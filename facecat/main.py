@@ -15,13 +15,24 @@ from model import Kronos, KronosTokenizer, KronosPredictor
 import torch
 
 latestDataStr = ""
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOCAL_TOKENIZER_DIR = os.path.join(BASE_DIR, "model", "Kronos-Tokenizer-base")
+LOCAL_MODEL_DIR = os.path.join(BASE_DIR, "model", "Kronos-small")
+HF_TOKENIZER_REPO = "NeoQuasar/Kronos-Tokenizer-base"
+HF_MODEL_REPO = "NeoQuasar/Kronos-small"
+
+def resolve_pretrained_source(local_dir, repo_id):
+	"""Prefer local weights; otherwise use the official Hugging Face repo."""
+	if os.path.isdir(local_dir):
+		return local_dir
+	return repo_id
 # tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base",force_download=True, cache_dir="model/Kronos-Tokenizer-base")
 # model = Kronos.from_pretrained("NeoQuasar/Kronos-small",force_download=True, cache_dir="model/Kronos-small")
 tokenizer = KronosTokenizer.from_pretrained(
-    "model/Kronos-Tokenizer-base"  # 本地分词器路径
+    resolve_pretrained_source(LOCAL_TOKENIZER_DIR, HF_TOKENIZER_REPO)
 )
 model = Kronos.from_pretrained(
-    "model/Kronos-small"  # 本地模型路径
+    resolve_pretrained_source(LOCAL_MODEL_DIR, HF_MODEL_REPO)
 )
 if torch.cuda.is_available():
 	device = "cuda:0"
@@ -30,6 +41,7 @@ elif torch.backends.mps.is_available():
 else:
 	device = "cpu"
 predictor = KronosPredictor(model, tokenizer, device=device, max_context=512, )
+print(f"[startup] model ready on {device}")
 latestDataStr = ""
 findMyCharts = []
 charts = []
@@ -1586,4 +1598,7 @@ thread.start()
 thread2 = threading.Thread(target=startQueryPriceData, args=())
 thread2.start()
 gPaint.update()
+setWindowSize(FCSize(1400, 900))
+setCenterScreen(True)
+print("[startup] about to show main window")
 showWindow(gPaint)
