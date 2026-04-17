@@ -1,7 +1,7 @@
-﻿# -*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 #! python3
 
-# FaceCat-Python 著作权编号:2020SR0266727
+# FaceCat-Python 著作權編號:2020SR0266727
 # Developed by FaceCat Team 
 
 import math
@@ -96,37 +96,37 @@ class POINT(ct.Structure):
 	]
 
 class FCPoint(object):
-	"""坐标结构"""
+	"""坐標結構"""
 	def __init__(self, x, y):
-		self.x = x #横坐标
-		self.y = y #纵坐标
-		self.z = 0 #Z坐标
+		self.x = x #橫坐標
+		self.y = y #縱坐標
+		self.z = 0 #Z坐標
 	
 class FCSize(object):
-	"""大小结构"""
+	"""大小結構"""
 	def __init__(self, cx, cy):
-		self.cx = cx #长
-		self.cy = cy #宽
+		self.cx = cx #長
+		self.cy = cy #寬
 
 class FCRect(object):
-	"""矩形结构"""
+	"""矩形結構"""
 	def __init__(self, left, top, right, bottom):
-		self.left = left #左侧
-		self.top = top #上侧
-		self.right = right #右侧
+		self.left = left #左側
+		self.top = top #上側
+		self.right = right #右側
 		self.bottom = bottom #底部
 
 class FCPadding(object):
-	"""边距信息"""
+	"""邊距信息"""
 	def __init__(self, left, top, right, bottom):
-		self.left = left #左侧
-		self.top = top #上侧
-		self.right = right #右侧
+		self.left = left #左側
+		self.top = top #上側
+		self.right = right #右側
 		self.bottom = bottom #底部
 		
 def toColorGdiPlus(strColor):
-	"""转换颜色
-	strColor:颜色字符"""
+	"""轉換顏色
+	strColor:顏色字符"""
 	strColor = strColor.replace("(", "").replace(")","")
 	if strColor.find("rgba") == 0:
 		strColor = strColor.replace("rgba", "")
@@ -157,84 +157,84 @@ def toColorGdiPlus(strColor):
 	return 0
 
 class FCData(object):
-	"""消息数据"""
+	"""消息數據"""
 	def __init__(self):
-		self.callBack = None #回调
-		self.data = None #结果
-		self.key = "" #键
+		self.callBack = None #回調
+		self.data = None #結果
+		self.key = "" #鍵
 		self.success = False #是否成功
-		self.tag = [] #标识数据
+		self.tag = [] #標識數據
 
 class FCPaint(object):
-	"""绘图API"""
+	"""繪圖API"""
 	def __init__(self):
-		self.allowPartialPaint = True #是否允许局部绘图
-		self.cancelClick = False #是否退出点击
-		self.clipRect = None #裁剪区域
-		self.datas = Queue() #线程安全消息队列
-		self.defaultUIStyle = "light" #默认样式
-		self.dragBeginPoint = FCPoint(0, 0) #拖动开始时的触摸位置
-		self.dragBeginRect = FCRect(0, 0, 0, 0) #拖动开始时的区域
-		self.draggingView = None #正被拖动的视图
-		self.drawHDC = None #双倍缓冲的hdc
-		self.focusedView = None #焦点视图
-		self.fontSize = 19 #当前的字体大小
-		self.gdiPlusPaint = None #GDI+对象
-		self.hdc = None #绘图对象
-		self.hFont = None #字体
-		self.hOldFont = None #旧的字体
+		self.allowPartialPaint = True #是否允許局部繪圖
+		self.cancelClick = False #是否退出點擊
+		self.clipRect = None #裁剪區域
+		self.datas = Queue() #線程安全消息隊列
+		self.defaultUIStyle = "light" #默認樣式
+		self.dragBeginPoint = FCPoint(0, 0) #拖動開始時的觸摸位置
+		self.dragBeginRect = FCRect(0, 0, 0, 0) #拖動開始時的區域
+		self.draggingView = None #正被拖動的視圖
+		self.drawHDC = None #雙倍緩沖的hdc
+		self.focusedView = None #焦點視圖
+		self.fontSize = 19 #當前的字體大小
+		self.gdiPlusPaint = None #GDI+對象
+		self.hdc = None #繪圖對象
+		self.hFont = None #字體
+		self.hOldFont = None #舊的字體
 		self.hWnd = None #句柄
-		self.innerHDC = None #内部HDC
-		self.innerBM = None #内部BM
-		self.isDoubleClick = False #是否双击
-		self.isPath = False #是否路径
-		self.offsetX = 0 #横向偏移
-		self.offsetY = 0 #纵向偏移
-		self.memBM = None #绘图对象
+		self.innerHDC = None #內部HDC
+		self.innerBM = None #內部BM
+		self.isDoubleClick = False #是否雙擊
+		self.isPath = False #是否路徑
+		self.offsetX = 0 #橫向偏移
+		self.offsetY = 0 #縱向偏移
+		self.memBM = None #繪圖對象
 		self.moveTo = False
-		self.resizeColumnState = 0 #改变列宽度的状态
-		self.resizeColumnBeginWidth = 0 #改变列宽度的起始值
-		self.resizeColumnIndex = -1 #改变列宽度的索引
-		self.scaleFactorX = 1 #横向缩放比例
-		self.scaleFactorY = 1 #纵向缩放比例
+		self.resizeColumnState = 0 #改變列寬度的狀態
+		self.resizeColumnBeginWidth = 0 #改變列寬度的起始值
+		self.resizeColumnIndex = -1 #改變列寬度的索引
+		self.scaleFactorX = 1 #橫向縮放比例
+		self.scaleFactorY = 1 #縱向縮放比例
 		self.size = FCSize(0,0) #布局大小
-		self.systemFont = "Segoe UI" #系统字体
-		self.touchDownView = None #鼠标按下的视图
-		self.touchMoveView = None #鼠标移动的视图
+		self.systemFont = "Microsoft JhengHei" #系統字體
+		self.touchDownView = None #鼠標按下的視圖
+		self.touchMoveView = None #鼠標移動的視圖
 		self.touchDownPoint = FCPoint(0,0)
-		self.views = [] #子视图
-		self.onCalculateChartMaxMin = None #计算最大最小值
-		self.onClick = None #点击
-		self.onClickGridCell = None #点击单元格的事件回调
-		self.onClickGridColumn = None #点击列头的事件回调
-		self.onClickTreeNode = None #点击树节点的事件回调
-		self.onContainsPoint = None #是否包含点
+		self.views = [] #子視圖
+		self.onCalculateChartMaxMin = None #計算最大最小值
+		self.onClick = None #點擊
+		self.onClickGridCell = None #點擊單元格的事件回調
+		self.onClickGridColumn = None #點擊列頭的事件回調
+		self.onClickTreeNode = None #點擊樹節點的事件回調
+		self.onContainsPoint = None #是否包含點
 		self.onInvalidate = None
 		self.onInvalidateView = None
-		self.onInvoke = None #跨线程调用
-		self.onKeyDown = None #键盘按下
-		self.onKeyUp = None #键盘抬起
-		self.onChar = None #键盘输入
-		self.onPaint = None #绘图
-		self.onPaintBorder = None #绘制边线
+		self.onInvoke = None #跨線程調用
+		self.onKeyDown = None #鍵盤按下
+		self.onKeyUp = None #鍵盤擡起
+		self.onChar = None #鍵盤輸入
+		self.onPaint = None #繪圖
+		self.onPaintBorder = None #繪制邊線
 		self.onPaintCalendarDayButton = None
 		self.onPaintCalendarMonthButton = None
 		self.onPaintCalendarYearButton = None
-		self.onPaintChartScale = None #绘制坐标轴回调
-		self.onPaintChartHScale = None #绘制横坐标回调
-		self.onPaintChartStock = None #绘制图表回调
-		self.onPaintChartPlot = None #绘制画线回调
-		self.onPaintChartCrossLine = None #绘制十字线回调
-		self.onPaintGridCell = None #绘制单元格的事件回调
-		self.onPaintGridColumn = None #绘制列头的事件回调
+		self.onPaintChartScale = None #繪制坐標軸回調
+		self.onPaintChartHScale = None #繪制橫坐標回調
+		self.onPaintChartStock = None #繪制圖表回調
+		self.onPaintChartPlot = None #繪制畫線回調
+		self.onPaintChartCrossLine = None #繪制十字線回調
+		self.onPaintGridCell = None #繪制單元格的事件回調
+		self.onPaintGridColumn = None #繪制列頭的事件回調
 		self.onPaintCalendarHeadDiv = None
-		self.onPaintTreeNode = None #绘图树节点的事件回调
-		self.onMouseDown = None #鼠标按下
-		self.onMouseMove = None #鼠标移动
-		self.onMouseUp = None #鼠标抬起
-		self.onMouseWheel = None #鼠标滚动
-		self.onMouseEnter = None #鼠标进入
-		self.onMouseLeave = None #鼠标离开
+		self.onPaintTreeNode = None #繪圖樹節點的事件回調
+		self.onMouseDown = None #鼠標按下
+		self.onMouseMove = None #鼠標移動
+		self.onMouseUp = None #鼠標擡起
+		self.onMouseWheel = None #鼠標滾動
+		self.onMouseEnter = None #鼠標進入
+		self.onMouseLeave = None #鼠標離開
 		self.onRenderViews = None
 		self.onUpdateView = None #更新布局
 		self.textSizeCache = dict()
@@ -244,22 +244,22 @@ class FCPaint(object):
 		self.pInvokeMsgID = 0x0401
 		self.invokeSerialID = 0
 	def addData(self, data):
-		"""添加数据
-		data 数据"""
+		"""添加數據
+		data 數據"""
 		self.datas.put(data)
 	def dealData(self):
-		"""处理数据"""
+		"""處理數據"""
 		while not self.datas.empty():
 			data = self.datas.get()
 			if data.callBack != None:
 				data.callBack(data)
 	def addView(self, view):
-		"""添加顶层视图
-		view 视图"""
+		"""添加頂層視圖
+		view 視圖"""
 		view.paint = self
 		self.views.append(view)
 	def highQuanlity(self):
-		"""高清显示"""
+		"""高清顯示"""
 		shcore.SetProcessDpiAwareness(1)
 	def init(self):
 		"""初始化"""
@@ -268,41 +268,41 @@ class FCPaint(object):
 			self.gdiPlusPaint.init()
 			self.gdiPlusPaint.createGdiPlus(self.hWnd)
 	def beginPaint(self, rect, pRect):
-		"""开始绘图 
-		rect:区域"""
+		"""開始繪圖 
+		rect:區域"""
 		self.init()
 		self.gdiPlusPaint.gdiPlus.beginPaintGdiPlus(self.gdiPlusPaint.gID, self.hdc, c_int(int(rect.left)), c_int(int(rect.top)), c_int(int(rect.right)), c_int(int(rect.bottom)), c_int(int(pRect.left)), c_int(int(pRect.top)), c_int(int(pRect.right)), c_int(int(pRect.bottom )))
 		self.offsetX = 0
 		self.offsetY = 0
 	def drawImage(self, imagePath, left, top, right, bottom):
-		"""绘制图片
-		imagePath:图片路径
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标"""
+		"""繪制圖片
+		imagePath:圖片路徑
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標"""
 		if os.path.exists(imagePath) == False:
 			current_file_path = os.path.abspath(__file__)
 			current_file_dir = os.path.dirname(current_file_path)
 			imagePath = current_file_dir + "\\" + imagePath
 		self.gdiPlusPaint.gdiPlus.drawImageGdiPlus(self.gdiPlusPaint.gID, c_char_p(imagePath.encode(self.gdiPlusPaint.encoding)), int(left), int(top), int(right), int(bottom))
 	def drawLine(self, color, width, style, x1, y1, x2, y2):
-		"""绘制线
-		color:颜色 
-		width:宽度 
-		style:样式 
-		x1:横坐标1 
-		y1:纵坐标1 
-		x2:横坐标2 
-		y2:纵坐标2"""
+		"""繪制線
+		color:顏色 
+		width:寬度 
+		style:樣式 
+		x1:橫坐標1 
+		y1:縱坐標1 
+		x2:橫坐標2 
+		y2:縱坐標2"""
 		inStyle = int(style)
 		self.gdiPlusPaint.gdiPlus.drawLineGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_float(int(width)), c_int(inStyle), c_int(int(x1)), c_int(int(y1)), c_int(int(x2)), c_int(int(y2)))
 	def drawPolyline(self, color, width, style, apt):
-		"""绘制连续线
-		color:颜色 
-		width:宽度 
-		style:样式 
-		apt:坐标集合"""
+		"""繪制連續線
+		color:顏色 
+		width:寬度 
+		style:樣式 
+		apt:坐標集合"""
 		if len(apt) == 1:
 			self.drawLine(color, width, style, apt[0].x, apt[0].y, apt[0].x + 1, apt[0].y)
 			return
@@ -317,11 +317,11 @@ class FCPaint(object):
 			inStyle = int(style)
 			self.gdiPlusPaint.gdiPlus.drawPolylineGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_float(int(width)), c_int(inStyle), c_char_p(strApt.encode(self.gdiPlusPaint.encoding)))
 	def drawPolygon(self, color, width, style, apt):
-		"""绘制多边形
-		color:颜色 
-		width:宽度 
-		style:样式 
-		apt:坐标集合"""
+		"""繪制多邊形
+		color:顏色 
+		width:寬度 
+		style:樣式 
+		apt:坐標集合"""
 		if len(apt) > 1:
 			strApt = ""
 			for i in range(0,len(apt)):
@@ -333,77 +333,77 @@ class FCPaint(object):
 			inStyle = int(style)
 			self.gdiPlusPaint.gdiPlus.drawPolygonGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_float(int(width)), c_int(inStyle), c_char_p(strApt.encode(self.gdiPlusPaint.encoding)))
 	def drawRect(self, color, width, style, left, top, right, bottom):
-		"""绘制矩形 
-		color:颜色 
-		width:宽度 
-		style:样式 
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标"""
+		"""繪制矩形 
+		color:顏色 
+		width:寬度 
+		style:樣式 
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標"""
 		inStyle = int(style)
 		self.gdiPlusPaint.gdiPlus.drawRectGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_float(int(width)), c_int(inStyle), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)))
 	def drawRoundRect(self, color, width, style, left, top, right, bottom, cornerRadius):
-		"""绘制矩形 
-		color:颜色 
-		width:宽度 
-		style:样式 
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标
-		cornerRadius:圆角"""
+		"""繪制矩形 
+		color:顏色 
+		width:寬度 
+		style:樣式 
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標
+		cornerRadius:圓角"""
 		if cornerRadius > 0:
 			inStyle = int(style)
 			self.gdiPlusPaint.gdiPlus.drawRoundRectGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_float(int(width)), c_int(inStyle), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)), c_int(int(cornerRadius)))
 		else:
 			self.drawRect(color, width, style, left, top, right, bottom)
 	def drawEllipse(self, color, width, style, left, top, right, bottom):
-		"""绘制椭圆 
-		color:颜色 
-		width:宽度 
-		style:样式 
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标"""
+		"""繪制橢圓 
+		color:顏色 
+		width:寬度 
+		style:樣式 
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標"""
 		inStyle = int(style)
 		self.gdiPlusPaint.gdiPlus.drawEllipseGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_float(int(width)), c_int(inStyle), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)))
 	def drawText(self, text, color, font, x, y):
-		"""绘制文字大小 
+		"""繪制文字大小 
 		text:文字 
-		color:颜色 
-		font:字体 
-		x:横坐标 
-		y:纵坐标"""
+		color:顏色 
+		font:字體 
+		x:橫坐標 
+		y:縱坐標"""
 		newFont = font.replace("Default", self.systemFont)
 		self.gdiPlusPaint.gdiPlus.drawTextWithPosGdiPlus(self.gdiPlusPaint.gID, c_char_p(text.encode(self.gdiPlusPaint.encoding)), c_longlong(toColorGdiPlus(color)), c_char_p(newFont.encode(self.gdiPlusPaint.encoding)), c_int(int(x)), c_int(int(y)))
 	def endPaint(self):
-		"""结束绘图"""
+		"""結束繪圖"""
 		self.gdiPlusPaint.gdiPlus.endPaintGdiPlus(self.gdiPlusPaint.gID)
 	def fillRect(self, color, left, top, right, bottom):
 		"""填充矩形 
-		color:颜色
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标"""
+		color:顏色
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標"""
 		self.gdiPlusPaint.gdiPlus.fillRectGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)))
 	def fillRoundRect(self, color, left, top, right, bottom, cornerRadius):
 		"""填充矩形 
-		color:颜色
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		cornerRadius:圆角"""
+		color:顏色
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		cornerRadius:圓角"""
 		if cornerRadius > 0:
 			self.gdiPlusPaint.gdiPlus.fillRoundRectGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)), c_int(int(cornerRadius)))
 		else:
 			self.fillRect(color, left, top, right, bottom)
 	def fillPolygon(self, color, apt):
-		"""填充多边形 
-		color:颜色
-		apt:坐标集合"""
+		"""填充多邊形 
+		color:顏色
+		apt:坐標集合"""
 		if len(apt) > 1:
 			strApt = ""
 			for i in range(0,len(apt)):
@@ -414,44 +414,44 @@ class FCPaint(object):
 					strApt += " "
 			self.gdiPlusPaint.gdiPlus.fillPolygonGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_char_p(strApt.encode(self.gdiPlusPaint.encoding)))
 	def fillEllipse(self, color, left, top, right, bottom):
-		"""填充椭圆 
-		color:颜色
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标"""
+		"""填充橢圓 
+		color:顏色
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標"""
 		self.gdiPlusPaint.gdiPlus.fillEllipseGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)))
 	def fillPie(self, color, left, top, right, bottom, startAngle, sweepAngle):
-		"""填充饼图
-		color:颜色
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:下方坐标
-		startAngle:开始角度
-		sweepAngle:持续角度"""
+		"""填充餅圖
+		color:顏色
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:下方坐標
+		startAngle:開始角度
+		sweepAngle:持續角度"""
 		self.gdiPlusPaint.gdiPlus.fillPieGdiPlus(self.gdiPlusPaint.gID, c_longlong(toColorGdiPlus(color)), c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)), c_float(startAngle), c_float(sweepAngle))
 	def findView(self, name):
-		"""根据名称查找视图
-		name:名称"""
+		"""根據名稱查找視圖
+		name:名稱"""
 		return findViewByName(name, self.views)
 	def render(self, parent, xmlStr):
-		"""渲染图形
-		parent:父视图
+		"""渲染圖形
+		parent:父視圖
 		xmlStr:配置字符串"""
 		if parent != None:
 			renderFaceCatInParent(parent, xmlStr)
 		else:
 			renderFaceCat(self, xmlStr)
 	def setOffset(self, offsetX, offsetY):
-		"""设置偏移量
-		offsetX:横向偏移 
-		offsetY:纵向偏移"""
+		"""設置偏移量
+		offsetX:橫向偏移 
+		offsetY:縱向偏移"""
 		self.gdiPlusPaint.gdiPlus.setOffsetGdiPlus(self.gdiPlusPaint.gID, c_int(int(offsetX)), c_int(int(offsetY)))
 	def textSize(self, text, font):
-		"""获取字体大小 
+		"""獲取字體大小 
 		text:文字 
-		font:字体"""
+		font:字體"""
 		newFont = font.replace("Default", self.systemFont)
 		key = text + newFont
 		if (key in self.textSizeCache) == False:
@@ -464,14 +464,14 @@ class FCPaint(object):
 		else:
 			return self.textSizeCache[key]
 	def drawTextAutoEllipsis(self, text, color, font, left, top, right, bottom):
-		"""绘制矩形 
+		"""繪制矩形 
 		text文字 
-		color:颜色 
-		font:字体 
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:方坐标"""
+		color:顏色 
+		font:字體 
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:方坐標"""
 		tSize = self.textSize(text, font)
 		if tSize.cx < right - left:
 			self.drawText(text, color, font, left, top)
@@ -491,11 +491,11 @@ class FCPaint(object):
 					else:
 						break
 	def setClip(self, left, top, right, bottom):
-		"""设置裁剪
-		left:左侧坐标 
-		top:上方坐标 
-		right:右侧坐标 
-		bottom:方坐标"""
+		"""設置裁剪
+		left:左側坐標 
+		top:上方坐標 
+		right:右側坐標 
+		bottom:方坐標"""
 		return self.gdiPlusPaint.gdiPlus.setClipGdiPlus(self.gdiPlusPaint.gID, c_int(int(left)), c_int(int(top)), c_int(int(right)), c_int(int(bottom)))
 	def update(self):
 		"""更新布局"""
@@ -506,11 +506,11 @@ class FCPaint(object):
 		invalidate(self)
 
 class GdiPlusPaint(object):
-	"""调用Gdi+的DLL"""
+	"""調用Gdi+的DLL"""
 	def __init__(self):
-		self.gdiPlus = None #GDI+对象
-		self.gID = 0 #GDI+的编号
-		self.encoding = "gbk" #解析编码
+		self.gdiPlus = None #GDI+對象
+		self.gID = 0 #GDI+的編號
+		self.encoding = "big5" #解析編碼
 	def init(self):
 		"""初始化"""
 		current_file_path = os.path.abspath(__file__)
@@ -518,468 +518,468 @@ class GdiPlusPaint(object):
 		self.gdiPlus = cdll.LoadLibrary(current_file_dir + r"\\facecatcpp.dll")
 		cdll.argtypes = [c_char_p, c_int, c_float, c_double, c_long, c_wchar_p, c_longlong]
 	def createGdiPlus(self, hWnd):
-		"""创建GDI+"""
+		"""創建GDI+"""
 		self.gID = self.gdiPlus.createGdiPlus(hWnd)
 	def deleteGdiPlus(self):
-		"""销毁GDI+"""
+		"""銷毀GDI+"""
 		return self.gdiPlus.deleteGdiPlus(self.gID)
 	def addArc(self, left, top, right, bottom, startAngle, sweepAngle):
-		"""添加曲线
-		rect 矩形区域
-		startAngle 从x轴到弧线的起始点沿顺时针方向度量的角（以度为单位）
-		sweepAngle 从startAngle参数到弧线的结束点沿顺时针方向度量的角（以度为单位）"""
+		"""添加曲線
+		rect 矩形區域
+		startAngle 從x軸到弧線的起始點沿順時針方向度量的角（以度為單位）
+		sweepAngle 從startAngle參數到弧線的結束點沿順時針方向度量的角（以度為單位）"""
 		return self.gdiPlus.addArcGdiPlus(self.gID, c_int(left), c_int(top), c_int(right), c_int(bottom), c_float(startAngle), c_float(sweepAngle))
 	def addBezier(self, strApt):
-		"""添加贝赛尔曲线
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""添加貝賽爾曲線
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.addBezierGdiPlus(self.gID, c_char_p(strApt.encode(self.encoding)))
 	def addCurve(self, strApt):
-		"""添加曲线
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""添加曲線
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.addCurveGdiPlus(self.gID, c_char_p(strApt.encode(self.encoding)))
 	def addEllipse(self, left, top, right, bottom):
-		"""添加椭圆
+		"""添加橢圓
 		rect 矩形"""
 		return self.gdiPlus.addEllipseGdiPlus(self.gID, c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def addLine(self, x1, y1, x2, y2):
-		"""添加直线
-		x1 第一个点的横坐标
-		y1 第一个点的纵坐标
-		x2 第二个点的横坐标
-		y2 第二个点的纵坐标"""
+		"""添加直線
+		x1 第一個點的橫坐標
+		y1 第一個點的縱坐標
+		x2 第二個點的橫坐標
+		y2 第二個點的縱坐標"""
 		return self.gdiPlus.addLineGdiPlus(self.gID, c_int(x1), c_int(y1), c_int(x2), c_int(y2))
 	def addRect(self, left, top, right, bottom):
 		"""添加矩形
-		rect 区域"""
+		rect 區域"""
 		return self.gdiPlus.addRectGdiPlus(self.gID, c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def addPie(self, left, top, right, bottom, startAngle, sweepAngle):
 		"""添加扇形
-		rect 矩形区域
-		startAngle 从x轴到弧线的起始点沿顺时针方向度量的角（以度为单位）
-		sweepAngle 从startAngle参数到弧线的结束点沿顺时针方向度量的角（以度为单位）"""
+		rect 矩形區域
+		startAngle 從x軸到弧線的起始點沿順時針方向度量的角（以度為單位）
+		sweepAngle 從startAngle參數到弧線的結束點沿順時針方向度量的角（以度為單位）"""
 		return self.gdiPlus.addPieGdiPlus(self.gID, c_int(left), c_int(top), c_int(right), c_int(bottom), c_float(startAngle), c_float(sweepAngle))
 	def addText(self, text, font, left, top, right, bottom, width):
 		"""添加文字
 		text 文字
-		font 字体
-		rect 区域"""
+		font 字體
+		rect 區域"""
 		return self.gdiPlus.addTextGdiPlus(self.gID, c_char_p(text.encode(self.encoding)), c_char_p(font.encode(self.encoding)), c_int(left), c_int(top), c_int(right), c_int(bottom), c_int(width))
 	def beginExport(self, exportPath, left, top, right, bottom):
-		"""开始导出
-		exportPath  路径
-		rect 区域"""
+		"""開始導出
+		exportPath  路徑
+		rect 區域"""
 		return self.gdiPlus.beginExportGdiPlus(self.gID, c_char_p(exportPath.encode(self.encoding)), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def beginPaint(self, hDC, wLeft, wTop, wRight, wBottom, pLeft, pTop, pRight, pBottom):
-		"""开始绘图
+		"""開始繪圖
 		hdc HDC
-		wRect 窗体区域
-		pRect 刷新区域"""
+		wRect 窗體區域
+		pRect 刷新區域"""
 		return self.gdiPlus.beginPaintGdiPlus(self.gID, hDC, c_int(wLeft), c_int(wTop), c_int(wRight), c_int(wBottom), c_int(pLeft), c_int(pTop), c_int(pRight), c_int(pBottom))
 	def beginPath(self):
-		"""开始一段路径"""
+		"""開始一段路徑"""
 		return self.gdiPlus.beginPathGdiPlus(self.gID)
 	def clipPath(self):
-		"""裁剪路径"""
+		"""裁剪路徑"""
 		return self.gdiPlus.clipPathGdiPlus(self.gID)
 	def clearCaches(self):
-		"""清除缓存"""
+		"""清除緩存"""
 		return self.gdiPlus.clearCachesGdiPlus(self.gID)
 	def closeFigure(self):
-		"""闭合路径"""
+		"""閉合路徑"""
 		return self.gdiPlus.closeFigureGdiPlus(self.gID)
 	def closePath(self):
-		"""结束一段路径"""
+		"""結束一段路徑"""
 		return self.gdiPlus.closePathGdiPlus(self.gID)
 	def drawArc(self, dwPenColor, width, style, left, top, right, bottom, startAngle, sweepAngle):
-		"""绘制弧线
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		rect 矩形区域
-		startAngle 从x轴到弧线的起始点沿顺时针方向度量的角（以度为单位）
-		sweepAngle 从startAngle参数到弧线的结束点沿顺时针方向度量的角（以度为单位）"""
+		"""繪制弧線
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		rect 矩形區域
+		startAngle 從x軸到弧線的起始點沿順時針方向度量的角（以度為單位）
+		sweepAngle 從startAngle參數到弧線的結束點沿順時針方向度量的角（以度為單位）"""
 		return self.gdiPlus.drawArcGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_int(left), c_int(top), c_int(right), c_int(bottom), c_float(startAngle), c_float(sweepAngle))
 	def drawBezier(self, dwPenColor, width, style, strApt):
-		"""设置贝赛尔曲线
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""設置貝賽爾曲線
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.drawBezierGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_char_p(strApt.encode(self.encoding)))
 	def drawCurve(self, dwPenColor, width, style, strApt):
-		"""绘制曲线
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""繪制曲線
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.drawCurveGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_char_p(strApt.encode(self.encoding)))
 	def drawEllipse(self, dwPenColor, width, style, left, top, right, bottom):
-		"""绘制椭圆
-		dwPenColor 颜色
-		width 宽度
-		 style 样式
-		left 左侧坐标
-		top 顶部左标
-		right 右侧坐标
-		bottom 底部坐标"""
+		"""繪制橢圓
+		dwPenColor 顏色
+		width 寬度
+		 style 樣式
+		left 左側坐標
+		top 頂部左標
+		right 右側坐標
+		bottom 底部坐標"""
 		return self.gdiPlus.drawEllipseGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def drawImage(self, imagePath, left, top, right, bottom):
-		"""绘制图片
-		imagePath 图片路径
-		rect 绘制区域"""
+		"""繪制圖片
+		imagePath 圖片路徑
+		rect 繪制區域"""
 		return self.gdiPlus.drawImageGdiPlus(self.gID, c_char_p(imagePath.encode(self.encoding)), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def drawLine(self, dwPenColor, width, style, x1, y1, x2, y2):
-		"""绘制直线
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		x1 第一个点的横坐标
-		y1 第一个点的纵坐标
-		x2 第二个点的横坐标
-		y2 第二个点的纵坐标"""
+		"""繪制直線
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		x1 第一個點的橫坐標
+		y1 第一個點的縱坐標
+		x2 第二個點的橫坐標
+		y2 第二個點的縱坐標"""
 		return self.gdiPlus.drawLineGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_int(x1), c_int(y1), c_int(x2), c_int(y2))
 	def drawPath(self, dwPenColor, width, style):
-		"""绘制直线
-		dwPenColor 颜色
-		width 宽度
-		style 样式"""
+		"""繪制直線
+		dwPenColor 顏色
+		width 寬度
+		style 樣式"""
 		return self.gdiPlus.drawPathGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style))
 	def drawPie(self, dwPenColor, width, style, left, top, right, bottom, startAngle, sweepAngle):
-		"""绘制扇形
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		rect 矩形区域
-		startAngle 从x轴到弧线的起始点沿顺时针方向度量的角（以度为单位）
-		sweepAngle 从startAngle参数到弧线的结束点沿顺时针方向度量的角（以度为单位）"""
+		"""繪制扇形
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		rect 矩形區域
+		startAngle 從x軸到弧線的起始點沿順時針方向度量的角（以度為單位）
+		sweepAngle 從startAngle參數到弧線的結束點沿順時針方向度量的角（以度為單位）"""
 		return self.gdiPlus.drawPieGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_int(left), c_int(top), c_int(right), c_int(bottom), c_float(startAngle), c_float(sweepAngle))
 	def drawPolygon(self, dwPenColor, width, style, strApt):
-		"""绘制多边形
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""繪制多邊形
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.drawPolygonGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_char_p(strApt.encode(self.encoding)))
 	def drawPolyline(self, dwPenColor, width, style, strApt):
-		"""绘制大量直线
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""繪制大量直線
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.drawPolylineGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_char_p(strApt.encode(self.encoding)))
 	def drawRect(self, dwPenColor, width, style, left, top, right, bottom):
-		"""绘制矩形
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		rect 矩形区域"""
+		"""繪制矩形
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		rect 矩形區域"""
 		return self.gdiPlus.drawRectGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def drawRoundRect(self, dwPenColor, width, style, left, top, right, bottom, cornerRadius):
-		"""绘制圆角矩形
-		dwPenColor 颜色
-		width 宽度
-		style 样式
-		rect 矩形区域
-		cornerRadius 边角半径"""
+		"""繪制圓角矩形
+		dwPenColor 顏色
+		width 寬度
+		style 樣式
+		rect 矩形區域
+		cornerRadius 邊角半徑"""
 		return self.gdiPlus.drawRoundRectGdiPlus(self.gID, dwPenColor, c_float(width), c_int(style), c_int(left), c_int(top), c_int(right), c_int(bottom), c_int(cornerRadius))
 	def drawText(self, strText, dwPenColor, font, left, top, right, bottom, width):
-		"""绘制文字
+		"""繪制文字
 		text 文字
-		dwPenColor 颜色
-		font 字体
-		rect 矩形区域"""
+		dwPenColor 顏色
+		font 字體
+		rect 矩形區域"""
 		return self.gdiPlus.drawTextGdiPlus(self.gID, c_char_p(strText.encode(self.encoding)), dwPenColor, c_char_p(font.encode(self.encoding)), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def drawTextWithPos(self, strText, dwPenColor, font, x, y):
-		"""绘制文字
+		"""繪制文字
 		text 文字
-		dwPenColor 颜色
-		font 字体
-		rect 矩形区域"""
+		dwPenColor 顏色
+		font 字體
+		rect 矩形區域"""
 		return self.gdiPlus.drawTextWithPosGdiPlus(self.gID, c_char_p(strText.encode(self.encoding)), dwPenColor, c_char_p(font.encode(self.encoding)), c_int(x), c_int(y))
 	def drawTextAutoEllipsis(self, strText, dwPenColor, font, left, top, right, bottom):
-		"""绘制自动省略结尾的文字
+		"""繪制自動省略結尾的文字
 		text 文字
-		dwPenColor 颜色
-		font 字体
-		rect 矩形区域"""
+		dwPenColor 顏色
+		font 字體
+		rect 矩形區域"""
 		return self.gdiPlus.drawTextAutoEllipsisGdiPlus(self.gID, c_char_p(strText.encode(self.encoding)), dwPenColor, c_char_p(font.encode(self.encoding)), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def endExport(self):
-		"""结束导出"""
+		"""結束導出"""
 		return self.gdiPlus.endExportGdiPlus(self.gID)
 	def endPaint(self):
-		"""结束绘图"""
+		"""結束繪圖"""
 		return self.gdiPlus.endPaintGdiPlus(self.gID)
 	def excludeClipPath(self):
-		"""反裁剪路径"""
+		"""反裁剪路徑"""
 		return self.gdiPlus.excludeClipPathGdiPlus(self.gID)
 	def fillEllipse(self, dwPenColor, left, top, right, bottom):
-		"""填充椭圆
-		dwPenColor 颜色
-		rect 矩形区域"""
+		"""填充橢圓
+		dwPenColor 顏色
+		rect 矩形區域"""
 		return self.gdiPlus.fillEllipseGdiPlus(self.gID, dwPenColor, c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def fillGradientEllipse(self, dwFirst, dwSecond, left, top, right, bottom, angle):
-		"""绘制渐变椭圆
-		dwFirst 开始颜色
-		dwSecond  结束颜色
-		rect 矩形区域
+		"""繪制漸變橢圓
+		dwFirst 開始顏色
+		dwSecond  結束顏色
+		rect 矩形區域
 		angle 角度"""
 		return self.gdiPlus.fillGradientEllipseGdiPlus(self.gID, dwFirst, dwSecond, c_int(left), c_int(top), c_int(right), c_int(bottom), c_int(angle))
 	def fillGradientPath(self, dwFirst, dwSecond, left, top, right, bottom, angle):
-		"""填充渐变路径
-		dwFirst 开始颜色
-		dwSecond  结束颜色
-		rect 矩形区域
+		"""填充漸變路徑
+		dwFirst 開始顏色
+		dwSecond  結束顏色
+		rect 矩形區域
 		angle 角度"""
 		return self.gdiPlus.fillGradientPathGdiPlus(self.gID, dwFirst, dwSecond, c_int(left), c_int(top), c_int(right), c_int(bottom), c_int(angle))
 	def fillGradientPolygon(self, dwFirst, dwSecond, strApt, angle):
-		"""绘制渐变的多边形
-		dwFirst 开始颜色
-		dwSecond  开始颜色
-		strApt 点阵字符串 x1,y1 x2,y2...
+		"""繪制漸變的多邊形
+		dwFirst 開始顏色
+		dwSecond  開始顏色
+		strApt 點陣字符串 x1,y1 x2,y2...
 		angle 角度"""
 		return self.gdiPlus.fillGradientPolygonGdiPlus(self.gID, dwFirst, dwSecond, c_char_p(strApt.encode(self.encoding)), c_int(angle))
 	def fillGradientRect(self, dwFirst, dwSecond, left, top, right, bottom, cornerRadius, angle):
-		"""绘制渐变矩形
-		dwFirst 开始颜色
-		dwSecond 开始颜色
+		"""繪制漸變矩形
+		dwFirst 開始顏色
+		dwSecond 開始顏色
 		rect 矩形
-		cornerRadius 边角半径
+		cornerRadius 邊角半徑
 		angle 角度"""
 		return self.gdiPlus.fillGradientRectGdiPlus(self.gID, dwFirst, dwSecond, c_int(left), c_int(top), c_int(right), c_int(bottom), c_int(cornerRadius), c_int(angle))
 	def fillPath(self, dwPenColor):
-		"""填充路径
-		dwPenColor 颜色"""
+		"""填充路徑
+		dwPenColor 顏色"""
 		return self.gdiPlus.fillPathGdiPlus(self.gID, dwPenColor)
 	def fillPie(self, dwPenColor, left, top, right, bottom, startAngle, sweepAngle):
-		"""绘制扇形
-		dwPenColor 颜色
-		rect 矩形区域
-		startAngle 从x轴到弧线的起始点沿顺时针方向度量的角（以度为单位）
-		sweepAngle 从startAngle参数到弧线的结束点沿顺时针方向度量的角（以度为单位）"""
+		"""繪制扇形
+		dwPenColor 顏色
+		rect 矩形區域
+		startAngle 從x軸到弧線的起始點沿順時針方向度量的角（以度為單位）
+		sweepAngle 從startAngle參數到弧線的結束點沿順時針方向度量的角（以度為單位）"""
 		return self.gdiPlus.fillPieGdiPlus(self.gID, dwPenColor, c_int(left), c_int(top), c_int(right), c_int(bottom), c_float(startAngle), c_float(sweepAngle))
 	def fillPolygon(self, dwPenColor, strApt):
-		"""填充多边形
-		dwPenColor 颜色
-		strApt 点阵字符串 x1,y1 x2,y2..."""
+		"""填充多邊形
+		dwPenColor 顏色
+		strApt 點陣字符串 x1,y1 x2,y2..."""
 		return self.gdiPlus.fillPolygonGdiPlus(self.gID, dwPenColor, c_char_p(strApt.encode(self.encoding)))
 	def fillRect(self, dwPenColor, left, top, right, bottom):
 		"""填充矩形
-		dwPenColor 颜色
-		left 左侧坐标
-		top 顶部左标
-		right 右侧坐标
-		bottom 底部坐标"""
+		dwPenColor 顏色
+		left 左側坐標
+		top 頂部左標
+		right 右側坐標
+		bottom 底部坐標"""
 		return self.gdiPlus.fillRectGdiPlus(self.gID, dwPenColor, c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def fillRoundRect(self, dwPenColor, left, top, right, bottom, cornerRadius):
-		"""填充圆角矩形
-		dwPenColor 颜色
-		rect 矩形区域
-		cornerRadius 边角半径"""
+		"""填充圓角矩形
+		dwPenColor 顏色
+		rect 矩形區域
+		cornerRadius 邊角半徑"""
 		return self.gdiPlus.fillRoundRectGdiPlus(self.gID, dwPenColor, c_int(left), c_int(top), c_int(right), c_int(bottom), c_int(cornerRadius))
 	def setClip(self, left, top, right, bottom):
-		"""设置裁剪区域
-		rect 区域"""
+		"""設置裁剪區域
+		rect 區域"""
 		return self.gdiPlus.setClipGdiPlus(self.gID, c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def setLineCap(self, startLineCap, endLineCap):
-		"""设置直线两端的样式
-		startLineCap 开始的样式
-		endLineCap  结束的样式"""
+		"""設置直線兩端的樣式
+		startLineCap 開始的樣式
+		endLineCap  結束的樣式"""
 		return self.gdiPlus.setLineCapGdiPlus(self.gID, c_int(startLineCap), c_int(endLineCap))
 	def setOffset(self, offsetX, offsetY):
-		"""设置偏移
-		mp 偏移坐标"""
+		"""設置偏移
+		mp 偏移坐標"""
 		return self.gdiPlus.setOffsetGdiPlus(self.gID, c_int(offsetX), c_int(offsetY))
 	def setOpacity(self, opacity):
-		"""设置透明度
+		"""設置透明度
 		opacity 透明度"""
 		return self.gdiPlus.setOpacityGdiPlus(self.gID, c_float(opacity))
 	def setResourcePath(self, resourcePath):
-		"""设置资源的路径
-		resourcePath 资源的路径"""
+		"""設置資源的路徑
+		resourcePath 資源的路徑"""
 		return self.gdiPlus.setResourcePathGdiPlus(self.gID, c_char_p(resourcePath.encode(self.encoding)))
 	def setRotateAngle(self, rotateAngle):
-		"""设置旋转角度
-		rotateAngle 旋转角度"""
+		"""設置旋轉角度
+		rotateAngle 旋轉角度"""
 		return self.gdiPlus.setRotateAngleGdiPlus(self.gID, c_int(rotateAngle))
 	def setScaleFactor(self, scaleFactorX, scaleFactorY):
-		"""设置缩放因子
-		scaleFactorX 横向因子
-		scaleFactorY 纵向因子"""
+		"""設置縮放因子
+		scaleFactorX 橫向因子
+		scaleFactorY 縱向因子"""
 		return self.gdiPlus.setScaleFactorGdiPlus(self.gID, c_double(scaleFactorX), c_double(scaleFactorY))
 	def textSize(self, strText, font, width, data):
-		"""获取文字大小
+		"""獲取文字大小
 		text 文字
-		font 字体
-		width 字符最大宽度
-		data 返回数据 create_string_buffer(1024000) cx,cy"""
+		font 字體
+		width 字符最大寬度
+		data 返回數據 create_string_buffer(1024000) cx,cy"""
 		return self.gdiPlus.textSizeGdiPlus(self.gID, c_char_p(strText.encode(self.encoding)), c_char_p(font.encode(self.encoding)), c_int(width), data)
 	def onMessage(self, hWnd, message, wParam, lParam):
-		"""消息循环
+		"""消息循環
 		hWnd 句柄
 		message 消息ID"""
 		return self.gdiPlus.onMessage(self.gID, hWnd, message, wParam, lParam)
 	def createView(self, typeStr, name):
-		"""创建视图
-		typeStr 类型
-		name 名称"""
+		"""創建視圖
+		typeStr 類型
+		name 名稱"""
 		return self.gdiPlus.createView(self.gID, c_char_p(typeStr.encode(self.encoding)), c_char_p(name.encode(self.encoding)))
 	def setAttribute(self, name, atrName, atrValue):
-		"""设置属性
-		name 名称
-		atrName 属性名称
-		atrValue 属性值"""
+		"""設置屬性
+		name 名稱
+		atrName 屬性名稱
+		atrValue 屬性值"""
 		return self.gdiPlus.setAttribute(self.gID, c_char_p(name.encode("gbk")), c_char_p(atrName.encode("gbk")), c_char_p(atrValue.encode("gbk")))
 	def getAttribute(self, name, atrName, data):
-		"""获取属性
-		name 名称
-		atrName 属性名称
-		data 返回数据 create_string_buffer(1024000)"""
+		"""獲取屬性
+		name 名稱
+		atrName 屬性名稱
+		data 返回數據 create_string_buffer(1024000)"""
 		return self.gdiPlus.getAttribute(self.gID, c_char_p(name.encode("gbk")), c_char_p(atrName.encode("gbk")), data)
 	def paintView(self, name, left, top, right, bottom):
-		"""获取属性
-		name 名称
-		left 左侧坐标
-		top 顶部左标
-		right 右侧坐标
-		bottom 底部坐标"""
+		"""獲取屬性
+		name 名稱
+		left 左側坐標
+		top 頂部左標
+		right 右側坐標
+		bottom 底部坐標"""
 		return self.gdiPlus.paintView(self.gID, c_char_p(name.encode(self.encoding)), c_int(left), c_int(top), c_int(right), c_int(bottom))
 	def focusView(self, name):
-		"""设置焦点
-		name 名称"""
+		"""設置焦點
+		name 名稱"""
 		return self.gdiPlus.focusView(self.gID, c_char_p(name.encode(self.encoding)))
 	def unFocusView(self, name):
-		"""设置焦点
-		name 名称"""
+		"""設置焦點
+		name 名稱"""
 		return self.gdiPlus.unFocusView(self.gID, c_char_p(name.encode(self.encoding)))
 	def mouseDownView(self, name, x, y, buttons, clicks):
-		"""鼠标按下视图
-		name 名称
-		x 横坐标
-		y 纵坐标
-		buttons 按钮
-		clicks 点击次数"""
+		"""鼠標按下視圖
+		name 名稱
+		x 橫坐標
+		y 縱坐標
+		buttons 按鈕
+		clicks 點擊次數"""
 		return self.gdiPlus.mouseDownView(self.gID, c_char_p(name.encode(self.encoding)), c_int(x), c_int(y), c_int(buttons), c_int(clicks))
 	def mouseUpView(self, name, x, y, buttons, clicks):
-		"""鼠标抬起视图
-		name 名称
-		x 横坐标
-		y 纵坐标
-		buttons 按钮
-		clicks 点击次数"""
+		"""鼠標擡起視圖
+		name 名稱
+		x 橫坐標
+		y 縱坐標
+		buttons 按鈕
+		clicks 點擊次數"""
 		return self.gdiPlus.mouseUpView(self.gID, c_char_p(name.encode(self.encoding)), c_int(x), c_int(y), c_int(buttons), c_int(clicks))
 	def mouseMoveView(self, name, x, y, buttons, clicks):
-		"""鼠标移动视图
-		name 名称
-		x 横坐标
-		y 纵坐标
-		buttons 按钮
-		clicks 点击次数"""
+		"""鼠標移動視圖
+		name 名稱
+		x 橫坐標
+		y 縱坐標
+		buttons 按鈕
+		clicks 點擊次數"""
 		return self.gdiPlus.mouseMoveView(self.gID, c_char_p(name.encode(self.encoding)), c_int(x), c_int(y), c_int(buttons), c_int(clicks))
 	def mouseWheelView(self, name, x, y, buttons, clicks, delta):
-		"""鼠标滚动视图
-		name 名称
-		x 横坐标
-		y 纵坐标
-		buttons 按钮
-		clicks 点击次数
-		delta 滚动值"""
+		"""鼠標滾動視圖
+		name 名稱
+		x 橫坐標
+		y 縱坐標
+		buttons 按鈕
+		clicks 點擊次數
+		delta 滾動值"""
 		return self.gdiPlus.mouseWheelView(self.gID, c_char_p(name.encode(self.encoding)), c_int(x), c_int(y), c_int(buttons), c_int(clicks), c_int(delta))
 	def setCursor(self, cursor):
-		"""设置光标
-		cursor 光标"""
+		"""設置光標
+		cursor 光標"""
 		return self.gdiPlus.setCursor(self.gID, c_char_p(cursor.encode("gbk")))
 	def removeView(self, name):
-		"""移除原生视图
-		name 名称"""
+		"""移除原生視圖
+		name 名稱"""
 		return self.gdiPlus.removeView(self.gID, c_char_p(name.encode("gbk")))
 
 class FCView(object):
-	"""基础视图"""
+	"""基礎視圖"""
 	def __init__(self):
-		self.allowClip = True #是否允许裁剪
-		self.align = "left" #横向布局
-		self.allowDrag = False #是否允许拖动
-		self.allowResize = False #是否可以拖动改变大小
-		self.allowDraw = True #是否允许绘图
-		self.allowDragScroll = False #是否允许拖动滚动
-		self.allowPreviewsEvent = False #是否允许预处理事件
-		self.autoHide = False #是否自动隐藏
+		self.allowClip = True #是否允許裁剪
+		self.align = "left" #橫向布局
+		self.allowDrag = False #是否允許拖動
+		self.allowResize = False #是否可以拖動改變大小
+		self.allowDraw = True #是否允許繪圖
+		self.allowDragScroll = False #是否允許拖動滾動
+		self.allowPreviewsEvent = False #是否允許預處理事件
+		self.autoHide = False #是否自動隱藏
 		self._backColor = "rgb(255,255,255)" #背景色
-		self.backImage = "" #背景图片
-		self._borderColor = "rgb(150,150,150)" #边线色
-		self.borderWidth = 1 #边线宽度
-		self.clipRect = None #裁剪区域
-		self.cornerRadius = 0 #圆角
-		self.cursor = "" #光标
-		self.dock = "none" #悬浮状态
-		self.downScrollHButton = False #是否按下横向滚动条
-		self.downScrollVButton = False #是否按下纵向滚动条
-		self.displayOffset = True #是否显示偏移量
+		self.backImage = "" #背景圖片
+		self._borderColor = "rgb(150,150,150)" #邊線色
+		self.borderWidth = 1 #邊線寬度
+		self.clipRect = None #裁剪區域
+		self.cornerRadius = 0 #圓角
+		self.cursor = "" #光標
+		self.dock = "none" #懸浮狀態
+		self.downScrollHButton = False #是否按下橫向滾動條
+		self.downScrollVButton = False #是否按下縱向滾動條
+		self.displayOffset = True #是否顯示偏移量
 		self.enabled = True #是否可用
-		self.exAttributes = dict() #额外属性
-		self.exView = False #是否扩展视图
-		self._font = "Default,14" #字体
-		self.hoverScrollHButton = False #是否悬停横向滚动条
-		self.hoverScrollVButton = False #是否悬停纵向滚动条
-		self.hoveredColor = "none" #鼠标悬停时的颜色
-		self.hScrollIsVisible = False #横向滚动是否显示
-		self.hWnd = None #子视图句柄
-		self.location = FCPoint(0,0) #坐标
-		self.margin = FCPadding(0,0,0,0) #外边距
+		self.exAttributes = dict() #額外屬性
+		self.exView = False #是否擴展視圖
+		self._font = "Default,14" #字體
+		self.hoverScrollHButton = False #是否懸停橫向滾動條
+		self.hoverScrollVButton = False #是否懸停縱向滾動條
+		self.hoveredColor = "none" #鼠標懸停時的顏色
+		self.hScrollIsVisible = False #橫向滾動是否顯示
+		self.hWnd = None #子視圖句柄
+		self.location = FCPoint(0,0) #坐標
+		self.margin = FCPadding(0,0,0,0) #外邊距
 		self.maximumSize = FCSize(0,0) #最大大小
-		self.padding = FCPadding(0,0,0,0) #内边距
-		self.paint = None #绘图对象
-		self.parent = None #父视图
-		self.pushedColor = "none" #鼠标按下时的颜色
-		self.resizePoint = -1 #调整尺寸的点
-		self.scrollV = 0 #纵向滚动
-		self.scrollH = 0 #横向滚动
-		self.scrollSize = 8 #滚动条的大小
-		self.selectedBackColor = "none" #选中的颜色
-		self.showHScrollBar = False #是否显示横向滚动条
-		self.showVScrollBar = False #是否显示横向滚动条
-		self.scrollBarColor = "rgb(200,200,200)" #滚动条的颜色
-		self.scrollBarHoveredColor = "rgb(42,138,195)" #滚动条悬停的颜色
+		self.padding = FCPadding(0,0,0,0) #內邊距
+		self.paint = None #繪圖對象
+		self.parent = None #父視圖
+		self.pushedColor = "none" #鼠標按下時的顏色
+		self.resizePoint = -1 #調整尺寸的點
+		self.scrollV = 0 #縱向滾動
+		self.scrollH = 0 #橫向滾動
+		self.scrollSize = 8 #滾動條的大小
+		self.selectedBackColor = "none" #選中的顏色
+		self.showHScrollBar = False #是否顯示橫向滾動條
+		self.showVScrollBar = False #是否顯示橫向滾動條
+		self.scrollBarColor = "rgb(200,200,200)" #滾動條的顏色
+		self.scrollBarHoveredColor = "rgb(42,138,195)" #滾動條懸停的顏色
 		self.size = FCSize(100,20) #大小
-		self.startPoint = FCPoint(0,0) #起始点
-		self.startScrollH = 0 #开始滚动的值
-		self.startScrollV = 0 #结束滚动的值
-		self.startRect = FCRect(0,0,0,0) #移动开始时的视图矩形
+		self.startPoint = FCPoint(0,0) #起始點
+		self.startScrollH = 0 #開始滾動的值
+		self.startScrollV = 0 #結束滾動的值
+		self.startRect = FCRect(0,0,0,0) #移動開始時的視圖矩形
 		self.tabIndex = 0 #Tab索引
 		self.tabStop = False #是否支持Tab
 		self._text = "" #文字
 		self._textColor = "rgb(0,0,0)" #前景色
 		self.textAlign = "middleleft" #文字位置
-		self.topMost = False #是否置顶
-		self.touchDownTime = 0 #鼠标按下的时间
-		self.verticalAlign = "top" #纵向布局
-		self.viewName = "" #名称
-		self.visible = True #可见性
-		self.views = [] #子视图
-		self.viewType = "" #类型
-		self.vScrollIsVisible = False #纵向滚动是否显示
-		self.onPaint = None #重绘
-		self.onPaintBorder = None #重绘边线
-		self.onClick = None #点击方法
-		self.onMouseDown = None  #鼠标按下
-		self.onMouseMove = None #鼠标移动
-		self.onMouseWheel = None #鼠标滚动
-		self.onMouseUp = None #鼠标抬起
-		self.onKeyDown = None #键盘按下
-		self.onKeyUp = None #键盘抬起
-		self.onMouseEnter = None #鼠标进入
-		self.onMouseLeave = None #鼠标离开
+		self.topMost = False #是否置頂
+		self.touchDownTime = 0 #鼠標按下的時間
+		self.verticalAlign = "top" #縱向布局
+		self.viewName = "" #名稱
+		self.visible = True #可見性
+		self.views = [] #子視圖
+		self.viewType = "" #類型
+		self.vScrollIsVisible = False #縱向滾動是否顯示
+		self.onPaint = None #重繪
+		self.onPaintBorder = None #重繪邊線
+		self.onClick = None #點擊方法
+		self.onMouseDown = None  #鼠標按下
+		self.onMouseMove = None #鼠標移動
+		self.onMouseWheel = None #鼠標滾動
+		self.onMouseUp = None #鼠標擡起
+		self.onKeyDown = None #鍵盤按下
+		self.onKeyUp = None #鍵盤擡起
+		self.onMouseEnter = None #鼠標進入
+		self.onMouseLeave = None #鼠標離開
 
-		self.onPrePaint = None #预处理重绘
-		self.onPrePaintBorder = None #预处理重绘边线
-		self.onPreClick = None #预处理点击方法
-		self.onPreMouseDown = None  #预处理鼠标按下
-		self.onPreMouseMove = None #预处理鼠标移动
-		self.onPreMouseWheel = None #预处理鼠标滚动
-		self.onPreMouseUp = None #预处理鼠标抬起
-		self.onPreKeyDown = None #预处理键盘按下
-		self.onPreKeyUp = None #预处理键盘抬起
-		self.onInvoke = None #跨线程调用
+		self.onPrePaint = None #預處理重繪
+		self.onPrePaintBorder = None #預處理重繪邊線
+		self.onPreClick = None #預處理點擊方法
+		self.onPreMouseDown = None  #預處理鼠標按下
+		self.onPreMouseMove = None #預處理鼠標移動
+		self.onPreMouseWheel = None #預處理鼠標滾動
+		self.onPreMouseUp = None #預處理鼠標擡起
+		self.onPreKeyDown = None #預處理鍵盤按下
+		self.onPreKeyUp = None #預處理鍵盤擡起
+		self.onInvoke = None #跨線程調用
 		global globalGID
 		globalGID = globalGID + 1
 		self.gID = str(globalGID)
@@ -1034,232 +1034,232 @@ class FCView(object):
 		if self.exView and self.viewType == "textbox":
 			setViewAttribute(self, "font", value)
 	def addView(self, view):
-		"""添加视图"""
+		"""添加視圖"""
 		addViewToParent(view, self)
 	def removeView(self, view):
-		"""移除视图"""
+		"""移除視圖"""
 		removeViewFromParent(view, self)
 	def invalidate(self):
-		"""刷新视图"""
+		"""刷新視圖"""
 		invalidateView(self)
 
 class FCButton(FCView):
-	"""按钮"""
+	"""按鈕"""
 	def __init__(self):
 		super().__init__()
-		self.viewType = "button" #类型
+		self.viewType = "button" #類型
 		self.hoveredColor = "rgb(150,150,150)"
 		self.pushedColor = "rgb(200,200,200)"
 
 class FCLabel(FCView):
-	"""标签"""
+	"""標簽"""
 	def __init__(self):
 		super().__init__()
 		self.backColor = "none" #背景色
-		self.viewType = "label" #类型
+		self.viewType = "label" #類型
 
 class FCTextBox(FCView):
 	"""文本框"""
 	def __init__(self):
 		super().__init__()
-		self.viewType = "textbox" #类型
+		self.viewType = "textbox" #類型
 
 class FCDiv(FCView):
-	"""图层"""
+	"""圖層"""
 	def __init__(self):
 		super().__init__()
-		self.viewType = "div" #类型
+		self.viewType = "div" #類型
 	
 class FCCheckBox(FCView):
-	"""复选按钮"""
+	"""覆選按鈕"""
 	def __init__(self):
 		super().__init__()
-		self.buttonSize = FCSize(16,16) #按钮的大小
-		self.checked = True #是否选中
-		self.viewType = "checkbox" #类型
+		self.buttonSize = FCSize(16,16) #按鈕的大小
+		self.checked = True #是否選中
+		self.viewType = "checkbox" #類型
 
 class FCRadioButton(FCView):
-	"""单选按钮"""
+	"""單選按鈕"""
 	def __init__(self):
 		super().__init__()
-		self.buttonSize = FCSize(16,16) #按钮的大小
-		self.checked = False #是否选中
-		self.groupName = "" #组别
-		self.viewType = "radiobutton" #类型
+		self.buttonSize = FCSize(16,16) #按鈕的大小
+		self.checked = False #是否選中
+		self.groupName = "" #組別
+		self.viewType = "radiobutton" #類型
 
 class FCTabPage(FCView):
-	"""页"""
+	"""頁"""
 	def __init__(self):
 		super().__init__()
-		self.headerButton = None #页头的按钮
-		self.viewType = "tabpage" #类型
-		self.visible = False #是否可见
+		self.headerButton = None #頁頭的按鈕
+		self.viewType = "tabpage" #類型
+		self.visible = False #是否可見
 
 class FCTabView(FCView):
-	"""多页夹"""
+	"""多頁夾"""
 	def __init__(self):
 		super().__init__()
-		self.animationSpeed = 20 #动画速度
+		self.animationSpeed = 20 #動畫速度
 		self.layout = "top" #布局方式
-		self.tabPages = [] #子页
-		self.underLineColor = "none" #下划线的颜色
-		self.underLineSize = 0 #下划线的宽度
-		self.underPoint = None #下划点
-		self.useAnimation = False #是否使用动画
-		self.viewType = "tabview" #类型
+		self.tabPages = [] #子頁
+		self.underLineColor = "none" #下劃線的顏色
+		self.underLineSize = 0 #下劃線的寬度
+		self.underPoint = None #下劃點
+		self.useAnimation = False #是否使用動畫
+		self.viewType = "tabview" #類型
 
 class FCLayoutDiv(FCView):
-	"""横竖布局层"""
+	"""橫豎布局層"""
 	def __init__(self):
 		super().__init__()
-		self.autoWrap = False #是否自动换行
+		self.autoWrap = False #是否自動換行
 		self.layoutStyle = "lefttoright" #分割方式
-		self.viewType = "layout" #类型
+		self.viewType = "layout" #類型
 
 class FCSplitLayoutDiv(FCView):
-	"""分割布局层"""
+	"""分割布局層"""
 	def __init__(self):
 		super().__init__()
-		self.firstView = None #第一个视图
+		self.firstView = None #第一個視圖
 		self.layoutStyle = "lefttoright" #分割方式
 		self.oldSize = FCSize(0,0) #上次的尺寸
-		self.secondView = None #第二个视图
-		self.splitMode = "absolutesize" #分割模式 percentsize百分比 或absolutesize绝对值
+		self.secondView = None #第二個視圖
+		self.splitMode = "absolutesize" #分割模式 percentsize百分比 或absolutesize絕對值
 		self.splitPercent = -1 #分割百分比
-		self.splitter = None #分割线 
-		self.viewType = "split" #类型
+		self.splitter = None #分割線 
+		self.viewType = "split" #類型
 
 class FCGridColumn(object):	
 	"""表格列"""
 	def __init__(self):
-		self.allowSort = True #是否允许排序
-		self.allowResize = False #是否允许改变大小
+		self.allowSort = True #是否允許排序
+		self.allowResize = False #是否允許改變大小
 		self.backColor = "rgb(200,200,200)" #背景色
-		self.borderColor = "rgb(150,150,150)" #边线颜色
-		self.bounds = FCRect(0,0,0,0) #区域
+		self.borderColor = "rgb(150,150,150)" #邊線顏色
+		self.bounds = FCRect(0,0,0,0) #區域
 		self.cellAlign = "left" #left:居左 center:居中 right:居右
-		self.colName = "" #名称
-		self.colType = "" #类型 string:字符串 double:浮点型 int:整型 bool:布尔型
-		self.font = "Default,14" #字体
-		self.frozen = False #是否冻结
+		self.colName = "" #名稱
+		self.colType = "" #類型 string:字符串 double:浮點型 int:整型 bool:布爾型
+		self.font = "Default,14" #字體
+		self.frozen = False #是否凍結
 		self.index = -1 #索引
 		self.sort = "none" #排序模式
 		self.text = "" #文字
-		self.textColor = "rgb(50,50,50)" #文字颜色
-		self.visible = True #是否可见
-		self.width = 120 #宽度
-		self.widthStr = "" #宽度字符串
+		self.textColor = "rgb(50,50,50)" #文字顏色
+		self.visible = True #是否可見
+		self.width = 120 #寬度
+		self.widthStr = "" #寬度字符串
 
 class FCGridCell(object):	
-	"""单元格"""
+	"""單元格"""
 	def __init__(self):
 		self.backColor = "none" #背景色
-		self.borderColor = "none" #边线颜色
+		self.borderColor = "none" #邊線顏色
 		self.colSpan = 1 #列距
 		self.column = None #所在列
-		self.digit = -1 #保留小数的位数
-		self.font = "Default,14" #字体
+		self.digit = -1 #保留小數的位數
+		self.font = "Default,14" #字體
 		self.rowSpan = 1 #行距
-		self.textColor = "rgb(0,0,0)" #文字颜色
+		self.textColor = "rgb(0,0,0)" #文字顏色
 		self.value = None #值
-		self.view = None #包含的视图
+		self.view = None #包含的視圖
 
 class FCGridRow(object):	
 	"""表格行"""
 	def __init__(self):
 		self.alternate = False #是否交替行
-		self.cells = [] #单元格
+		self.cells = [] #單元格
 		self.index = -1 #索引
-		self.key = "" #排序键值
-		self.selected = False #是否选中
-		self.visible = True #是否可见
+		self.key = "" #排序鍵值
+		self.selected = False #是否選中
+		self.visible = True #是否可見
 
 class FCGrid(FCView):
 	"""表格"""
 	def __init__(self):
 		super().__init__()
-		self.alternateRowColor = "none" #交替行的颜色
+		self.alternateRowColor = "none" #交替行的顏色
 		self.columns = [] #列
-		self.headerHeight = 30 #头部高度
+		self.headerHeight = 30 #頭部高度
 		self.rowHeight = 30 #行高
 		self.rows = [] #行
-		self.selectedRowColor = "rgb(125,125,125)" #选中行的颜色
-		self.showHScrollBar = True #是否显示横向滚动条
-		self.showVScrollBar = True #是否显示横向滚动条
-		self.viewType = "grid" #类型
-		self.onClickGridCell = None #点击单元格
-		self.onClickGridColumn = None #点击列
-		self.onPaintGridCell = None #绘制单元格
-		self.onPaintGridColumn = None #绘制表格列
+		self.selectedRowColor = "rgb(125,125,125)" #選中行的顏色
+		self.showHScrollBar = True #是否顯示橫向滾動條
+		self.showVScrollBar = True #是否顯示橫向滾動條
+		self.viewType = "grid" #類型
+		self.onClickGridCell = None #點擊單元格
+		self.onClickGridColumn = None #點擊列
+		self.onPaintGridCell = None #繪制單元格
+		self.onPaintGridColumn = None #繪制表格列
 
 class FCTreeColumn(object):
 	"""表格列"""
 	def __init__(self):
-		self.bounds = FCRect(0,0,0,0) #区域
+		self.bounds = FCRect(0,0,0,0) #區域
 		self.index = -1 #索引
-		self.visible = True #是否可见
-		self.width = 120 #宽度
-		self.widthStr = "" #宽度字符串
+		self.visible = True #是否可見
+		self.width = 120 #寬度
+		self.widthStr = "" #寬度字符串
 
 class FCTreeRow(object):	
 	"""表格行"""
 	def __init__(self):
 		self.alternate = False #是否交替行
-		self.cells = [] #单元格
+		self.cells = [] #單元格
 		self.index = -1 #索引
-		self.selected = False #是否选中
-		self.visible = True #是否可见
+		self.selected = False #是否選中
+		self.visible = True #是否可見
 
 class FCTreeNode(object):
-	"""单元格"""
+	"""單元格"""
 	def __init__(self):
-		self.allowCollapsed = True #是否允许折叠
+		self.allowCollapsed = True #是否允許折疊
 		self.backColor = "none" #背景色
-		self.checked = False #是否选中
-		self.childNodes = [] #子节点
-		self.collapsed = False #是否折叠
+		self.checked = False #是否選中
+		self.childNodes = [] #子節點
+		self.collapsed = False #是否折疊
 		self.column = None #所在列
-		self.font = "Default,14" #字体
-		self.indent = 0 #缩进
-		self.parentNode = None #父节点
+		self.font = "Default,14" #字體
+		self.indent = 0 #縮進
+		self.parentNode = None #父節點
 		self.row = None #所在行
 		self.value = None #值
-		self.textColor = "rgb(0,0,0)" #文字颜色	
+		self.textColor = "rgb(0,0,0)" #文字顏色	
 
 class FCTree(FCView):
-	"""树"""
+	"""樹"""
 	def __init__(self):
 		super().__init__()
-		self.alternateRowColor = "none" #交替行的颜色
-		self.checkBoxWidth = 25 #复选框占用的宽度
-		self.childNodes = [] #子节点
-		self.collapsedWidth = 25 #折叠按钮占用的宽度
+		self.alternateRowColor = "none" #交替行的顏色
+		self.checkBoxWidth = 25 #覆選框占用的寬度
+		self.childNodes = [] #子節點
+		self.collapsedWidth = 25 #折疊按鈕占用的寬度
 		self.columns = [] #列
-		self.headerHeight = 0 #头部高度
-		self.indent = 20 #缩进
+		self.headerHeight = 0 #頭部高度
+		self.indent = 20 #縮進
 		self.rowHeight = 30 #行高
 		self.rows = [] #行
-		self.selectedRowColor = "rgb(125,125,125)" #选中行的颜色
-		self.showCheckBox = False #是否显示复选框
-		self.showHScrollBar = True #是否显示横向滚动条
-		self.showVScrollBar = True #是否显示横向滚动条
-		self.viewType = "tree" #类型
-		self.onClickTreeNode = None #点击树节点
-		self.onPaintTreeNode = None #绘制树节点
+		self.selectedRowColor = "rgb(125,125,125)" #選中行的顏色
+		self.showCheckBox = False #是否顯示覆選框
+		self.showHScrollBar = True #是否顯示橫向滾動條
+		self.showVScrollBar = True #是否顯示橫向滾動條
+		self.viewType = "tree" #類型
+		self.onClickTreeNode = None #點擊樹節點
+		self.onPaintTreeNode = None #繪制樹節點
 
 class SecurityData(object):
-	"""证券数据结构"""
+	"""證券數據結構"""
 	def __init__(self):
-		self.amount = 0 #成交额
-		self.close = 0 #收盘价
-		self.date = 0 #日期，为1970年到现在的秒
-		self.high = 0 #最高价
-		self.low = 0 #最低价
-		self.open = 0 #开盘价
-		self.volume = 0 #成交额
-		self.openInterest = 0 #持仓
+		self.amount = 0 #成交額
+		self.close = 0 #收盤價
+		self.date = 0 #日期，為1970年到現在的秒
+		self.high = 0 #最高價
+		self.low = 0 #最低價
+		self.open = 0 #開盤價
+		self.volume = 0 #成交額
+		self.openInterest = 0 #持倉
 	def copy(self, securityData):
-		"""拷贝数值"""
+		"""拷貝數值"""
 		self.amount = securityData.amount
 		self.close = securityData.close
 		self.date = securityData.date
@@ -1270,159 +1270,159 @@ class SecurityData(object):
 		self.openInterest = securityData.openInterest
 
 class BaseShape(object):
-	"""基础图形"""
+	"""基礎圖形"""
 	def __init__(self):
-		self.color = "none" #颜色
-		self.color2 = "none" #颜色2
-		self.datas = [] #第一组数据
-		self.datas2 = [] #第二组数据
-		self.divIndex = 0 #所在层
-		self.leftOrRight = True #依附于左轴或右轴
-		self.lineWidth = 1 #线的宽度
-		self.shapeName = "" #名称
-		self.shapeType = "line" #类型
-		self.showHideDatas = [] #控制显示隐藏的数据
-		self.style = "" #样式
-		self.text = "" #显示的文字
-		self.title = "" #第一个标题
-		self.title2 = "" #第二个标题
-		self.value = 0 #显示文字的值
+		self.color = "none" #顏色
+		self.color2 = "none" #顏色2
+		self.datas = [] #第一組數據
+		self.datas2 = [] #第二組數據
+		self.divIndex = 0 #所在層
+		self.leftOrRight = True #依附於左軸或右軸
+		self.lineWidth = 1 #線的寬度
+		self.shapeName = "" #名稱
+		self.shapeType = "line" #類型
+		self.showHideDatas = [] #控制顯示隱藏的數據
+		self.style = "" #樣式
+		self.text = "" #顯示的文字
+		self.title = "" #第一個標題
+		self.title2 = "" #第二個標題
+		self.value = 0 #顯示文字的值
 	def onPaint(self, chart, paint, clipRect):
-		"""重绘方法
-		view:视图
-		paint:绘图对象
-		clipRect:区域"""
+		"""重繪方法
+		view:視圖
+		paint:繪圖對象
+		clipRect:區域"""
 		return False
 
 class FCPlot(object):
-	"""画线工具结构"""
+	"""畫線工具結構"""
 	def __init__(self):
-		self.key1 = None #第一个键
-		self.key2 = None #第二个键
-		self.key3 = None #第三个键
-		self.plotType = "Line" #线的类型
-		self.pointColor = "rgba(0,0,0,125)" #线的颜色
-		self.lineColor = "rgb(0,0,0)" #线的颜色
-		self.lineWidth = 1 #线的宽度
-		self.startKey1 = None #移动前第一个键
-		self.startValue1 = None #移动前第一个值
-		self.startKey2 = None #移动前第二个键
-		self.startValue2 = None #移动前第二个值
-		self.startKey3 = None #移动前第三个键
-		self.startValue3 = None #移动前第三个值
-		self.value1 = None #第一个值
-		self.value2 = None #第二个值
-		self.value3 = None #第三个值
+		self.key1 = None #第一個鍵
+		self.key2 = None #第二個鍵
+		self.key3 = None #第三個鍵
+		self.plotType = "Line" #線的類型
+		self.pointColor = "rgba(0,0,0,125)" #線的顏色
+		self.lineColor = "rgb(0,0,0)" #線的顏色
+		self.lineWidth = 1 #線的寬度
+		self.startKey1 = None #移動前第一個鍵
+		self.startValue1 = None #移動前第一個值
+		self.startKey2 = None #移動前第二個鍵
+		self.startValue2 = None #移動前第二個值
+		self.startKey3 = None #移動前第三個鍵
+		self.startValue3 = None #移動前第三個值
+		self.value1 = None #第一個值
+		self.value2 = None #第二個值
+		self.value3 = None #第三個值
 
 class ChartDiv(object):
-	"""图表的图层"""
+	"""圖表的圖層"""
 	def __init__(self):
-		self.digit = 0 #保留小数的位数
-		self.paddingTop = 20 #上边距
-		self.paddingBottom = 20 #下边距
+		self.digit = 0 #保留小數的位數
+		self.paddingTop = 20 #上邊距
+		self.paddingBottom = 20 #下邊距
 		self.percent = 0 #占比
-		self.visibleMax = 0 #可见的最大值
-		self.visibleMin = 0 #可见的最小值
-		self.visibleMaxRight = 0 #可见的右轴最大值
-		self.visibleMinRight = 0 #可见的右轴最小值
+		self.visibleMax = 0 #可見的最大值
+		self.visibleMin = 0 #可見的最小值
+		self.visibleMaxRight = 0 #可見的右軸最大值
+		self.visibleMinRight = 0 #可見的右軸最小值
 
 class FCChart(FCView):
-	"""图表"""
+	"""圖表"""
 	def __init__(self):
 		super().__init__()
-		self.addingPlot = "" #要添加的画线
-		self.allowDragScroll = True #是否允许拖动滚动
-		self.autoFillHScale = False #是否填充满X轴
-		self.allowDragChartDiv = False #是否允许拖拽图层
-		self.allowSelectShape = False #是否允许选中线条
-		self.candleMax = 0 #蜡烛线的最大值
-		self.candleMin = 0 #蜡烛线的最小值
-		self.candleMaxRight = 0 #蜡烛线的右轴最大值
-		self.candleMinRight = 0 #蜡烛线的右轴最小值
-		self.crossTipColor = "rgb(50,50,50)" #十字线标识的颜色
-		self.crossLineColor = "rgb(100,100,100)" #十字线的颜色
-		self.candleDivPercent = 0.5 #图表层的占比
-		self.candleDigit = 2 #图表层保留小数的位数
-		self.candlePaddingTop = 30 #图表层的上边距
-		self.candlePaddingBottom = 30 #图表层的下边距
-		self.crossStopIndex = -1 #鼠标停留位置
+		self.addingPlot = "" #要添加的畫線
+		self.allowDragScroll = True #是否允許拖動滾動
+		self.autoFillHScale = False #是否填充滿X軸
+		self.allowDragChartDiv = False #是否允許拖拽圖層
+		self.allowSelectShape = False #是否允許選中線條
+		self.candleMax = 0 #蠟燭線的最大值
+		self.candleMin = 0 #蠟燭線的最小值
+		self.candleMaxRight = 0 #蠟燭線的右軸最大值
+		self.candleMinRight = 0 #蠟燭線的右軸最小值
+		self.crossTipColor = "rgb(50,50,50)" #十字線標識的顏色
+		self.crossLineColor = "rgb(100,100,100)" #十字線的顏色
+		self.candleDivPercent = 0.5 #圖表層的占比
+		self.candleDigit = 2 #圖表層保留小數的位數
+		self.candlePaddingTop = 30 #圖表層的上邊距
+		self.candlePaddingBottom = 30 #圖表層的下邊距
+		self.crossStopIndex = -1 #鼠標停留位置
 		self.cycle = "day" #周期
-		self.datas = [] #图表数据
-		self.divs = [] #子图层
-		self.downColor = "rgb(15,193,118)" #下跌颜色
-		self.firstVisibleIndex = -1 #起始可见的索引
-		self.font = "Default,14" #字体
-		self.gridColor = "rgb(150,150,150)" #网格颜色 
-		self.gridStyle = 0 #网格样式
-		self.gridStyle = 0 #网格样式
-		self.hScalePixel = 11 #蜡烛线的宽度
-		self.hScaleHeight = 30 #X轴的高度
-		self.hScaleFormat = "" #X轴的格式化字符，例如%Y-%m-%d %H:%M:%S
-		self.hScaleTextDistance = 10 #X轴的文字间隔
-		self.indMax = 0 #指标层的最大值
-		self.indMin = 0 #指标层的最小值
-		self.indMax2 = 0 #指标层2的最大值
-		self.indMin2 = 0 #指标层2的最小值
-		self.indMaxRight = 0 #指标层的右轴最大值
-		self.indMinRight = 0 #指标层的右轴最小值
-		self.indMax2Right = 0 #指标层2的右轴最大值
-		self.indMin2Right = 0 #指标层2的右轴最小值
-		self.indDigit = 2 #指标层保留小数的位数
-		self.indDigit2 = 2 #指标层2保留小数的位数
-		self.indDivPercent = 0.3 #指标层的占比
-		self.indDivPercent2 = 0.0 #指标层2的占比
-		self.indPaddingTop = 20 #指标层的上边距
-		self.indPaddingBottom = 20 #指标层的下边距
-		self.indPaddingTop2 = 20 #指标层2的上边距
-		self.indPaddingBottom2 = 20 #指标层2的下边距
-		self.indicatorColors = [] #指标的颜色
-		self.leftVScaleWidth = 0 #左轴宽度
-		self.lastVisibleIndex = -1 #结束可见的索引
-		self.lastRecordIsVisible = True #最后记录是否可见
-		self.lastVisibleKey = 0 #最后可见的主键
-		self.lastValidIndex = -1 #最后有效数据索引
+		self.datas = [] #圖表數據
+		self.divs = [] #子圖層
+		self.downColor = "rgb(15,193,118)" #下跌顏色
+		self.firstVisibleIndex = -1 #起始可見的索引
+		self.font = "Default,14" #字體
+		self.gridColor = "rgb(150,150,150)" #網格顏色 
+		self.gridStyle = 0 #網格樣式
+		self.gridStyle = 0 #網格樣式
+		self.hScalePixel = 11 #蠟燭線的寬度
+		self.hScaleHeight = 30 #X軸的高度
+		self.hScaleFormat = "" #X軸的格式化字符，例如%Y-%m-%d %H:%M:%S
+		self.hScaleTextDistance = 10 #X軸的文字間隔
+		self.indMax = 0 #指標層的最大值
+		self.indMin = 0 #指標層的最小值
+		self.indMax2 = 0 #指標層2的最大值
+		self.indMin2 = 0 #指標層2的最小值
+		self.indMaxRight = 0 #指標層的右軸最大值
+		self.indMinRight = 0 #指標層的右軸最小值
+		self.indMax2Right = 0 #指標層2的右軸最大值
+		self.indMin2Right = 0 #指標層2的右軸最小值
+		self.indDigit = 2 #指標層保留小數的位數
+		self.indDigit2 = 2 #指標層2保留小數的位數
+		self.indDivPercent = 0.3 #指標層的占比
+		self.indDivPercent2 = 0.0 #指標層2的占比
+		self.indPaddingTop = 20 #指標層的上邊距
+		self.indPaddingBottom = 20 #指標層的下邊距
+		self.indPaddingTop2 = 20 #指標層2的上邊距
+		self.indPaddingBottom2 = 20 #指標層2的下邊距
+		self.indicatorColors = [] #指標的顏色
+		self.leftVScaleWidth = 0 #左軸寬度
+		self.lastVisibleIndex = -1 #結束可見的索引
+		self.lastRecordIsVisible = True #最後記錄是否可見
+		self.lastVisibleKey = 0 #最後可見的主鍵
+		self.lastValidIndex = -1 #最後有效數據索引
 		self.lineWidth = 1
-		self.mainIndicator = "" #主图指标
+		self.mainIndicator = "" #主圖指標
 		self.magnitude = 1 #成交量的比例
-		self.midColor = "none" #中间色
-		self.offsetX = 0 #横向绘图偏移
-		self.plots = [] #画线的集合
-		self.plotPointSize = 5 #画线的选中点大小
-		self.rightVScaleWidth = 100 #右轴宽度
-		self.rightSpace = 0 #右侧空间
-		self.shapes = [] #扩展图形
-		self.scaleColor = "rgb(100,100,100)" #刻度的颜色
-		self.showIndicator = "" #显示指标
-		self.showIndicator2 = "" #显示指标2
-		self.showCrossLine = False #是否显示十字线
-		self.selectPlotPoint = -1 #选中画线的点
-		self.sPlot = None #选中的画线
-		self.startMovePlot = False #选中画线
-		self.selectShape = "" #选中的图形
-		self.selectShapeEx = "" #选中的图形信息
-		self.targetOldX = 0 #缩小时旧的位置1
-		self.targetOldX2 = 0 #放大时旧的位置2
-		self.touchPosition = FCPoint(0,0) #鼠标坐标
+		self.midColor = "none" #中間色
+		self.offsetX = 0 #橫向繪圖偏移
+		self.plots = [] #畫線的集合
+		self.plotPointSize = 5 #畫線的選中點大小
+		self.rightVScaleWidth = 100 #右軸寬度
+		self.rightSpace = 0 #右側空間
+		self.shapes = [] #擴展圖形
+		self.scaleColor = "rgb(100,100,100)" #刻度的顏色
+		self.showIndicator = "" #顯示指標
+		self.showIndicator2 = "" #顯示指標2
+		self.showCrossLine = False #是否顯示十字線
+		self.selectPlotPoint = -1 #選中畫線的點
+		self.sPlot = None #選中的畫線
+		self.startMovePlot = False #選中畫線
+		self.selectShape = "" #選中的圖形
+		self.selectShapeEx = "" #選中的圖形信息
+		self.targetOldX = 0 #縮小時舊的位置1
+		self.targetOldX2 = 0 #放大時舊的位置2
+		self.touchPosition = FCPoint(0,0) #鼠標坐標
 		self.touchDownPoint = FCPoint(0, 0)
-		self.trendColor = "rgb(255,255,255)" #分时线颜色
-		self.volMax = 0 #成交量层的最大值
-		self.volMin = 0 #成交量层的最小值
-		self.volMaxRight = 0 #成交量层的右轴最大值
-		self.volMinRight = 0 #成交量层的右轴最小值
-		self.volDigit = 0 #成交量层保留小数的位数
-		self.volDivPercent = 0.2 #成交量层的占比
-		self.volPaddingTop = 20 #成交量层的上边距
-		self.volPaddingBottom = 0 #成交量层的下边距
-		self.vScaleDistance = 35 #纵轴的间隔
-		self.vScaleType = "standard" #纵轴的类型 math.log10代表指数坐标
-		self.viewType = "chart" #类型
-		self.upColor = "rgb(219,68,83)" #上涨颜色
+		self.trendColor = "rgb(255,255,255)" #分時線顏色
+		self.volMax = 0 #成交量層的最大值
+		self.volMin = 0 #成交量層的最小值
+		self.volMaxRight = 0 #成交量層的右軸最大值
+		self.volMinRight = 0 #成交量層的右軸最小值
+		self.volDigit = 0 #成交量層保留小數的位數
+		self.volDivPercent = 0.2 #成交量層的占比
+		self.volPaddingTop = 20 #成交量層的上邊距
+		self.volPaddingBottom = 0 #成交量層的下邊距
+		self.vScaleDistance = 35 #縱軸的間隔
+		self.vScaleType = "standard" #縱軸的類型 math.log10代表指數坐標
+		self.viewType = "chart" #類型
+		self.upColor = "rgb(219,68,83)" #上漲顏色
 		self.candleStyle = "rect"
 		self.barStyle = "rect"
 		self.firstOpen = 0
-		self.hScaleTextColor = "none" #横轴的文字颜色
-		self.vScaleTextColor = "none" #纵轴的文字颜色
-		self.volColor = "none" #成交量的颜色
+		self.hScaleTextColor = "none" #橫軸的文字顏色
+		self.vScaleTextColor = "none" #縱軸的文字顏色
+		self.volColor = "none" #成交量的顏色
 		self.closearr = []
 		self.allema12 = []
 		self.allema26 = []
@@ -1457,8 +1457,8 @@ class FCChart(FCView):
 		self.ma30 = []
 		self.ma120 = []
 		self.ma250 = []
-		self.gridStep = 0 #网格计算临时变量
-		self.gridDigit = 0 #网格计算临时变量
+		self.gridStep = 0 #網格計算臨時變量
+		self.gridDigit = 0 #網格計算臨時變量
 		self.firstIndexCache = -1
 		self.firstTouchIndexCache = -1
 		self.firstTouchPointCache = FCPoint(0,0)
@@ -1492,159 +1492,159 @@ class FCChart(FCView):
 		self.indicatorColors.append("rgb(0,150,0)")
 		self.indicatorColors.append("rgb(59,174,218)")
 		self.indicatorColors.append("rgb(50,50,50)")
-		self.onCalculateChartMaxMin = None #计算最大最小值
-		self.onPaintChartScale = None #绘制坐标轴回调
-		self.onPaintChartHScale = None #绘制坐标轴回调
-		self.onPaintChartStock = None #绘制图表回调
-		self.onPaintChartPlot = None #绘制画线回调
-		self.onPaintChartCrossLine = None #绘制十字线回调
-		self.getChartTitles = None #绘制标题
-		self.onPaintChartTip = None #绘制提示
+		self.onCalculateChartMaxMin = None #計算最大最小值
+		self.onPaintChartScale = None #繪制坐標軸回調
+		self.onPaintChartHScale = None #繪制坐標軸回調
+		self.onPaintChartStock = None #繪制圖表回調
+		self.onPaintChartPlot = None #繪制畫線回調
+		self.onPaintChartCrossLine = None #繪制十字線回調
+		self.getChartTitles = None #繪制標題
+		self.onPaintChartTip = None #繪制提示
 
 class DayButton(object):
-	"""日期按钮"""
+	"""日期按鈕"""
 	def __init__(self):
-		self.backColor = "none" #背景颜色
-		self.borderColor = "rgb(150,150,150)" #文字颜色 
-		self.bounds = FCRect(0,0,0,0) #显示区域
-		self.calendar = None #日历视图
+		self.backColor = "none" #背景顏色
+		self.borderColor = "rgb(150,150,150)" #文字顏色 
+		self.bounds = FCRect(0,0,0,0) #顯示區域
+		self.calendar = None #日歷視圖
 		self.day = None #日
-		self.font = "Default,16" #字体
+		self.font = "Default,16" #字體
 		self.inThisMonth = False #是否在本月
-		self.selected = False #是否被选中
-		self.textColor = "rgb(0,0,0)" #文字颜色
-		self.textColor2 = "rgb(50,50,50)" #第二个文字颜色
-		self.visible = True #是否可见
+		self.selected = False #是否被選中
+		self.textColor = "rgb(0,0,0)" #文字顏色
+		self.textColor2 = "rgb(50,50,50)" #第二個文字顏色
+		self.visible = True #是否可見
 
 class MonthButton(object):
-	"""月的按钮"""
+	"""月的按鈕"""
 	def __init__(self):
-		self.backColor = "none" #背景颜色
-		self.borderColor = "rgb(150,150,150)" #文字颜色 
-		self.bounds = FCRect(0,0,0,0) #显示区域
-		self.calendar = None #日历视图
-		self.font = "Default,16" #字体
+		self.backColor = "none" #背景顏色
+		self.borderColor = "rgb(150,150,150)" #文字顏色 
+		self.bounds = FCRect(0,0,0,0) #顯示區域
+		self.calendar = None #日歷視圖
+		self.font = "Default,16" #字體
 		self.month = 0 #月
-		self.textColor = "rgb(0,0,0)" #文字颜色
-		self.visible = True #是否可见
+		self.textColor = "rgb(0,0,0)" #文字顏色
+		self.visible = True #是否可見
 		self.year = 0 #年
 
 class YearButton(object):
-	"""年的按钮"""
+	"""年的按鈕"""
 	def __init__(self):
-		self.backColor = "none" #背景颜色
-		self.borderColor = "rgb(150,150,150)" #文字颜色 
-		self.bounds = FCRect(0,0,0,0) #显示区域
-		self.calendar = None #日历视图
-		self.font = "Default,16" #字体
-		self.textColor = "rgb(0,0,0)" #文字颜色
-		self.visible = True #是否可见
+		self.backColor = "none" #背景顏色
+		self.borderColor = "rgb(150,150,150)" #文字顏色 
+		self.bounds = FCRect(0,0,0,0) #顯示區域
+		self.calendar = None #日歷視圖
+		self.font = "Default,16" #字體
+		self.textColor = "rgb(0,0,0)" #文字顏色
+		self.visible = True #是否可見
 		self.year = 0 #年
 
 class DayDiv(object):
-	"""日期层"""
+	"""日期層"""
 	def __init__(self):
-		self.aClickRowFrom = 0 #点击时的上月的行
-		self.aClickRowTo = 0 #点击时的当月的行
-		self.aDirection = 0 #动画的方向
-		self.aTick = 0 #动画当前帧数
-		self.aTotalTick = 40 #动画总帧数
-		self.calendar = None #日历视图
+		self.aClickRowFrom = 0 #點擊時的上月的行
+		self.aClickRowTo = 0 #點擊時的當月的行
+		self.aDirection = 0 #動畫的方向
+		self.aTick = 0 #動畫當前幀數
+		self.aTotalTick = 40 #動畫總幀數
+		self.calendar = None #日歷視圖
 		self.dayButtons = [] #日期的集合
-		self.dayButtons_am = []  #动画日期的集合
+		self.dayButtons_am = []  #動畫日期的集合
 
 class MonthDiv(object):
-	"""月层"""
+	"""月層"""
 	def __init__(self):
-		self.aDirection = 0 #动画的方向
-		self.aTick = 0 #动画当前帧数
-		self.aTotalTick = 40 #动画总帧数
-		self.calendar = None #日历视图
+		self.aDirection = 0 #動畫的方向
+		self.aTick = 0 #動畫當前幀數
+		self.aTotalTick = 40 #動畫總幀數
+		self.calendar = None #日歷視圖
 		self.month = 0 #月份
-		self.monthButtons = [] #月的按钮
-		self.monthButtons_am = [] #月的动画按钮
+		self.monthButtons = [] #月的按鈕
+		self.monthButtons_am = [] #月的動畫按鈕
 		self.year = 0 #年份
 
 class YearDiv(object):
-	"""年层"""
+	"""年層"""
 	def __init__(self):
-		self.aDirection = 0 #动画的方向
-		self.aTick = 0 #动画当前帧数
-		self.aTotalTick = 40 #动画总帧数
-		self.calendar = None #日历视图
-		self.startYear = 0 #开始年份
-		self.yearButtons = [] #月的按钮
-		self.yearButtons_am = [] #月的动画按钮
+		self.aDirection = 0 #動畫的方向
+		self.aTick = 0 #動畫當前幀數
+		self.aTotalTick = 40 #動畫總幀數
+		self.calendar = None #日歷視圖
+		self.startYear = 0 #開始年份
+		self.yearButtons = [] #月的按鈕
+		self.yearButtons_am = [] #月的動畫按鈕
 
 class HeadDiv(object):
-	"""头部层"""
+	"""頭部層"""
 	def __init__(self):
-		self.arrowColor = "rgb(150,150,150)" #箭头颜色
-		self.backColor = "rgb(255,255,255)" #箭头颜色
-		self.calendar = None #日历视图
-		self.bounds = FCRect(0,0,0,0) #显示区域
-		self.textColor = "rgb(0,0,0)" #文字颜色
-		self.titleFont = "Default,20" #标题字体
-		self.visible = True #是否可见
-		self.weekFont = "Default,14" #星期字体
+		self.arrowColor = "rgb(150,150,150)" #箭頭顏色
+		self.backColor = "rgb(255,255,255)" #箭頭顏色
+		self.calendar = None #日歷視圖
+		self.bounds = FCRect(0,0,0,0) #顯示區域
+		self.textColor = "rgb(0,0,0)" #文字顏色
+		self.titleFont = "Default,20" #標題字體
+		self.visible = True #是否可見
+		self.weekFont = "Default,14" #星期字體
 
 class TimeDiv(object):
-	"""时间层"""
+	"""時間層"""
 	def __init__(self):
-		self.bounds = FCRect(0,0,0,0) #显示区域
-		self.calendar = None #日历视图
+		self.bounds = FCRect(0,0,0,0) #顯示區域
+		self.calendar = None #日歷視圖
 		
 class CYear(object):
-	"""年的结构"""
+	"""年的結構"""
 	def __init__(self):
 		self.months = dict() #月的集合
 		self.year = 0 #年
 
 class CMonth(object):
-	"""月的结构"""
+	"""月的結構"""
 	def __init__(self):
 		self.days = dict() #日的集合
 		self.month = 0 #月
 		self.year = 0 #年
 
 class CDay(object):
-	"""日的结构"""
+	"""日的結構"""
 	def __init__(self):
 		self.day = 0 #日
 		self.month = 0 #月
 		self.year = 0 #年
 
 class FCCalendar(FCView):
-	"""多页夹"""
+	"""多頁夾"""
 	def __init__(self):
 		super().__init__()
-		self.dayDiv = DayDiv() #日层
-		self.headDiv = HeadDiv() #头部层
+		self.dayDiv = DayDiv() #日層
+		self.headDiv = HeadDiv() #頭部層
 		self.mode = "day" #模式
-		self.monthDiv = MonthDiv() #月层
-		self.selectedDay = None #选中日
-		self.showWeekend = True #是否显示周末
-		self.timeDiv = TimeDiv() #时间层
-		self.useAnimation = False #是否使用动画
-		self.viewType = "calendar" #类型
-		self.yearDiv = YearDiv() #年层
-		self.years = dict() #日历
-		self.onPaintCalendarDayButton = None  #绘制日历的日按钮回调
-		self.onPaintCalendarMonthButton = None #绘制日历的月按钮回调
-		self.onPaintCalendarYearButton = None #绘制日历的年按钮回调
-		self.onPaintCalendarHeadDiv = None #绘制日历头部回调
+		self.monthDiv = MonthDiv() #月層
+		self.selectedDay = None #選中日
+		self.showWeekend = True #是否顯示周末
+		self.timeDiv = TimeDiv() #時間層
+		self.useAnimation = False #是否使用動畫
+		self.viewType = "calendar" #類型
+		self.yearDiv = YearDiv() #年層
+		self.years = dict() #日歷
+		self.onPaintCalendarDayButton = None  #繪制日歷的日按鈕回調
+		self.onPaintCalendarMonthButton = None #繪制日歷的月按鈕回調
+		self.onPaintCalendarYearButton = None #繪制日歷的年按鈕回調
+		self.onPaintCalendarHeadDiv = None #繪制日歷頭部回調
 
 class FCMenu(FCLayoutDiv):
-	"""菜单"""
+	"""菜單"""
 	def __init__(self):
 		super().__init__()
-		self.autoSize = True #是否自动适应尺寸
+		self.autoSize = True #是否自動適應尺寸
 		self.autoWrap = False
-		self.comboBox = None #所在的下拉菜单
-		self.items = [] #菜单项
+		self.comboBox = None #所在的下拉菜單
+		self.items = [] #菜單項
 		self.layoutStyle = "toptobottom"
 		self.maximumSize = FCSize(100,300) #最大大小
-		self.popup = True #是否弹出
+		self.popup = True #是否彈出
 		self.showHScrollBar = True
 		self.showVScrollBar = True 
 		self.size = FCSize(100, 100)
@@ -1652,32 +1652,32 @@ class FCMenu(FCLayoutDiv):
 		self.visible = False
 
 class FCMenuItem(FCView):
-	"""菜单项"""
+	"""菜單項"""
 	def __init__(self):
 		super().__init__()
-		self.checked = False #是否选中
-		self.dropDownMenu = None #下拉菜单
+		self.checked = False #是否選中
+		self.dropDownMenu = None #下拉菜單
 		self.hoveredColor = "rgb(150,150,150)"
-		self.items = [] #菜单项
-		self.parentMenu = None #所在菜单
-		self.parentItem = None #父菜单项
+		self.items = [] #菜單項
+		self.parentMenu = None #所在菜單
+		self.parentItem = None #父菜單項
 		self.pushedColor = "rgb(200,200,200)"
 		self.size = FCSize(100, 25)
 		self.value = "" #值
 		self.viewType = "menuitem"
 
 class FCComboBox(FCView):
-	"""下拉选择"""
+	"""下拉選擇"""
 	def __init__(self):
 		super().__init__()
-		self.dropDownMenu = None #下拉菜单 
-		self.selectedIndex = -1 #选中索引
+		self.dropDownMenu = None #下拉菜單 
+		self.selectedIndex = -1 #選中索引
 		self.viewType = "combobox"
 
 def addView(view, paint):
-	"""添加顶层视图
-	view 视图
-	paint 绘图对象"""
+	"""添加頂層視圖
+	view 視圖
+	paint 繪圖對象"""
 	view.paint = paint
 	paint.views.append(view)
 	if view.viewType == "textbox":
@@ -1688,9 +1688,9 @@ def addView(view, paint):
 				paint.gdiPlusPaint.createView(view.viewType, view.gID)
 			
 def addViewToParent(view, parent):
-	"""添加到父视图
-	view 视图
-	parent 父视图"""
+	"""添加到父視圖
+	view 視圖
+	parent 父視圖"""
 	view.parent = parent
 	view.paint = parent.paint
 	parent.views.append(view)
@@ -1703,9 +1703,9 @@ def addViewToParent(view, parent):
 				paint.gdiPlusPaint.createView(view.viewType, view.gID)
 
 def autoHideView(mp, paint):
-	"""隐藏视图
-	mp 坐标
-	paint 绘图对象"""
+	"""隱藏視圖
+	mp 坐標
+	paint 繪圖對象"""
 	hideView = False
 	for i in range(0, len(paint.views)):
 		view = paint.views[i]
@@ -1720,8 +1720,8 @@ def autoHideView(mp, paint):
 		invalidate(paint)
 
 def clearViewInputs(views):
-	"""清除输入框
-	views:视图集合"""
+	"""清除輸入框
+	views:視圖集合"""
 	for i in range(0, len(views)):
 		view = views[i]
 		if view.exView:
@@ -1731,14 +1731,14 @@ def clearViewInputs(views):
 		clearViewInputs(view.views)
 
 def clearViews(paint):
-	"""清除全部的视图"""
+	"""清除全部的視圖"""
 	clearViewInputs(paint.views)
 	paint.views = []
 
 def removeView(view, paint):
-	"""移除顶层视图
-	view 视图
-	paint 绘图对象"""
+	"""移除頂層視圖
+	view 視圖
+	paint 繪圖對象"""
 	for i in range(0, len(paint.views)):
 		if paint.views[i] == view:
 			paint.views.remove(view)
@@ -1749,9 +1749,9 @@ def removeView(view, paint):
 			break
 
 def removeViewFromParent(view, parent):
-	"""从父视图中移除
-	view 视图
-	parent 父视图"""
+	"""從父視圖中移除
+	view 視圖
+	parent 父視圖"""
 	for i in range(0, len(parent.views)):
 		if parent.views[i] == view:
 			parent.views.remove(view)
@@ -1762,8 +1762,8 @@ def removeViewFromParent(view, parent):
 			break
 
 def clientX(view):
-	"""获取绝对位置X 
-	view:视图"""
+	"""獲取絕對位置X 
+	view:視圖"""
 	if view != None:
 		cLeft = view.location.x
 		if view.parent != None:
@@ -1777,8 +1777,8 @@ def clientX(view):
 		return 0
 
 def clientY(view):
-	"""获取绝对位置Y 
-	view:视图"""
+	"""獲取絕對位置Y 
+	view:視圖"""
 	if view != None:
 		cTop = view.location.y
 		if view.parent != None:
@@ -1792,8 +1792,8 @@ def clientY(view):
 		return 0
 
 def isPaintVisible(view):
-	"""是否重绘时可见 
-	view:视图"""
+	"""是否重繪時可見 
+	view:視圖"""
 	if view.visible:
 	    if view.parent != None:
 	        if view.parent.visible:
@@ -1807,7 +1807,7 @@ def isPaintVisible(view):
 
 def isViewEnabled(view):
 	"""是否可用 
-	view:视图"""
+	view:視圖"""
 	if view.enabled:
 		if view.parent != None:
 			if view.parent.enabled:
@@ -1820,9 +1820,9 @@ def isViewEnabled(view):
 		return False
 
 def containsPoint(view, mp):
-	"""是否包含坐标 
-	view:视图 
-	mp:坐标"""
+	"""是否包含坐標 
+	view:視圖 
+	mp:坐標"""
 	if isViewEnabled(view):
 		clx = clientX(view)
 		cly = clientY(view)
@@ -1838,9 +1838,9 @@ def containsPoint(view, mp):
 		return False
 
 def findViewByName(name, views):
-	"""根据名称查找视图 
-	name:名称
-	views:视图集合"""
+	"""根據名稱查找視圖 
+	name:名稱
+	views:視圖集合"""
 	size = len(views)
 	for view in views:
 		if view.viewName == name:
@@ -1854,7 +1854,7 @@ def findViewByName(name, views):
 	return None
 
 def getIntersectRect(lpDestRect, lpSrc1Rect, lpSrc2Rect):
-	"""获取区域的交集"""
+	"""獲取區域的交集"""
 	lpDestRect.left = max(lpSrc1Rect.left, lpSrc2Rect.left)
 	lpDestRect.right = min(lpSrc1Rect.right, lpSrc2Rect.right)
 	lpDestRect.top = max(lpSrc1Rect.top, lpSrc2Rect.top)
@@ -1869,11 +1869,11 @@ def getIntersectRect(lpDestRect, lpSrc1Rect, lpSrc2Rect):
 		return 0
 
 def findView(mp, views):
-	"""根据坐标查找视图 
-	mp:坐标 
-	views:视图集合"""
+	"""根據坐標查找視圖 
+	mp:坐標 
+	views:視圖集合"""
 	size = len(views)
-	#先判断置顶视图
+	#先判斷置頂視圖
 	for i in range(0, size):
 		view = views[size - i - 1]
 		if view.visible and view.topMost:
@@ -1897,7 +1897,7 @@ def findView(mp, views):
 					if subView != None:
 						return subView
 				return view
-	#再判断非置顶视图
+	#再判斷非置頂視圖
 	for i in range(0, size):
 		view = views[size - i - 1]
 		if view.visible and view.topMost == False:
@@ -1924,7 +1924,7 @@ def findView(mp, views):
 	return None
 
 def beginInvoke(view, args):
-	"""跨线程调用"""
+	"""跨線程調用"""
 	paint = view.paint
 	seraialID = 0
 	paint.lock.acquire()
@@ -1936,9 +1936,9 @@ def beginInvoke(view, args):
 	user32.PostMessageW(paint.hWnd, paint.pInvokeMsgID, seraialID, 0)
 
 def getTabStopViews(view, views):
-	""" 获取允许Tab键的视图
-	 view:父视图
-	 views:视图集合"""
+	""" 獲取允許Tab鍵的視圖
+	 view:父視圖
+	 views:視圖集合"""
 	subViews = view.views
 	for i in range(0, len(subViews)):
 		subView = subViews[i]
@@ -1947,17 +1947,17 @@ def getTabStopViews(view, views):
 		getTabStopViews(subView, views)
 
 def drawCheckBox(checkBox, paint, clipRect):
-	"""重绘复选按钮 
-	checkBox:视图 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""重繪覆選按鈕 
+	checkBox:視圖 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	width = checkBox.size.cx
 	height = checkBox.size.cy
 	if checkBox.textColor != "none":
 		eRight = checkBox.buttonSize.cx + 10
 		eRect = FCRect(1, (height - checkBox.buttonSize.cy) / 2, checkBox.buttonSize.cx + 1, (height + checkBox.buttonSize.cy) / 2)
 		paint.drawRect(checkBox.textColor, 1, 0, eRect.left, eRect.top, eRect.right, eRect.bottom)
-		#绘制选中区域
+		#繪制選中區域
 		if checkBox.checked:
 			eRect.left += 2
 			eRect.top += 2
@@ -1972,17 +1972,17 @@ def drawCheckBox(checkBox, paint, clipRect):
 		paint.drawText(checkBox.text, checkBox.textColor, checkBox.font, eRight, (height - tSize.cy) / 2)		
 
 def drawRadioButton(radioButton, paint, clipRect):
-	"""重绘单选按钮 
-	checkBox:视图 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""重繪單選按鈕 
+	checkBox:視圖 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	width = radioButton.size.cx
 	height = radioButton.size.cy
 	if radioButton.textColor != "none":
 		eRight = radioButton.buttonSize.cx + 10
 		eRect = FCRect(1, (height - radioButton.buttonSize.cy) / 2, radioButton.buttonSize.cx + 1, (height + radioButton.buttonSize.cy) / 2)
 		paint.drawEllipse(radioButton.textColor, 1, 0, eRect.left, eRect.top, eRect.right, eRect.bottom)
-		#绘制选中区域
+		#繪制選中區域
 		if radioButton.checked:
 			eRect.left += 2
 			eRect.top += 2
@@ -1993,21 +1993,21 @@ def drawRadioButton(radioButton, paint, clipRect):
 		paint.drawText(radioButton.text, radioButton.textColor, radioButton.font, eRight, (height - tSize.cy) / 2)		
 
 def clickCheckBox(checkBox, mp):
-	"""点击复选按钮 
-	checkBox:视图
-	mp: 坐标"""
+	"""點擊覆選按鈕 
+	checkBox:視圖
+	mp: 坐標"""
 	if checkBox.checked:
 		checkBox.checked = False
 	else:
 		checkBox.checked = True
 
 def clickRadioButton(radioButton, mp):
-	"""点击单选按钮 
-	radioButton:视图
-	mp: 坐标"""
+	"""點擊單選按鈕 
+	radioButton:視圖
+	mp: 坐標"""
 	hasOther = False
 	if radioButton.parent != None and len(radioButton.parent.views) > 0:
-		#将相同groupName的单选按钮都取消选中
+		#將相同groupName的單選按鈕都取消選中
 		for i in range(0, len(radioButton.parent.views)):
 			rView = radioButton.parent.views[i]
 			if rView.viewType == "radiobutton":
@@ -2016,25 +2016,25 @@ def clickRadioButton(radioButton, mp):
 	radioButton.checked = True
 
 def drawButton(button, paint, clipRect):
-	"""重绘按钮 
-	button:视图 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
-	#鼠标按下
+	"""重繪按鈕 
+	button:視圖 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
+	#鼠標按下
 	if button.viewType != "tabbutton" and button == paint.touchDownView:
 		if button.pushedColor != "none":
 			paint.fillRoundRect(button.pushedColor, 0, 0, button.size.cx, button.size.cy, button.cornerRadius)
 		else:
 			if button.backColor != "none":
 				paint.fillRoundRect(button.backColor, 0, 0, button.size.cx, button.size.cy, button.cornerRadius)
-	#鼠标悬停
+	#鼠標懸停
 	elif button.viewType != "tabbutton" and button == paint.touchMoveView:
 		if button.hoveredColor != "none":
 			paint.fillRoundRect(button.hoveredColor, 0, 0, button.size.cx, button.size.cy, button.cornerRadius)
 		else:
 			if button.backColor != "none":
 				paint.fillRoundRect(button.backColor, 0, 0, button.size.cx, button.size.cy, button.cornerRadius)
-	#常规情况
+	#常規情況
 	elif button.backColor != "none":
 		selected = False
 		if button.viewType == "tabbutton":
@@ -2047,21 +2047,21 @@ def drawButton(button, paint, clipRect):
 			paint.fillRoundRect(button.selectedBackColor, 0, 0, button.size.cx, button.size.cy, button.cornerRadius)
 		else:
 			paint.fillRoundRect(button.backColor, 0, 0, button.size.cx, button.size.cy, button.cornerRadius)
-	#绘制图片
+	#繪制圖片
 	if len(button.backImage) > 0:
 		paint.drawImage(button.backImage, 0, 0, button.size.cx, button.size.cy)
-	#绘制文字
+	#繪制文字
 	if button.textColor != "none" and len(button.text) > 0:
 		tSize = paint.textSize(button.text, button.font)
 		paint.drawText(button.text, button.textColor, button.font, (button.size.cx - tSize.cx) / 2, (button.size.cy  - tSize.cy) / 2)
-	#绘制边线
+	#繪制邊線
 	if button.borderColor != "none":
 		halfBorder = int(button.borderWidth / 2)
 		paint.drawRoundRect(button.borderColor, button.borderWidth, 0, halfBorder, halfBorder, button.size.cx - halfBorder, button.size.cy - halfBorder, button.cornerRadius)
 
 def getDivContentWidth(div):
-	"""获取内容的宽度 
-	div:图层"""
+	"""獲取內容的寬度 
+	div:圖層"""
 	cWidth = 0
 	subViews = div.views
 	for view in subViews:
@@ -2071,8 +2071,8 @@ def getDivContentWidth(div):
 	return cWidth
 
 def getDivContentHeight(div):
-	"""获取内容的高度 
-	div:图层"""
+	"""獲取內容的高度 
+	div:圖層"""
 	cHeight = 0
 	subViews = div.views
 	for view in subViews:
@@ -2082,13 +2082,13 @@ def getDivContentHeight(div):
 	return cHeight
 
 def drawDivScrollBar(div, paint, clipRect):
-	"""绘制滚动条 
-	div:图层 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""繪制滾動條 
+	div:圖層 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	div.hScrollIsVisible = False
 	div.vScrollIsVisible = False
-	#判断横向滚动条
+	#判斷橫向滾動條
 	if div.showHScrollBar:
 		contentWidth = getDivContentWidth(div)
 		if contentWidth > 0 and contentWidth > div.size.cx:
@@ -2101,7 +2101,7 @@ def drawDivScrollBar(div, paint, clipRect):
 			else:
 				paint.fillRect(div.scrollBarColor, sLeft, div.size.cy - div.scrollSize, sRight, div.size.cy)
 			div.hScrollIsVisible = True
-	#判断纵向滚动条
+	#判斷縱向滾動條
 	if div.showVScrollBar:
 		contentHeight = getDivContentHeight(div)	
 		if contentHeight > 0 and contentHeight > div.size.cy:
@@ -2116,29 +2116,29 @@ def drawDivScrollBar(div, paint, clipRect):
 			div.vScrollIsVisible = True
 
 def drawDivBorder(div, paint, clipRect):
-	"""重绘图层边线 
-	div:视图 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""重繪圖層邊線 
+	div:視圖 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	if div.borderColor != "none":
 		halfBorder = int(div.borderWidth / 2)
 		paint.drawRoundRect(div.borderColor, div.borderWidth, 0, halfBorder, halfBorder, div.size.cx - halfBorder, div.size.cy - halfBorder, div.cornerRadius)
 
 def drawDiv(div, paint, clipRect):
-	"""重绘图形 
-	div:视图 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""重繪圖形 
+	div:視圖 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	if div.backColor != "none":
 		paint.fillRoundRect(div.backColor, 0, 0, div.size.cx, div.size.cy, div.cornerRadius)
-	#绘制图片
+	#繪制圖片
 	if len(div.backImage) > 0:
 		paint.drawImage(div.backImage, 0, 0, div.size.cx, div.size.cy)
 
 def touchWheelDiv(div, delta):
-	"""图层的鼠标滚轮方法 
-	div:图层 
-	delta:滚轮值"""
+	"""圖層的鼠標滾輪方法 
+	div:圖層 
+	delta:滾輪值"""
 	oldScrollV = div.scrollV
 	if delta > 0:
 		oldScrollV -= 10
@@ -2156,33 +2156,33 @@ def touchWheelDiv(div, delta):
 
 
 def touchUpDiv(div, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""图层的鼠标抬起方法 
-	div: 图层 
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks 点击次数"""
+	"""圖層的鼠標擡起方法 
+	div: 圖層 
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks 點擊次數"""
 	div.downScrollHButton = False
 	div.downScrollVButton = False
 	div.hoverScrollHButton = False
 	div.hoverScrollVButton = False
 
 def touchDownDiv(div, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""图层的鼠标按下方法 
-	div: 图层 
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks 点击次数"""
+	"""圖層的鼠標按下方法 
+	div: 圖層 
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks 點擊次數"""
 	mp = firstPoint
 	div.startPoint = mp
 	div.downScrollHButton = False
 	div.downScrollVButton = False
 	div.hoverScrollHButton = False
 	div.hoverScrollVButton = False
-	#判断横向滚动条
+	#判斷橫向滾動條
 	if div.showHScrollBar:
 		contentWidth = getDivContentWidth(div)
 		if contentWidth > 0 and contentWidth > div.size.cx:
@@ -2194,7 +2194,7 @@ def touchDownDiv(div, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 				div.downScrollHButton = True
 				div.startScrollH = div.scrollH
 				return
-	#判断纵向滚动条
+	#判斷縱向滾動條
 	if div.showVScrollBar:
 		contentHeight = getDivContentHeight(div)
 		if contentHeight > 0 and contentHeight > div.size.cy:
@@ -2211,18 +2211,18 @@ def touchDownDiv(div, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 		div.startScrollV = div.scrollV
 
 def touchMoveDiv(div, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""图层的鼠标移动方法 
-	div: 图层 
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	"""圖層的鼠標移動方法 
+	div: 圖層 
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	div.hoverScrollHButton = False
 	div.hoverScrollVButton = False
 	mp = firstPoint
 	if firstTouch:
 		if div.showHScrollBar or div.showVScrollBar:
-			#判断横向滚动条
+			#判斷橫向滾動條
 			if div.downScrollHButton:
 				contentWidth = getDivContentWidth(div)
 				subX = (mp.x - div.startPoint.x) / div.size.cx * contentWidth
@@ -2234,7 +2234,7 @@ def touchMoveDiv(div, firstTouch, firstPoint, secondTouch, secondPoint):
 				div.scrollH = newScrollH
 				div.paint.cancelClick = True
 				return
-			#判断纵向滚动条
+			#判斷縱向滾動條
 			elif div.downScrollVButton:
 				contentHeight = getDivContentHeight(div)
 				subY = (mp.y - div.startPoint.y) / div.size.cy * contentHeight
@@ -2246,7 +2246,7 @@ def touchMoveDiv(div, firstTouch, firstPoint, secondTouch, secondPoint):
 				div.scrollV = newScrollV
 				div.paint.cancelClick = True
 				return
-		#判断拖动
+		#判斷拖動
 		if div.allowDragScroll:
 			contentWidth = getDivContentWidth(div)
 			if contentWidth > div.size.cx:
@@ -2271,7 +2271,7 @@ def touchMoveDiv(div, firstTouch, firstPoint, secondTouch, secondPoint):
 				if abs(subY) > 5:
 					div.paint.cancelClick = True
 	else:
-		#判断横向滚动条
+		#判斷橫向滾動條
 		if div.showHScrollBar:
 			contentWidth = getDivContentWidth(div)
 			if contentWidth > 0 and contentWidth > div.size.cx:
@@ -2284,7 +2284,7 @@ def touchMoveDiv(div, firstTouch, firstPoint, secondTouch, secondPoint):
 					return
 				else:
 					div.hoverScrollHButton = False
-		#判断纵向滚动条
+		#判斷縱向滾動條
 		if div.showVScrollBar:
 			contentHeight = getDivContentHeight(div)
 			if contentHeight > 0 and contentHeight > div.size.cy:
@@ -2299,10 +2299,10 @@ def touchMoveDiv(div, firstTouch, firstPoint, secondTouch, secondPoint):
 					div.hoverScrollVButton = False
 
 def drawTabViewBorder(tabView, paint, clipRect):
-	"""重绘多页加 
-	tabView:多页夹 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""重繪多頁加 
+	tabView:多頁夾 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	if tabView.underLineColor != "none":
 		tabPages = tabView.tabPages
 		for tp in tabPages:
@@ -2325,15 +2325,15 @@ def drawTabViewBorder(tabView, paint, clipRect):
 				break
 
 def updataPageLayout(tabView, tabPage, left, top, width, height, tw, th):
-	"""更新页的布局 
-	tabView:多页夹 
-	tabPage:页 
-	left:左侧坐标 
-	top:上方坐标 
-	width:宽度 
+	"""更新頁的布局 
+	tabView:多頁夾 
+	tabPage:頁 
+	left:左側坐標 
+	top:上方坐標 
+	width:寬度 
 	height:高度 
-	tw:页头按钮的宽度 
-	th:页头按钮的高度"""
+	tw:頁頭按鈕的寬度 
+	th:頁頭按鈕的高度"""
 	newBounds = FCRect(0, 0, 0, 0)
 	#下方
 	if tabView.layout == "bottom":
@@ -2342,14 +2342,14 @@ def updataPageLayout(tabView, tabPage, left, top, width, height, tw, th):
 		newBounds.right = width
 		newBounds.bottom = height - th
 		tabPage.headerButton.location = FCPoint(left, height - th)
-	#左侧
+	#左側
 	elif tabView.layout == "left":
 		newBounds.left = tw
 		newBounds.top = 0
 		newBounds.right = width
 		newBounds.bottom = height
 		tabPage.headerButton.location = FCPoint(0, top)
-	#右侧
+	#右側
 	elif tabView.layout == "right":
 		newBounds.left = 0
 		newBounds.top = 0
@@ -2367,8 +2367,8 @@ def updataPageLayout(tabView, tabPage, left, top, width, height, tw, th):
 	tabPage.size = FCSize(newBounds.right - newBounds.left, newBounds.bottom - newBounds.top)
 
 def updateTabLayout(tabView):
-	"""更新多页夹的布局 
-	tabView:多页夹"""
+	"""更新多頁夾的布局 
+	tabView:多頁夾"""
 	width = tabView.size.cx
 	height = tabView.size.cy
 	left = 0
@@ -2386,10 +2386,10 @@ def updateTabLayout(tabView):
 			tabPage.visible = False
 
 def addTabPage(tabView, tabPage, tabButton):
-	"""添加页 
-	tabView:多页夹 
-	tabPage:页 
-	tabButton:页头按钮"""
+	"""添加頁 
+	tabView:多頁夾 
+	tabPage:頁 
+	tabButton:頁頭按鈕"""
 	tabPage.headerButton = tabButton
 	tabPage.parent = tabView
 	tabPage.paint = tabView.paint
@@ -2400,9 +2400,9 @@ def addTabPage(tabView, tabPage, tabButton):
 	tabView.views.append(tabButton)
 
 def removeTabPage(tabView, pageOrButton):
-	"""删除页
-	tabView:多页夹 
-	pageOrButton:页或者按钮"""
+	"""刪除頁
+	tabView:多頁夾 
+	pageOrButton:頁或者按鈕"""
 	for i in range(0, len(tabView.tabPages)):
 		tabPage = tabView.tabPages[i]
 		if tabPage.headerButton == pageOrButton or tabPage == pageOrButton:
@@ -2415,9 +2415,9 @@ def removeTabPage(tabView, pageOrButton):
 	updateTabLayout(tabView)
 			
 def selectTabPage(tabView, tabPage):
-	"""选中页 
-	tabView:多页夹 
-	tabPage:页"""
+	"""選中頁 
+	tabView:多頁夾 
+	tabPage:頁"""
 	tabPages = tabView.tabPages
 	for tp in tabPages:
 		if tp == tabPage:
@@ -2427,8 +2427,8 @@ def selectTabPage(tabView, tabPage):
 	updateTabLayout(tabView)
 
 def resetLayoutDiv(layout):
-	"""重置布局图层 
-	layout:布局层"""
+	"""重置布局圖層 
+	layout:布局層"""
 	reset = False
 	padding = layout.padding
 	vPos = 0
@@ -2450,7 +2450,7 @@ def resetLayoutDiv(layout):
 			nTop = cTop
 			nWidth = cWidth
 			nHeight = cHeight
-			#从下至上
+			#從下至上
 			if layout.layoutStyle == "bottomtotop":
 				if i == 0:
 					top = height - padding.top
@@ -2468,7 +2468,7 @@ def resetLayoutDiv(layout):
 				nLeft = left + margin.left
 				nWidth = lWidth
 				nTop = top
-			#从左到右
+			#從左到右
 			elif layout.layoutStyle == "lefttoright":
 				lHeight = 0
 				if layout.autoWrap:
@@ -2485,7 +2485,7 @@ def resetLayoutDiv(layout):
 				nTop = top + margin.top
 				nHeight = lHeight
 				left += cWidth + margin.right
-			#从右到左
+			#從右到左
 			elif layout.layoutStyle == "righttoleft":
 				if i == 0:
 					left = width - padding.left
@@ -2503,7 +2503,7 @@ def resetLayoutDiv(layout):
 				nLeft = left
 				nTop = top + margin.top
 				nHeight = lHeight
-			#从上至下
+			#從上至下
 			elif layout.layoutStyle == "toptobottom":
 				lWidth = 0
 				if layout.autoWrap:
@@ -2529,10 +2529,10 @@ def resetLayoutDiv(layout):
 	return reset
 
 def addViewToSplit(splitDiv, firstView, secondView, pos):
-	"""添加视图到分割层
-	splitDiv 分割层
-	firstView 第一个视图
-	secondView 第二个视图
+	"""添加視圖到分割層
+	splitDiv 分割層
+	firstView 第一個視圖
+	secondView 第二個視圖
 	pos 位置"""
 	size = splitDiv.size
 	splitDiv.oldSize = FCSize(size.cx, size.cy)
@@ -2558,8 +2558,8 @@ def addViewToSplit(splitDiv, firstView, secondView, pos):
 		splitter.location = FCPoint(0, pos)
 
 def resetSplitLayoutDiv(split):
-	"""重置分割线的布局
-	split:分割视图"""
+	"""重置分割線的布局
+	split:分割視圖"""
 	reset = False
 	splitRect = FCRect(0, 0, 0, 0)
 	width = split.size.cx
@@ -2572,7 +2572,7 @@ def resetSplitLayoutDiv(split):
 		splitterSize.cy = split.splitter.size.cy
 	split.splitter.topMost = True
 	layoutStyle = split.layoutStyle 
-	#从下至上
+	#從下至上
 	if layoutStyle == "bottomtotop":
 		if split.splitMode == "absolutesize" or split.oldSize.cy == 0:
 			splitRect.left = 0
@@ -2594,7 +2594,7 @@ def resetSplitLayoutDiv(split):
 		sRect.top = 0
 		sRect.right = width
 		sRect.bottom = splitRect.top
-	#从左至右
+	#從左至右
 	elif layoutStyle == "lefttoright":
 		if split.splitMode == "absolutesize" or split.oldSize.cx == 0:
 			splitRect.left = split.splitter.location.x
@@ -2616,7 +2616,7 @@ def resetSplitLayoutDiv(split):
 		sRect.top = 0
 		sRect.right = width
 		sRect.bottom = height
-	#从右到左
+	#從右到左
 	elif layoutStyle == "righttoleft":
 		if split.splitMode == "absolutesize" or split.oldSize.cx == 0:
 			splitRect.left = width - (split.oldSize.cx - split.splitter.location.x)
@@ -2638,7 +2638,7 @@ def resetSplitLayoutDiv(split):
 		sRect.top = 0
 		sRect.right = splitRect.left
 		sRect.bottom = height
-	#从上至下
+	#從上至下
 	elif layoutStyle == "toptobottom":
 		if split.splitMode == "absolutesize" or split.oldSize.cy == 0:
 			splitRect.left = 0
@@ -2660,7 +2660,7 @@ def resetSplitLayoutDiv(split):
 		sRect.top = splitRect.bottom
 		sRect.right = width
 		sRect.bottom = height
-	#重置分割条
+	#重置分割條
 	if split.splitter.visible:
 		spRect = FCRect(split.splitter.location.x,  split.splitter.location.y, split.splitter.location.x + split.splitter.size.cx, split.splitter.location.y + split.splitter.size.cy)
 		if spRect.left != splitRect.left or spRect.top != splitRect.top or spRect.right != splitRect.right or spRect.bottom != splitRect.bottom:
@@ -2668,13 +2668,13 @@ def resetSplitLayoutDiv(split):
 			split.splitter.size = FCSize(math.ceil(splitRect.right - splitRect.left), math.ceil(splitRect.bottom - splitRect.top))
 			reset = True
 	fcRect = FCRect(split.firstView.location.x,  split.firstView.location.y, split.firstView.location.x + split.firstView.size.cx, split.firstView.location.y + split.firstView.size.cy)
-	#重置第一个视图
+	#重置第一個視圖
 	if fcRect.left != fRect.left or fcRect.top != fRect.top or fcRect.right != fRect.right or fcRect.bottom != fRect.bottom:
 		reset = True
 		split.firstView.location = FCPoint(fRect.left, fRect.top)
 		split.firstView.size = FCSize(fRect.right - fRect.left, fRect.bottom - fRect.top)
 	scRect = FCRect(split.secondView.location.x,  split.secondView.location.y, split.secondView.location.x + split.secondView.size.cx, split.secondView.location.y + split.secondView.size.cy)
-	#重置第二个视图
+	#重置第二個視圖
 	if scRect.left != sRect.left or scRect.top != sRect.top or scRect.right != sRect.right or scRect.bottom != sRect.bottom:
 		reset = True
 		split.secondView.location = FCPoint(sRect.left, sRect.top)
@@ -2695,7 +2695,7 @@ def fastAddGridColumns(grid, columns):
 def fastAddGridRow(grid, datas):
 	"""快速添加表格行
 	grid:表格
-	datas:数据集合"""
+	datas:數據集合"""
 	gridRow = FCGridRow()
 	datasSize = len(datas)
 	for i in range(0,datasSize):
@@ -2705,9 +2705,9 @@ def fastAddGridRow(grid, datas):
 	return gridRow
 
 def addViewToGridCell(view, cell, grid):
-	"""添加视图到单元格
-	view:视图
-	cell:单元格
+	"""添加視圖到單元格
+	view:視圖
+	cell:單元格
 	grid:表格"""
 	view.displayOffset = False
 	view.visible = False
@@ -2715,9 +2715,9 @@ def addViewToGridCell(view, cell, grid):
 	addViewToParent(view, grid)
 
 def touchWheelGrid(grid, delta):
-	"""表格的鼠标滚轮方法 
+	"""表格的鼠標滾輪方法 
 	grid:表格 
-	delta:滚轮值"""
+	delta:滾輪值"""
 	oldScrollV = grid.scrollV
 	if delta > 0:
 		oldScrollV -= grid.rowHeight
@@ -2734,31 +2734,31 @@ def touchWheelGrid(grid, delta):
 		grid.scrollV = oldScrollV
 
 def drawGridCell(grid, row, column, cell, paint, left, top, right, bottom):
-	"""绘制单元格 
+	"""繪制單元格 
 	grid:表格 
 	row:行 
 	column:列 
-	cell:单元格
-	paint:绘图对象 
-	left:左侧坐标 
-	top:上方坐标 
-	right:右侧坐标 
-	bottom:下方坐标"""
-	#绘制背景
+	cell:單元格
+	paint:繪圖對象 
+	left:左側坐標 
+	top:上方坐標 
+	right:右側坐標 
+	bottom:下方坐標"""
+	#繪制背景
 	if cell.backColor != "none":
 		paint.fillRect(cell.backColor, left, top, right, bottom)
-	#绘制选中
+	#繪制選中
 	if row.selected:
 		if grid.selectedRowColor != "none":
 			paint.fillRect(grid.selectedRowColor, left, top, right, bottom)
 	else:
 		if row.alternate and grid.alternateRowColor != "none":
 			paint.fillRect(grid.alternateRowColor, left, top, right, bottom)
-	#绘制边线
+	#繪制邊線
 	if cell.borderColor != "none":
 		paint.drawLine(cell.borderColor, 1, 0, left, bottom, right, bottom)
 		paint.drawLine(cell.borderColor, 1, 0, right - 1, top, right - 1, bottom)
-	#绘制数值
+	#繪制數值
 	if cell.value != None:
 		showText = str(cell.value)
 		if column.colType == "double":
@@ -2779,7 +2779,7 @@ def drawGridCell(grid, row, column, cell, paint, left, top, right, bottom):
 				paint.drawText(showText, cell.textColor, cell.font, right - tSize.cx, top + grid.rowHeight / 2 - tSize.cy / 2)	
 
 def getGridContentWidth(grid):
-	"""获取内容的宽度 
+	"""獲取內容的寬度 
 	grid:表格"""
 	cWidth = 0
 	for column in grid.columns:
@@ -2788,7 +2788,7 @@ def getGridContentWidth(grid):
 	return cWidth
 
 def getGridContentHeight(grid):
-	"""获取内容的高度 
+	"""獲取內容的高度 
 	grid:表格"""
 	cHeight = 0
 	for row in grid.rows:
@@ -2797,23 +2797,23 @@ def getGridContentHeight(grid):
 	return cHeight
 
 def drawGridColumn(grid, column, paint, left, top, right, bottom):
-	"""绘制列 
+	"""繪制列 
 	grid:表格 
 	column:列
-	paint:绘图对象 
-	left:左侧坐标 
-	top:上方坐标 
-	right:右侧坐标 
-	bottom:下方坐标"""
+	paint:繪圖對象 
+	left:左側坐標 
+	top:上方坐標 
+	right:右側坐標 
+	bottom:下方坐標"""
 	tSize = paint.textSize(column.text, column.font)
-	#绘制背景
+	#繪制背景
 	if column.backColor != "none":
 		paint.fillRect(column.backColor, left, top, right, bottom)
-	#绘制边线
+	#繪制邊線
 	if column.borderColor != "none":
 		paint.drawRect(column.borderColor, 1, 0, left, top, right, bottom)
 	paint.drawText(column.text, column.textColor, column.font, left + (column.width - tSize.cx) / 2, top + grid.headerHeight / 2 - tSize.cy / 2)
-	#绘制升序箭头
+	#繪制升序箭頭
 	if column.sort == "asc":
 		cR = (bottom - top) / 4
 		oX = right - cR * 2
@@ -2823,7 +2823,7 @@ def drawGridColumn(grid, column, paint, left, top, right, bottom):
 		drawPoints.append(FCPoint(oX - cR, oY + cR))
 		drawPoints.append(FCPoint(oX + cR, oY + cR))
 		paint.fillPolygon(column.textColor, drawPoints)
-	#绘制降序箭头
+	#繪制降序箭頭
 	elif column.sort == "desc":
 		cR = (bottom - top) / 4
 		oX = right - cR * 2
@@ -2835,15 +2835,15 @@ def drawGridColumn(grid, column, paint, left, top, right, bottom):
 		paint.fillPolygon(column.textColor, drawPoints)
 
 def drawGrid(grid, paint, clipRect):
-	"""绘制表格 
+	"""繪制表格 
 	grid:表格
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	cTop = -grid.scrollV + grid.headerHeight
 	colLeft = 0
 	for i in range(0, len(grid.views)):
 		grid.views[i].visible = False
-	#重置列头
+	#重置列頭
 	for i in range(0, len(grid.columns)):
 		column = grid.columns[i]
 		if len(column.widthStr) > 0:
@@ -2864,7 +2864,7 @@ def drawGrid(grid, paint, clipRect):
 			visibleIndex = visibleIndex + 1
 			rTop = cTop
 			rBottom = cTop + grid.rowHeight
-			#绘制非冻结列
+			#繪制非凍結列
 			if rBottom >= 0 and cTop <= grid.size.cy:
 				for j in range(0, len(row.cells)):
 					cell = row.cells[j]
@@ -2899,7 +2899,7 @@ def drawGrid(grid, paint, clipRect):
 									cell.view.visible = True
 									cell.view.location = FCPoint(cRect.left + grid.scrollH, cRect.top + grid.scrollV)
 									cell.view.size = FCSize(cRect.right - cRect.left, cRect.bottom - cRect.top)
-			#绘制冻结列
+			#繪制凍結列
 			if rBottom >= 0 and cTop <= grid.size.cy:
 				for j in range(0, len(row.cells)):
 					cell = row.cells[j]
@@ -2940,15 +2940,15 @@ def drawGrid(grid, paint, clipRect):
 	
 
 def drawGridScrollBar(grid, paint, clipRect):
-	"""绘制表格的滚动条 
+	"""繪制表格的滾動條 
 	grid:表格 
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	grid.hScrollIsVisible = False
 	grid.vScrollIsVisible = False
 	if grid.headerHeight > 0:
 		cLeft = -grid.scrollH
-		#绘制非冻结列
+		#繪制非凍結列
 		for gridColumn in grid.columns:
 			if gridColumn.visible:
 				if gridColumn.frozen == False:
@@ -2960,7 +2960,7 @@ def drawGridScrollBar(grid, paint, clipRect):
 						drawGridColumn(grid, gridColumn, paint, cLeft, 0, cLeft + gridColumn.width, grid.headerHeight)
 				cLeft += gridColumn.width
 		cLeft = 0
-		#绘制冻结列
+		#繪制凍結列
 		for gridColumn in grid.columns:
 			if gridColumn.visible:
 				if gridColumn.frozen:
@@ -2971,7 +2971,7 @@ def drawGridScrollBar(grid, paint, clipRect):
 					else:
 						drawGridColumn(grid, gridColumn, paint, cLeft, 0, cLeft + gridColumn.width, grid.headerHeight)
 				cLeft += gridColumn.width
-	#绘制横向滚动条
+	#繪制橫向滾動條
 	if grid.showHScrollBar:
 		contentWidth = getGridContentWidth(grid)
 		if contentWidth > 0 and contentWidth > grid.size.cx:
@@ -2984,7 +2984,7 @@ def drawGridScrollBar(grid, paint, clipRect):
 			else:
 				paint.fillRect(grid.scrollBarColor, sLeft, grid.size.cy - grid.scrollSize, sRight, grid.size.cy)
 			grid.hScrollIsVisible = True
-	#绘制纵向滚动条
+	#繪制縱向滾動條
 	if grid.showVScrollBar:
 		contentHeight = getGridContentHeight(grid)
 		if contentHeight > 0 and contentHeight > grid.size.cy - grid.headerHeight and contentHeight > 0 and grid.size.cy - grid.headerHeight - grid.scrollSize > 0:
@@ -2999,12 +2999,12 @@ def drawGridScrollBar(grid, paint, clipRect):
 			grid.vScrollIsVisible = True
 
 def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""表格的鼠标移动方法 
+	"""表格的鼠標移動方法 
 	grid: 表格 
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	grid.hoverScrollHButton = False
 	grid.hoverScrollVButton = False
 	if grid.paint.resizeColumnState != 0:
@@ -3016,7 +3016,7 @@ def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
 	mp = firstPoint
 	if firstTouch:
 		if grid.showHScrollBar or grid.showVScrollBar:
-			#判断横向滚动条
+			#判斷橫向滾動條
 			if grid.downScrollHButton:
 				contentWidth = getGridContentWidth(grid)
 				subX = (mp.x - grid.startPoint.x) / grid.size.cx * contentWidth
@@ -3028,7 +3028,7 @@ def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
 				grid.scrollH = newScrollH
 				grid.paint.cancelClick = True
 				return
-			#判断纵向滚动条
+			#判斷縱向滾動條
 			elif grid.downScrollVButton:
 				contentHeight = getGridContentHeight(grid)
 				subY = (mp.y - grid.startPoint.y) / (grid.size.cy - grid.headerHeight - grid.scrollSize) * contentHeight
@@ -3040,7 +3040,7 @@ def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
 				grid.scrollV = newScrollV
 				grid.paint.cancelClick = True
 				return
-		#处理拖动
+		#處理拖動
 		if grid.allowDragScroll:
 			contentWidth = getGridContentWidth(grid)
 			if contentWidth > grid.size.cx - grid.scrollSize:
@@ -3065,7 +3065,7 @@ def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
 				if abs(subY) > 5:
 					grid.paint.cancelClick = True
 	else:
-		#判断横向滚动条
+		#判斷橫向滾動條
 		if grid.showHScrollBar:
 			contentWidth = getGridContentWidth(grid)
 			if contentWidth > 0 and contentWidth > grid.size.cx - grid.scrollSize:
@@ -3078,7 +3078,7 @@ def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
 					return
 				else:
 					grid.hoverScrollHButton = False
-		#判断纵向滚动条
+		#判斷縱向滾動條
 		if grid.showVScrollBar:
 			contentHeight = getGridContentHeight(grid)
 			if contentHeight > 0 and contentHeight > grid.size.cy - grid.headerHeight - grid.scrollSize:
@@ -3093,20 +3093,20 @@ def touchMoveGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint):
 					grid.hoverScrollVButton = False
 
 def touchDownGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""表格的鼠标按下方法 
+	"""表格的鼠標按下方法 
 	grid: 表格 
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks:点击次数"""
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks:點擊次數"""
 	mp = firstPoint
 	grid.startPoint = mp
 	grid.downScrollHButton = False
 	grid.downScrollVButton = False
 	grid.hoverScrollHButton = False
 	grid.hoverScrollVButton = False
-	#判断横向滚动条
+	#判斷橫向滾動條
 	if grid.showHScrollBar:
 		contentWidth = getGridContentWidth(grid)
 		if contentWidth > 0 and contentWidth > grid.size.cx - grid.scrollSize:
@@ -3118,7 +3118,7 @@ def touchDownGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks
 				grid.downScrollHButton = True
 				grid.startScrollH = grid.scrollH
 				return
-	#判断纵向滚动条
+	#判斷縱向滾動條
 	if grid.showVScrollBar:
 		contentHeight = getGridContentHeight(grid)
 		if contentHeight > 0 and contentHeight > grid.size.cy - grid.headerHeight - grid.scrollSize:
@@ -3161,13 +3161,13 @@ def touchDownGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks
 					break
 
 def touchUpGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""表格的鼠标抬起方法 
+	"""表格的鼠標擡起方法 
 	grid: 表格 
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks:点击次数"""
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks:點擊次數"""
 	grid.downScrollHButton = False
 	grid.downScrollVButton = False
 	grid.hoverScrollHButton = False
@@ -3186,7 +3186,7 @@ def touchUpGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 		column.bounds = colRect
 		column.index = i
 		colLeft += column.width
-	#判断列头
+	#判斷列頭
 	if grid.headerHeight > 0 and firstPoint.y <= grid.headerHeight:
 		cLeft = 0
 		for gridColumn in grid.columns:
@@ -3249,7 +3249,7 @@ def touchUpGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 		if row.visible:
 			rTop = cTop
 			rBottom = cTop + grid.rowHeight
-			#判断非冻结列
+			#判斷非凍結列
 			if rBottom >= 0 and cTop <= grid.size.cy:
 				for j in range(0, len(row.cells)):
 					cell = row.cells[j]
@@ -3285,7 +3285,7 @@ def touchUpGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 									elif grid.paint.onClickGridCell != None:
 										grid.paint.onClickGridCell(grid, row, gridColumn, cell, firstTouch, firstPoint, secondTouch, secondPoint, clicks)
 									return
-			#判断冻结列
+			#判斷凍結列
 			if rBottom >= 0 and cTop <= grid.size.cy:
 				for j in range(0, len(row.cells)):
 					cell = row.cells[j]
@@ -3326,8 +3326,8 @@ def touchUpGrid(grid, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 			cTop += grid.rowHeight
 
 def getTreeContentWidth(tree):
-	"""获取内容的宽度
-	tree:树"""
+	"""獲取內容的寬度
+	tree:樹"""
 	cWidth = 0
 	for column in tree.columns:
 		if column.visible:
@@ -3335,8 +3335,8 @@ def getTreeContentWidth(tree):
 	return cWidth
 
 def getTreeContentHeight(tree):
-	"""获取内容的高度
-	tree:树"""
+	"""獲取內容的高度
+	tree:樹"""
 	cHeight = 0
 	for row in tree.rows:
 		if row.visible:
@@ -3344,13 +3344,13 @@ def getTreeContentHeight(tree):
 	return cHeight
 
 def drawTreeScrollBar(tree, paint, clipRect):
-	"""绘制滚动条
-	tree:树
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制滾動條
+	tree:樹
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	tree.hScrollIsVisible = False
 	tree.vScrollIsVisible = False
-	#判断横向滚动条
+	#判斷橫向滾動條
 	if tree.showHScrollBar:
 		contentWidth = getTreeContentWidth(tree)
 		if contentWidth > 0 and contentWidth > tree.size.cx:
@@ -3363,7 +3363,7 @@ def drawTreeScrollBar(tree, paint, clipRect):
 			else:
 				paint.fillRect(tree.scrollBarColor, sLeft, tree.size.cy - tree.scrollSize, sRight, tree.size.cy)
 			tree.hScrollIsVisible = True
-	#判断纵向滚动条
+	#判斷縱向滾動條
 	if tree.showVScrollBar:
 		contentHeight = getTreeContentHeight(tree)	
 		if contentHeight > 0 and contentHeight > tree.size.cy:
@@ -3378,20 +3378,20 @@ def drawTreeScrollBar(tree, paint, clipRect):
 			tree.vScrollIsVisible = True
 
 def drawTreeNode(tree, row, column, node, paint, left, top, right, bottom):
-	"""绘制单元格
-	tree:树
+	"""繪制單元格
+	tree:樹
 	row:行
 	column:列
-	node:节点
-	paint:绘图对象
-	left:左侧坐标
-	top:上方坐标
-	right:右侧坐标
-	bottom:下方坐标"""
-	#绘制背景
+	node:節點
+	paint:繪圖對象
+	left:左側坐標
+	top:上方坐標
+	right:右側坐標
+	bottom:下方坐標"""
+	#繪制背景
 	if node.backColor != "none":
 		paint.fillRect(node.backColor, left, top, right, bottom)
-	#绘制选中
+	#繪制選中
 	if row.selected:
 		if tree.selectedRowColor != "none":
 			paint.fillRect(tree.selectedRowColor, left, top, right, bottom)
@@ -3403,14 +3403,14 @@ def drawTreeNode(tree, row, column, node, paint, left, top, right, bottom):
 		tLeft = left + 2 + getTotalIndent(node)
 		wLeft = tLeft
 		cR = tree.checkBoxWidth / 3
-		#绘制复选框
+		#繪制覆選框
 		if tree.showCheckBox:
 			wLeft += tree.checkBoxWidth
 			if node.checked:
 				paint.fillRect(node.textColor, tLeft + (tree.checkBoxWidth - cR) / 2, top + (tree.rowHeight - cR) / 2, tLeft + (tree.checkBoxWidth + cR) / 2, top + (tree.rowHeight + cR) / 2)
 			else:
 				paint.drawRect(node.textColor, 1, 0, tLeft + (tree.checkBoxWidth - cR) / 2, top + (tree.rowHeight - cR) / 2, tLeft + (tree.checkBoxWidth + cR) / 2, top + (tree.rowHeight + cR) / 2)
-		#绘制箭头
+		#繪制箭頭
 		if len(node.childNodes) > 0:
 			drawPoints = []
 			if node.collapsed:
@@ -3423,7 +3423,7 @@ def drawTreeNode(tree, row, column, node, paint, left, top, right, bottom):
 				drawPoints.append(FCPoint(wLeft + tree.collapsedWidth / 2, top + (tree.rowHeight + cR) / 2))
 			paint.fillPolygon(node.textColor, drawPoints)
 			wLeft += tree.collapsedWidth
-		#绘制文字
+		#繪制文字
 		if tSize.cx > column.width:
 			paint.drawTextAutoEllipsis(str(node.value), node.textColor, node.font, wLeft, top + tree.rowHeight / 2 - tSize.cy / 2, wLeft + column.width, top + tree.rowHeight / 2 - tSize.cy / 2)
 		else:
@@ -3431,19 +3431,19 @@ def drawTreeNode(tree, row, column, node, paint, left, top, right, bottom):
 
 def updateTreeRowIndex(tree):
 	"""更新行的索引
-	tree:树"""
+	tree:樹"""
 	for i in range(0,len(tree.rows)):
 		tree.rows[i].index = i
 
 def drawTree(tree, paint, clipRect):
-	"""绘制树
-	tree:树
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制樹
+	tree:樹
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	cLeft = -tree.scrollH
 	cTop = -tree.scrollV + tree.headerHeight
 	colLeft = 0
-	#重置列头
+	#重置列頭
 	for i in range(0,len(tree.columns)):
 		if len(tree.columns[i].widthStr) > 0:
 			newWidthStr = tree.columns[i].widthStr.replace("%", "")
@@ -3486,8 +3486,8 @@ def drawTree(tree, paint, clipRect):
 			cTop += tree.rowHeight
 
 def getTreeLastNodeRowIndex(node):
-	"""获取最后一行的索引 
-	node:树节点"""
+	"""獲取最後一行的索引 
+	node:樹節點"""
 	rowIndex = node.row.index
 	for i in range(0,len(node.childNodes)):
 		rIndex = getTreeLastNodeRowIndex(node.childNodes[i])
@@ -3496,10 +3496,10 @@ def getTreeLastNodeRowIndex(node):
 	return rowIndex
 
 def appendTreeNode(tree, node, parentNode):
-	"""添加节点
-	tree:树
-	node:要添加的节点
-	parentNode:父节点"""
+	"""添加節點
+	tree:樹
+	node:要添加的節點
+	parentNode:父節點"""
 	if parentNode == None:
 		newRow = FCTreeRow()
 		tree.rows.append(newRow)
@@ -3522,9 +3522,9 @@ def appendTreeNode(tree, node, parentNode):
 	updateTreeRowIndex(tree)
 
 def removeTreeNode(tree, node):
-	"""移除节点
-	tree:树
-	node:要添加的节点"""
+	"""移除節點
+	tree:樹
+	node:要添加的節點"""
 	if node.parentNode == None:
 		nodesSize = len(tree.childNodes)
 		for i in range(0,nodesSize):
@@ -3541,9 +3541,9 @@ def removeTreeNode(tree, node):
 	updateTreeRowIndex(tree)
 
 def hideOrShowTreeNode(node, visible):
-	"""展开或折叠节点
-	node:节点
-	visible:是否可见"""
+	"""展開或折疊節點
+	node:節點
+	visible:是否可見"""
 	if len(node.childNodes) > 0:
 		for i in range(0,len(node.childNodes)):
 			node.childNodes[i].row.visible = visible
@@ -3554,34 +3554,34 @@ def hideOrShowTreeNode(node, visible):
 				hideOrShowTreeNode(node.childNodes[i], visible)
 				
 def expendTree(tree):
-	"""展开树的节点
-	tree:树"""
+	"""展開樹的節點
+	tree:樹"""
 	if len(tree.childNodes) > 0:
 		for i in range(0,len(tree.childNodes)):
 			tree.childNodes[i].collapsed = False
 			hideOrShowTreeNode(tree.childNodes[i], True)
 
 def collapseTree(tree):
-	"""折叠树的节点
-	tree:树"""
+	"""折疊樹的節點
+	tree:樹"""
 	if len(tree.childNodes) > 0:
 		for i in range(0,len(tree.childNodes)):
 			tree.childNodes[i].collapsed = True
 			hideOrShowTreeNode(tree.childNodes[i], False)
 
 def checkOrUnCheckTreeNode(node, checked):
-	"""选中或反选节点
-	node:节点
-	checked:是否选中"""
+	"""選中或反選節點
+	node:節點
+	checked:是否選中"""
 	node.checked = checked
 	if len(node.childNodes) > 0:
 		for i in range(0,len(node.childNodes)):
 			checkOrUnCheckTreeNode(node.childNodes[i], checked)
 
 def touchWheelTree(tree, delta):
-	"""树的鼠标滚轮方法
-	tree:树
-	delta:滚轮值"""
+	"""樹的鼠標滾輪方法
+	tree:樹
+	delta:滾輪值"""
 	oldScrollV = tree.scrollV
 	if delta > 0:
 		oldScrollV -= tree.rowHeight
@@ -3598,18 +3598,18 @@ def touchWheelTree(tree, delta):
 		tree.scrollV = oldScrollV
 
 def touchMoveTree(tree, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""树的鼠标移动方法
-	tree: 树
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	"""樹的鼠標移動方法
+	tree: 樹
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	tree.hoverScrollHButton = False
 	tree.hoverScrollVButton = False
 	mp = firstPoint
 	if firstTouch:
 		if tree.showHScrollBar or tree.showVScrollBar:
-			#判断横向滚动
+			#判斷橫向滾動
 			if tree.downScrollHButton:
 				contentWidth = getTreeContentWidth(tree)
 				subX = (mp.x - tree.startPoint.x) / tree.size.cx * contentWidth
@@ -3621,7 +3621,7 @@ def touchMoveTree(tree, firstTouch, firstPoint, secondTouch, secondPoint):
 				tree.scrollH = newScrollH
 				tree.paint.cancelClick = True
 				return
-			#判断纵向滚动
+			#判斷縱向滾動
 			elif tree.downScrollVButton:
 				contentHeight = getTreeContentHeight(tree)
 				subY = (mp.y - tree.startPoint.y) / (tree.size.cy - tree.headerHeight - tree.scrollSize) * contentHeight
@@ -3633,7 +3633,7 @@ def touchMoveTree(tree, firstTouch, firstPoint, secondTouch, secondPoint):
 				tree.scrollV = newScrollV
 				tree.paint.cancelClick = True
 				return
-		#判断拖动
+		#判斷拖動
 		if tree.allowDragScroll:
 			contentWidth = getTreeContentWidth(tree)
 			if contentWidth > tree.size.cx:
@@ -3658,7 +3658,7 @@ def touchMoveTree(tree, firstTouch, firstPoint, secondTouch, secondPoint):
 				if abs(subY) > 5:
 					tree.paint.cancelClick = True
 	else:
-		#判断横向滚动
+		#判斷橫向滾動
 		if tree.showHScrollBar:
 			contentWidth = getTreeContentWidth(tree)
 			if contentWidth > 0 and contentWidth > tree.size.cx:
@@ -3671,7 +3671,7 @@ def touchMoveTree(tree, firstTouch, firstPoint, secondTouch, secondPoint):
 					return
 				else:
 					tree.hoverScrollHButton = False
-		#判断纵向滚动
+		#判斷縱向滾動
 		if tree.showVScrollBar:
 			contentHeight = getTreeContentHeight(tree)
 			if contentHeight > 0 and contentHeight > tree.size.cy:
@@ -3687,20 +3687,20 @@ def touchMoveTree(tree, firstTouch, firstPoint, secondTouch, secondPoint):
 					
 
 def touchDownTree(tree, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""树的鼠标按下方法
-	tree: 树
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks 点击次数"""
+	"""樹的鼠標按下方法
+	tree: 樹
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks 點擊次數"""
 	mp = firstPoint
 	tree.startPoint = mp
 	tree.hoverScrollHButton = False
 	tree.hoverScrollVButton = False
 	tree.downScrollHButton = False
 	tree.downScrollVButton = False
-	#判断横向滚动
+	#判斷橫向滾動
 	if tree.showHScrollBar:
 		contentWidth = getTreeContentWidth(tree)
 		if contentWidth > 0 and contentWidth > tree.size.cx:
@@ -3712,7 +3712,7 @@ def touchDownTree(tree, firstTouch, firstPoint, secondTouch, secondPoint, clicks
 				tree.downScrollHButton = True
 				tree.startScrollH = tree.scrollH
 				return
-	#判断纵向滚动
+	#判斷縱向滾動
 	if tree.showVScrollBar:
 		contentHeight = getTreeContentHeight(tree)
 		if contentHeight > 0 and contentHeight > tree.size.cy:
@@ -3730,21 +3730,21 @@ def touchDownTree(tree, firstTouch, firstPoint, secondTouch, secondPoint, clicks
 	
 
 def getTotalIndent(node):
-	"""获取总的偏移量
-	node:树节点"""
+	"""獲取總的偏移量
+	node:樹節點"""
 	if node.parentNode != None:
 		return node.indent + getTotalIndent(node.parentNode)
 	else:
 		return node.indent
 
 def touchUpTree(tree, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""树的鼠标抬起方法
-	tree: 树
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks:点击次数"""
+	"""樹的鼠標擡起方法
+	tree: 樹
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks:點擊次數"""
 	tree.downScrollHButton = False
 	tree.downScrollVButton = False
 	tree.hoverScrollHButton = False
@@ -3792,14 +3792,14 @@ def touchUpTree(tree, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 			cTop += tree.rowHeight
 
 def lineXY(chart, x1, y1, x2, y2, oX, oY):
-	"""计算直线参数 
-	mp:坐标 
-	x1:横坐标1 
-	y1:纵坐标1 
-	x2:横坐标2 
-	y2:纵坐标2 
-	oX:坐标起始X 
-	oY:坐标起始Y"""
+	"""計算直線參數 
+	mp:坐標 
+	x1:橫坐標1 
+	y1:縱坐標1 
+	x2:橫坐標2 
+	y2:縱坐標2 
+	oX:坐標起始X 
+	oY:坐標起始Y"""
 	chart.kChart = 0
 	chart.bChart = 0
 	if (x1 - oX) != (x2 - oX):
@@ -3807,12 +3807,12 @@ def lineXY(chart, x1, y1, x2, y2, oX, oY):
 		chart.bChart = (y1 - oY) - chart.kChart * (x1 - oX)
 
 def selectLine(chart, mp, x1, y1, x2, y2):
-	"""判断是否选中直线 
-	mp:坐标 
-	x1:横坐标1 
-	y1:纵坐标1 
-	x2:横坐标2 
-	y2:纵坐标2"""
+	"""判斷是否選中直線 
+	mp:坐標 
+	x1:橫坐標1 
+	y1:縱坐標1 
+	x2:橫坐標2 
+	y2:縱坐標2"""
 	lineXY(chart, x1, y1, x2, y2, 0, 0)
 	if chart.kChart != 0 or chart.bChart != 0:
 	    if mp.y / (mp.x * chart.kChart + chart.bChart) >= 0.9 and mp.y / (mp.x * chart.kChart + chart.bChart) <= 1.1:
@@ -3823,12 +3823,12 @@ def selectLine(chart, mp, x1, y1, x2, y2):
 	return False
 
 def selectRay(chart, mp, x1, y1, x2, y2):
-	"""判断是否选中射线 
-	mp:坐标 
-	x1:横坐标1 
-	y1:纵坐标1 
-	x2:横坐标2 
-	y2:纵坐标2"""
+	"""判斷是否選中射線 
+	mp:坐標 
+	x1:橫坐標1 
+	y1:縱坐標1 
+	x2:橫坐標2 
+	y2:縱坐標2"""
 	lineXY(chart, x1, y1, x2, y2, 0, 0)
 	if chart.kChart != 0 or chart.bChart != 0:
 		if mp.y / (mp.x * chart.kChart + chart.bChart) >= 0.9 and mp.y / (mp.x * chart.kChart + chart.bChart) <= 1.1:
@@ -3850,12 +3850,12 @@ def selectRay(chart, mp, x1, y1, x2, y2):
 	return False
 
 def selectSegment(chart, mp, x1, y1, x2, y2):
-	"""判断是否选中线段 
-	mp:坐标 
-	x1:横坐标1 
-	y1:纵坐标1 
-	x2:横坐标2 
-	y2:纵坐标2"""
+	"""判斷是否選中線段 
+	mp:坐標 
+	x1:橫坐標1 
+	y1:縱坐標1 
+	x2:橫坐標2 
+	y2:縱坐標2"""
 	lineXY(chart, x1, y1, x2, y2, 0, 0)
 	smallX = x2
 	if x1 <= x2:
@@ -3879,25 +3879,25 @@ def selectSegment(chart, mp, x1, y1, x2, y2):
 	return False
 
 def ellipseOR(chart, x1, y1, x2, y2, x3, y3):
-	""" 根据三点计算圆心 
-	x1:横坐标 
-	y1:纵坐标1 
-	x2:横坐标2 
-	y2:纵坐标2 
-	x3:横坐标3 
-	y3:纵坐标3"""
+	""" 根據三點計算圓心 
+	x1:橫坐標 
+	y1:縱坐標1 
+	x2:橫坐標2 
+	y2:縱坐標2 
+	x3:橫坐標3 
+	y3:縱坐標3"""
 	chart.oXChart = ((y3 - y1) * (y2 * y2 - y1 * y1 + x2 * x2 - x1 * x1) + (y2 - y1) * (y1 * y1 - y3 * y3 + x1 * x1 - x3 * x3)) / (2 * (x2 - x1) * (y3 - y1) - 2 * (x3 - x1) * (y2 - y1))
 	chart.oYChart = ((x3 - x1) * (x2 * x2 - x1 * x1 + y2 * y2 - y1 * y1) + (x2 - x1) * (x1 * x1 - x3 * x3 + y1 * y1 - y3 * y3)) / (2 * (y2 - y1) * (x3 - x1) - 2 * (y3 - y1) * (x2 - x1))
 	chart.rChart = math.sqrt((x1 - chart.oXChart) * (x1 - chart.oXChart) + (y1 - chart.oYChart) * (y1 - chart.oYChart))
 
 def ellipseHasPoint(x, y, oX, oY, a, b):
-	"""判断点是否在椭圆上
-	x:横坐标 
-	y:纵坐标 
-	oX:坐标起始X 
-	oY:坐标起始Y 
-	a:椭圆参数a 
-	b:椭圆参数b"""
+	"""判斷點是否在橢圓上
+	x:橫坐標 
+	y:縱坐標 
+	oX:坐標起始X 
+	oY:坐標起始Y 
+	a:橢圓參數a 
+	b:橢圓參數b"""
 	x -= oX
 	y -= oY
 	if a == 0 and b == 0 and x == 0 and y == 0:
@@ -3914,7 +3914,7 @@ def ellipseHasPoint(x, y, oX, oY, a, b):
 	return False
 
 def linearRegressionEquation(chart, list):
-	"""计算线性回归 
+	"""計算線性回歸 
 	list:集合"""
 	result = 0
 	sumX = 0
@@ -3940,7 +3940,7 @@ def linearRegressionEquation(chart, list):
 	return result
 
 def maxValue(list):
-	"""计算最大值 
+	"""計算最大值 
 	list:集合"""
 	length = len(list)
 	maxValue = 0
@@ -3953,7 +3953,7 @@ def maxValue(list):
 	return maxValue
 
 def minValue(list):
-	"""计算最小值 
+	"""計算最小值 
 	list:集合"""
 	length = len(list)
 	minValue = 0
@@ -3966,7 +3966,7 @@ def minValue(list):
 	return minValue
 
 def avgValue(list):
-	"""计算平均值 
+	"""計算平均值 
 	list:集合"""
 	sumValue = 0
 	length = len(list)
@@ -3977,18 +3977,18 @@ def avgValue(list):
 	return
 	
 def parallelogram(chart, x1, y1, x2, y2, x3, y3):
-	"""计算平行四边形参数 
-	x1:横坐标1 
-	y1:纵坐标1 
-	x2:横坐标2 
-	y2:纵坐标2 
-	x3:横坐标3 
-	y3:纵坐标3"""
+	"""計算平行四邊形參數 
+	x1:橫坐標1 
+	y1:縱坐標1 
+	x2:橫坐標2 
+	y2:縱坐標2 
+	x3:橫坐標3 
+	y3:縱坐標3"""
 	chart.x4Chart = x1 + x3 - x2
 	chart.y4Chart = y1 + y3 - y2
 
 def fibonacciValue(index):
-	"""计算斐波那契数列 
+	"""計算斐波那契數列 
 	index:索引"""
 	if index < 1:
 		return 0
@@ -4006,9 +4006,9 @@ def fibonacciValue(index):
 		return result
 
 def getPercentParams(y1, y2):
-	""" 获取百分比线的刻度 
-	y1: 纵坐标1 
-	y2: 纵坐标2"""
+	""" 獲取百分比線的刻度 
+	y1: 縱坐標1 
+	y2: 縱坐標2"""
 	y0 = 0
 	y25 = 0
 	y50 = 0
@@ -4033,11 +4033,11 @@ def getPercentParams(y1, y2):
 	return list
 
 def rectangleXYWH(chart, x1, y1, x2, y2):
-	"""根据坐标计算矩形
-	x1:横坐标1
-	y1:纵坐标1
-	x2:横坐标2
-	y2:纵坐标2"""
+	"""根據坐標計算矩形
+	x1:橫坐標1
+	y1:縱坐標1
+	x2:橫坐標2
+	y2:縱坐標2"""
 	chart.xChart = x2
 	if x1 < x2:
 		chart.xChart = x1
@@ -4053,9 +4053,9 @@ def rectangleXYWH(chart, x1, y1, x2, y2):
 
 
 def getChartIndex(chart, mp):
-	"""根据位置计算索引
-	chart:图表
-	mp:坐标"""
+	"""根據位置計算索引
+	chart:圖表
+	mp:坐標"""
 	if chart.datas != None and len(chart.datas) == 0:
 		return -1
 	if mp.x <= 0:
@@ -4073,18 +4073,18 @@ def getChartIndex(chart, mp):
 	return index
 
 def getChartMaxVisibleCount(chart, hScalePixel, pureH):
-	"""获取最大显示记录条数
-	chart:图表
-	hScalePixel:间隔
-	pureH:横向距离"""
+	"""獲取最大顯示記錄條數
+	chart:圖表
+	hScalePixel:間隔
+	pureH:橫向距離"""
 	count = int(pureH / hScalePixel)
 	if count < 0:
 	    count = 0
 	return count
 
 def getCandleDivHeight(chart):
-	"""获取图表层的高度
-	chart:图表"""
+	"""獲取圖表層的高度
+	chart:圖表"""
 	height = chart.size.cy - chart.hScaleHeight
 	if height > 0:
 		return height * chart.candleDivPercent
@@ -4092,8 +4092,8 @@ def getCandleDivHeight(chart):
 		return 0
 
 def getVolDivHeight(chart):
-	"""获取成交量层的高度
-	chart:图表"""
+	"""獲取成交量層的高度
+	chart:圖表"""
 	height = chart.size.cy - chart.hScaleHeight
 	if height > 0:
 		return height * chart.volDivPercent
@@ -4101,8 +4101,8 @@ def getVolDivHeight(chart):
 		return 0
 
 def getIndDivHeight(chart):
-	"""获取指标层的高度
-	chart:图表"""
+	"""獲取指標層的高度
+	chart:圖表"""
 	height = chart.size.cy - chart.hScaleHeight
 	if height > 0:
 		return height * chart.indDivPercent
@@ -4110,8 +4110,8 @@ def getIndDivHeight(chart):
 		return 0
 
 def getIndDivHeight2(chart):
-	"""获取指标层2的高度
-	chart:图表"""
+	"""獲取指標層2的高度
+	chart:圖表"""
 	height = chart.size.cy - chart.hScaleHeight
 	if height > 0:
 		return height * chart.indDivPercent2
@@ -4119,19 +4119,19 @@ def getIndDivHeight2(chart):
 		return 0
 
 def getChartWorkAreaWidth(chart):
-	"""获取横向工作区
-	chart:图表"""
+	"""獲取橫向工作區
+	chart:圖表"""
 	return chart.size.cx - chart.leftVScaleWidth - chart.rightVScaleWidth - chart.rightSpace - chart.offsetX
 
 def getChartX(chart, index):
-	"""根据索引获取横坐标
-	chart:图表
+	"""根據索引獲取橫坐標
+	chart:圖表
 	index:索引"""
 	return chart.leftVScaleWidth + (index - chart.firstVisibleIndex) * chart.hScalePixel + chart.hScalePixel / 2 + chart.offsetX
 
 def getChartIndexByDate(chart, date):
-	"""根据日期获取索引
-	chart:图表
+	"""根據日期獲取索引
+	chart:圖表
 	date:日期"""
 	index = -1
 	for i in range(0, len(chart.datas)):
@@ -4141,8 +4141,8 @@ def getChartIndexByDate(chart, date):
 	return index
 
 def getChartDateByIndex(chart, index):
-	"""根据索引获取日期
-	chart:图表
+	"""根據索引獲取日期
+	chart:圖表
 	index:索引"""
 	date = ""
 	if index >= 0 and index < len(chart.datas):
@@ -4150,8 +4150,8 @@ def getChartDateByIndex(chart, index):
 	return date
 
 def checkChartLastVisibleIndex(chart):
-	"""检查最后可见索引
-	chart:图表"""
+	"""檢查最後可見索引
+	chart:圖表"""
 	dataCount = len(chart.datas)
 	workingAreaWidth = getChartWorkAreaWidth(chart)
 	maxVisibleRecord = getChartMaxVisibleCount(chart, chart.hScalePixel, workingAreaWidth)
@@ -4172,8 +4172,8 @@ def checkChartLastVisibleIndex(chart):
 	    chart.lastRecordIsVisible = True
 
 def resetChartVisibleRecord(chart):
-	"""自动设置首先可见和最后可见的记录号
-	chart:图表"""
+	"""自動設置首先可見和最後可見的記錄號
+	chart:圖表"""
 	rowsCount = len(chart.datas)
 	workingAreaWidth = getChartWorkAreaWidth(chart)
 	if chart.autoFillHScale:
@@ -4207,10 +4207,10 @@ def resetChartVisibleRecord(chart):
 	                    chart.firstVisibleIndex = chart.lastVisibleIndex
 
 def setChartVisibleIndex(chart, firstVisibleIndex, lastVisibleIndex):
-	"""设置可见索引
-	chart:图表
+	"""設置可見索引
+	chart:圖表
 	firstVisibleIndex:起始索引
-	lastVisibleIndex:结束索引"""
+	lastVisibleIndex:結束索引"""
 	xScalePixel = getChartWorkAreaWidth(chart) / (lastVisibleIndex - firstVisibleIndex + 1)
 	if xScalePixel < 1000000:
 	    chart.firstVisibleIndex = firstVisibleIndex
@@ -4223,10 +4223,10 @@ def setChartVisibleIndex(chart, firstVisibleIndex, lastVisibleIndex):
 	    checkChartLastVisibleIndex(chart)
 
 def getChartY(chart, divIndex, value):
-	"""计算数值在层中的位置
-	chart:图表
-	divIndex:所在层
-	chart:数值"""
+	"""計算數值在層中的位置
+	chart:圖表
+	divIndex:所在層
+	chart:數值"""
 	if divIndex == 0:
 		if chart.candleMax > chart.candleMin:
 			cValue = value
@@ -4296,10 +4296,10 @@ def getChartY(chart, divIndex, value):
 			return 0
 
 def getChartYInRight(chart, divIndex, value):
-	"""计算数值在层中右轴的位置
-	chart:图表
-	divIndex:所在层
-	chart:数值"""
+	"""計算數值在層中右軸的位置
+	chart:圖表
+	divIndex:所在層
+	chart:數值"""
 	if divIndex == 0:
 		if chart.candleMaxRight > chart.candleMinRight:
 			cValue = value
@@ -4370,9 +4370,9 @@ def getChartYInRight(chart, divIndex, value):
 
 
 def getChartValue(chart, point):
-	"""根据坐标获取对应的值
-	chart:图表
-	point:坐标"""
+	"""根據坐標獲取對應的值
+	chart:圖表
+	point:坐標"""
 	candleHeight = getCandleDivHeight(chart)
 	volHeight = getVolDivHeight(chart)
 	indHeight = getIndDivHeight(chart)
@@ -4421,9 +4421,9 @@ def getChartValue(chart, point):
 	return 0
 
 def getCandleDivValue(chart, point):
-	"""根据坐标获取图表层对应的值
-	chart:图表
-	point:坐标"""
+	"""根據坐標獲取圖表層對應的值
+	chart:圖表
+	point:坐標"""
 	candleHeight = getCandleDivHeight(chart)
 	rate = 0
 	if candleHeight - chart.candlePaddingTop - chart.candlePaddingBottom > 0:
@@ -4446,8 +4446,8 @@ def getCandleDivValue(chart, point):
 		return result
 
 def clearDataArr(chart):
-	"""清除缓存数据方法
-	chart:图表"""
+	"""清除緩存數據方法
+	chart:圖表"""
 	chart.closearr = []
 	chart.allema12 = []
 	chart.allema26 = []
@@ -4478,8 +4478,8 @@ def clearDataArr(chart):
 	chart.cci = []
 
 def calcChartIndicator(chart):
-	"""获取数据
-	chart:图表"""
+	"""獲取數據
+	chart:圖表"""
 	clearDataArr(chart)
 	closeArr = []
 	highArr = []
@@ -4536,8 +4536,8 @@ def calcChartIndicator(chart):
 		calculateChartMaxMin(chart)
 
 def calculateChartMaxMin(chart):
-	"""计算最大最小值
-	chart:图表"""
+	"""計算最大最小值
+	chart:圖表"""
 	chart.candleMax = 0
 	chart.candleMin = 0
 	chart.volMax = 0
@@ -5063,8 +5063,8 @@ def calculateChartMaxMin(chart):
 			div.visibleMinRight = -1
 
 def zoomOutChart(chart):
-	"""缩小
-	chart:图表"""
+	"""縮小
+	chart:圖表"""
 	if chart.autoFillHScale == False:
 		hScalePixel = chart.hScalePixel
 		oldX = getChartX(chart, chart.crossStopIndex)
@@ -5117,7 +5117,7 @@ def zoomOutChart(chart):
 
 def zoomInChart(chart):
 	"""放大
-	chart:图表"""
+	chart:圖表"""
 	if chart.autoFillHScale == False:
 		hScalePixel = chart.hScalePixel
 		oldX = getChartX(chart, chart.crossStopIndex)
@@ -5163,13 +5163,13 @@ def zoomInChart(chart):
 			calculateChartMaxMin(chart)
 
 def chartGridScale(chart, minValue, maxValue, yLen, maxSpan, minSpan, defCount):
-	"""计算坐标轴
+	"""計算坐標軸
 	min:最小值
 	max:最大值
-	yLen:长度
-	maxSpan:最大间隔
-	minSpan:最小间隔
-	defCount:数量"""
+	yLen:長度
+	maxSpan:最大間隔
+	minSpan:最小間隔
+	defCount:數量"""
 	chart.gridStep = 0
 	chart.gridDigit = 0
 	if defCount > 0 and maxSpan > 0 and minSpan > 0:
@@ -5211,11 +5211,11 @@ def chartGridScale(chart, minValue, maxValue, yLen, maxSpan, minSpan, defCount):
 	return 0
 
 def getLRBandRange(chart, plot, a, b):
-	"""计算线性回归上下限
-	chart:图表
-	plot:画线
-	a:直线k
-	b:直线b"""
+	"""計算線性回歸上下限
+	chart:圖表
+	plot:畫線
+	a:直線k
+	b:直線b"""
 	bIndex = getChartIndexByDate(chart, plot.key1)
 	eIndex = getChartIndexByDate(chart, plot.key2)
 	tempBIndex = min(bIndex, eIndex)
@@ -5234,9 +5234,9 @@ def getLRBandRange(chart, plot, a, b):
 	chart.downSubValue = maxValue(downList)
 
 def getCandleRange(chart, plot):
-	"""获取图表的区域
-	chart: 图表
-	plot: 画线"""
+	"""獲取圖表的區域
+	chart: 圖表
+	plot: 畫線"""
 	bIndex = getChartIndexByDate(chart, plot.key1)
 	eIndex = getChartIndexByDate(chart, plot.key2)
 	tempBIndex = min(bIndex, eIndex)
@@ -5252,12 +5252,12 @@ def getCandleRange(chart, plot):
 	chart.nLowChart = minValue(lowList)
 
 def selectLines(chart, mp, divIndex, datas, curIndex):
-	"""判断是否选中线条
-	chart:图表
-	mp:坐标
-	divIndex:层索引
-	datas:数据
-	curIndex:当前索引"""
+	"""判斷是否選中線條
+	chart:圖表
+	mp:坐標
+	divIndex:層索引
+	datas:數據
+	curIndex:當前索引"""
 	if len(datas) > 0:
 		topY = getChartY(chart, divIndex, datas[curIndex])
 		if chart.hScalePixel <= 1:
@@ -5307,12 +5307,12 @@ def selectLines(chart, mp, divIndex, datas, curIndex):
 	return False
 
 def selectLinesInRight(chart, mp, divIndex, datas, curIndex):
-	"""判断是否在右轴选中线条
-	chart:图表
-	mp:坐标
-	divIndex:层索引
-	datas:数据
-	curIndex:当前索引"""
+	"""判斷是否在右軸選中線條
+	chart:圖表
+	mp:坐標
+	divIndex:層索引
+	datas:數據
+	curIndex:當前索引"""
 	if len(datas) > 0:
 		topY = getChartYInRight(chart, divIndex, datas[curIndex])
 		if chart.hScalePixel <= 1:
@@ -5362,9 +5362,9 @@ def selectLinesInRight(chart, mp, divIndex, datas, curIndex):
 	return False
 
 def selectShape(chart, mp):
-	"""判断是否选中图形
-	chart:图表
-	mp:坐标"""
+	"""判斷是否選中圖形
+	chart:圖表
+	mp:坐標"""
 	if chart.datas != None and len(chart.datas) > 0:
 		chart.selectShape = ""
 		chart.selectShapeEx = ""
@@ -5517,14 +5517,14 @@ def selectShape(chart, mp):
 						break
 
 def drawChartLines(chart, paint, clipRect, divIndex, datas, color, selected):
-	"""绘制线条
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域
-	divIndex:图层
-	datas:数据
-	color:颜色
-	selected:是否选中"""
+	"""繪制線條
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域
+	divIndex:圖層
+	datas:數據
+	color:顏色
+	selected:是否選中"""
 	maxVisibleRecord = getChartMaxVisibleCount(chart, chart.hScalePixel, getChartWorkAreaWidth(chart))
 	lastValidIndex = chart.lastVisibleIndex
 	if chart.lastValidIndex != -1:
@@ -5544,14 +5544,14 @@ def drawChartLines(chart, paint, clipRect, divIndex, datas, color, selected):
 	paint.drawPolyline(color, chart.lineWidth, 0, drawPoints)
 
 def drawChartLinesInRight(chart, paint, clipRect, divIndex, datas, color, selected):
-	"""绘制线条到右轴
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域
-	divIndex:图层
-	datas:数据
-	color:颜色
-	selected:是否选中"""
+	"""繪制線條到右軸
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域
+	divIndex:圖層
+	datas:數據
+	color:顏色
+	selected:是否選中"""
 	maxVisibleRecord = getChartMaxVisibleCount(chart, chart.hScalePixel, getChartWorkAreaWidth(chart))
 	lastValidIndex = chart.lastVisibleIndex
 	if chart.lastValidIndex != -1:
@@ -5571,9 +5571,9 @@ def drawChartLinesInRight(chart, paint, clipRect, divIndex, datas, color, select
 	paint.drawPolyline(color, chart.lineWidth, 0, drawPoints)
 
 def toFixed(value, digit):
-	"""数值转字符串，可以设置保留位数
-	value 数值
-	digit 小数位数"""
+	"""數值轉字符串，可以設置保留位數
+	value 數值
+	digit 小數位數"""
 	if digit > 0:
 		return ("{:." + str(digit) + "f}").format(value)
 	else:
@@ -5581,34 +5581,34 @@ def toFixed(value, digit):
 
 
 def getEMA(n, value, lastEMA):
-	"""计算EMA
+	"""計算EMA
 	n:周期
-	value:当前数据
-	lastEMA:上期数据"""
+	value:當前數據
+	lastEMA:上期數據"""
 	return(value * 2 + lastEMA * (n - 1)) / (n + 1)
 
 def getMACD(dif, dea):
-	"""计算MACD
-	dif:DIF数据
-	dea:DEA数据"""
+	"""計算MACD
+	dif:DIF數據
+	dea:DEA數據"""
 	result = []
 	for i in range(0,len(dif)):
 		result.append((dif[i] - dea[i]) * 2)
 	return result
 
 def getDIF(close12, close26):
-	"""计算DIF
-	close12:12日数据
-	close26:26日数据"""
+	"""計算DIF
+	close12:12日數據
+	close26:26日數據"""
 	result = []
 	for i in range(0,len(close12)):
 		result.append(close12[i] - close26[i])
 	return result
 
 def REF(ticks, days):
-	"""REF函数
-	ticks:数据
-	days:日数"""
+	"""REF函數
+	ticks:數據
+	days:日數"""
 	refArr = []
 	length = len(ticks)
 	for i in range(0,length):
@@ -5621,8 +5621,8 @@ def REF(ticks, days):
 	return refArr
 
 def HHV(ticks, days):
-	"""计算最大值
-	ticks 最高价数组
+	"""計算最大值
+	ticks 最高價數組
 	days"""
 	hhv = []
 	maxValue = ticks[0]
@@ -5642,8 +5642,8 @@ def HHV(ticks, days):
 	return hhv
 
 def LLV(ticks, days):
-	"""计算最小值
-	ticks 最低价数组
+	"""計算最小值
+	ticks 最低價數組
 	days"""
 	llv = []
 	minValue = ticks[0]
@@ -5663,9 +5663,9 @@ def LLV(ticks, days):
 	return llv
 
 def MA(ticks, days):
-	"""MA数据计算
-	ticks 收盘价数组
-	days 天数"""
+	"""MA數據計算
+	ticks 收盤價數組
+	days 天數"""
 	maSum = 0
 	mas = []
 	last = 0
@@ -5682,8 +5682,8 @@ def MA(ticks, days):
 	return mas
 
 def getRocData(ticks, n, m, roc, maroc):
-	"""计算ROC数据
-	ticks 收盘价数组"""
+	"""計算ROC數據
+	ticks 收盤價數組"""
 	for i in range(0,len(ticks)):
 		currRoc = 0
 		if i >= n:
@@ -5697,7 +5697,7 @@ def getRocData(ticks, n, m, roc, maroc):
 		maroc.append(marocMA[i])
 
 def getRSIData(ticks, n1, n2, n3, rsi1, rsi2, rsi3):
-	"""计算rsi指标"""
+	"""計算rsi指標"""
 	lastClosePx = ticks[0]
 	lastSm1 = 0
 	lastSa1 = 0
@@ -5747,7 +5747,7 @@ def getRSIData(ticks, n1, n2, n3, rsi1, rsi2, rsi3):
 		lastClosePx =  c
 
 def standardDeviationSum(listValue, avg_value, param):
-	"""获取方差数据"""
+	"""獲取方差數據"""
 	target_value = listValue[len(listValue) - 1]
 	sumValue = (target_value - avg_value) * (target_value - avg_value)
 	for i in range(0, len(listValue) - 1):
@@ -5756,7 +5756,7 @@ def standardDeviationSum(listValue, avg_value, param):
 	return sumValue
 
 def getBollData(ticks, maDays, ups, mas, lows):
-	"""计算boll指标"""
+	"""計算boll指標"""
 	tickBegin = maDays - 1
 	maSum  = 0
 	p = 0
@@ -5794,8 +5794,8 @@ def getBollData(ticks, maDays, ups, mas, lows):
 			lows.append(ma - 2 * md)
 
 def getMaxHighAndMinLow(chart, highArr, lowArr):
-	"""获取最大最小值区间
-	ticks:数据"""
+	"""獲取最大最小值區間
+	ticks:數據"""
 	for i in range(0, len(lowArr)):
 		high = highArr[i]
 		low = lowArr[i]
@@ -5805,7 +5805,7 @@ def getMaxHighAndMinLow(chart, highArr, lowArr):
 			chart.nMaxLow = low
 
 def getKDJData(chart, highArr, lowArr, closeArr, n, m1, m2, ks, ds, js):
-	"""计算kdj指标"""
+	"""計算kdj指標"""
 	rsvs = []
 	lastK = 0
 	lastD = 0
@@ -5842,8 +5842,8 @@ def getKDJData(chart, highArr, lowArr, closeArr, n, m1, m2, ks, ds, js):
 		js.append(3.0 * curK - 2.0 * curD)
 
 def getBIASData(ticks, n1, n2, n3, bias1Arr, bias2Arr, bias3Arr):
-	"""获取BIAS的数据
-	ticks 收盘价数组"""
+	"""獲取BIAS的數據
+	ticks 收盤價數組"""
 	ma1 = MA(ticks, n1)
 	ma2 = MA(ticks, n2)
 	ma3 = MA(ticks, n3)
@@ -5856,8 +5856,8 @@ def getBIASData(ticks, n1, n2, n3, bias1Arr, bias2Arr, bias3Arr):
 		bias3Arr.append(b3)
 
 def getDMAData(ticks, n1, n2, difArr, difmaArr):
-	"""计算DMA（平均差）
-	ticks 收盘价数组"""
+	"""計算DMA（平均差）
+	ticks 收盤價數組"""
 	ma10 = MA(ticks, n1)
 	ma50 = MA(ticks, n2)
 	for i in range(0,len(ticks)):
@@ -5868,7 +5868,7 @@ def getDMAData(ticks, n1, n2, difArr, difmaArr):
 		difmaArr.append(difma[i])
 
 def getBBIData(ticks, n1, n2, n3, n4, bbiArr):
-	"""计算BBI(多空指标)
+	"""計算BBI(多空指標)
 	ticks"""
 	ma3 = MA(ticks, n1)
 	ma6 = MA(ticks, n2)
@@ -5879,8 +5879,8 @@ def getBBIData(ticks, n1, n2, n3, n4, bbiArr):
 		bbiArr.append(bbi)
 
 def getWRData(closeArr, highArr, lowArr, n1, n2, wr1Arr, wr2Arr):
-	"""计算WR(威廉指标)
-	ticks 含最高价,最低价, 收盘价的二维数组
+	"""計算WR(威廉指標)
+	ticks 含最高價,最低價, 收盤價的二維數組
 	days"""
 	for i in range(0,len(closeArr)):
 		highArr.append(highArr[i])
@@ -5902,8 +5902,8 @@ def getWRData(closeArr, highArr, lowArr, n1, n2, wr1Arr, wr2Arr):
 		wr2Arr.append(wr2)
 
 def getCCIData(closeArr, highArr, lowArr, n, cciArr):
-	"""CCI(顺势指标)计算  CCI（N日）=（TP－MA）÷MD÷0.015
-	ticks 带最高价，最低价，收盘价的二维数组"""
+	"""CCI(順勢指標)計算  CCI（N日）=（TP－MA）÷MD÷0.015
+	ticks 帶最高價，最低價，收盤價的二維數組"""
 	tpArr = []
 	for i in range(0,len(closeArr)):
 		tpArr.append((closeArr[i] + highArr[i] + lowArr[i]) / 3)
@@ -5922,8 +5922,8 @@ def getCCIData(closeArr, highArr, lowArr, n, cciArr):
 	return cciArr
 
 def getTRIXData(ticks, n, m, trixArr, matrixArr):
-	"""获取TRIX的数据
-	ticks:数据"""
+	"""獲取TRIX的數據
+	ticks:數據"""
 	mtrArr = []
 
 	emaArr1 = []
@@ -5949,10 +5949,10 @@ def getTRIXData(ticks, n, m, trixArr, matrixArr):
 		matrixArr.append(matrixMa[i])
 
 def drawChartPlot(chart, paint, clipRect):
-	"""绘制画线工具
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制畫線工具
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if len(chart.plots) > 0:
 		divHeight = getCandleDivHeight(chart)
 		paint.setClip(chart.leftVScaleWidth, 0, chart.size.cx - chart.rightVScaleWidth, divHeight)
@@ -6421,9 +6421,9 @@ def drawChartPlot(chart, paint, clipRect):
 		paint.setClip(0, 0, chart.size.cx, chart.size.cy)
 
 def selectPlot(chart, mp):
-	"""选中直线
-	chart: 图表
-	mp:坐标"""
+	"""選中直線
+	chart: 圖表
+	mp:坐標"""
 	sPlot = None
 	chart.startMovePlot = False
 	chart.selectPlotPoint = -1
@@ -6762,12 +6762,12 @@ def selectPlot(chart, mp):
 	return sPlot
 
 def addPlotDefault(chart, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""添加画线
-	chart: 图表
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	"""添加畫線
+	chart: 圖表
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	mp = firstPoint
 	if mp.y < getCandleDivHeight(chart):
 		touchIndex = getChartIndex(chart, mp)
@@ -6834,12 +6834,12 @@ def addPlotDefault(chart, firstTouch, firstPoint, secondTouch, secondPoint):
 					chart.sPlot = selectPlot(chart, mp)
 
 def touchDownChart(chart, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""图表的鼠标按下方法
-	chart: 图表
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	"""圖表的鼠標按下方法
+	chart: 圖表
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	mp = firstPoint
 	chart.targetOldX = 0
 	chart.targetOldX2 = 0
@@ -6858,9 +6858,9 @@ def touchDownChart(chart, firstTouch, firstPoint, secondTouch, secondPoint):
 			chart.showCrossLine = True
 
 def scrollLeftChart(chart, step):
-	"""左滚
-	chart:图表
-	step:步长"""
+	"""左滾
+	chart:圖表
+	step:步長"""
 	chart.targetOldX = 0
 	chart.targetOldX2 = 0
 	if chart.showCrossLine:
@@ -6886,9 +6886,9 @@ def scrollLeftChart(chart, step):
 		calculateChartMaxMin(chart)
 
 def scrollRightChart(chart, step):
-	"""右滚
-	chart:图表
-	step:步长"""
+	"""右滾
+	chart:圖表
+	step:步長"""
 	chart.targetOldX = 0
 	chart.targetOldX2 = 0
 	dataCount = len(chart.datas)
@@ -6915,9 +6915,9 @@ def scrollRightChart(chart, step):
 		calculateChartMaxMin(chart)
 
 def keyDownChart(chart, key):
-	"""图标的键盘按下事件
-	chart:图表
-	key:按键"""
+	"""圖標的鍵盤按下事件
+	chart:圖表
+	key:按鍵"""
 	if key == 38:
 		zoomOutChart(chart)
 	elif key == 40:
@@ -6928,12 +6928,12 @@ def keyDownChart(chart, key):
 		scrollRightChart(chart, 1)
 
 def touchMoveChart(chart, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""图表的鼠标移动方法
-	chart: 图表
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	"""圖表的鼠標移動方法
+	chart: 圖表
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	if chart.datas == None or len(chart.datas) == 0:
 		return
 	mp = firstPoint
@@ -7075,20 +7075,20 @@ def touchMoveChart(chart, firstTouch, firstPoint, secondTouch, secondPoint):
 				calculateChartMaxMin(chart)
 
 def touchUpChart(chart, firstTouch, firstPoint, secondTouch, secondPoint):
-	"""图表的鼠标抬起方法
-	chart: 图表
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标"""
+	"""圖表的鼠標擡起方法
+	chart: 圖表
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標"""
 	chart.firstTouchIndexCache = -1
 	chart.secondTouchIndexCache = -1
 
 def drawChartScale(chart, paint, clipRect):
-	"""绘制刻度
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制刻度
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if chart.leftVScaleWidth > 0:
 		paint.fillRect(chart.scaleColor, chart.leftVScaleWidth, 0, chart.leftVScaleWidth + chart.lineWidth, chart.size.cy - chart.hScaleHeight)
 	if chart.rightVScaleWidth > 0:
@@ -7348,10 +7348,10 @@ def drawChartScale(chart, paint, clipRect):
 						i = i + 1
 
 def drawChartCrossLine(chart, paint, clipRect):
-	"""绘制十字线
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制十字線
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if chart.datas == None or len(chart.datas) == 0:
 		return
 	candleDivHeight = getCandleDivHeight(chart)
@@ -7763,10 +7763,10 @@ def drawChartCrossLine(chart, paint, clipRect):
 			paint.drawText(xText, chart.textColor, chart.font, drawX - xSize.cx / 2, chart.size.cy - chart.hScaleHeight + 3)
 
 def drawChartStock(chart, paint, clipRect):
-	"""绘制图表
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制圖表
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if chart.datas != None and len(chart.datas) > 0:
 		candleHeight = getCandleDivHeight(chart)
 		volHeight = getVolDivHeight(chart)
@@ -8071,7 +8071,7 @@ def drawChartStock(chart, paint, clipRect):
 						drawChartLines(chart, paint, clipRect, d, chart.dma2, chart.indicatorColors[1], True)
 					else:
 						drawChartLines(chart, paint, clipRect, d, chart.dma2, chart.indicatorColors[1], False)
-		#绘制扩展线条
+		#繪制擴展線條
 		if len(chart.shapes) > 0:
 			for i in range(0, len(chart.shapes)):
 				shape = chart.shapes[i]
@@ -8139,10 +8139,10 @@ def drawChartStock(chart, paint, clipRect):
 								drawChartLinesInRight(chart, paint, clipRect, shape.divIndex, shape.datas, shape.color, False)
 
 def drawChart(chart, paint, clipRect):
-	"""绘制图表
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制圖表
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if chart.backColor != "none":
 		paint.fillRect(chart.backColor, 0, 0, chart.size.cx, chart.size.cy)
 	if chart.onPaintChartScale != None:
@@ -8175,10 +8175,10 @@ def drawChart(chart, paint, clipRect):
 		paint.drawRect(chart.borderColor, chart.lineWidth, 0, 0, 0, chart.size.cx, chart.size.cy)
 
 def renderViews(views, paint, rect):
-	"""重绘视图 
-	views:视图集合 
-	paint:绘图对象 
-	rect:区域"""
+	"""重繪視圖 
+	views:視圖集合 
+	paint:繪圖對象 
+	rect:區域"""
 	size = len(views)
 	for i in range(0, size):
 		view = views[i]
@@ -8258,8 +8258,8 @@ def renderViews(views, paint, rect):
 
 def invalidate(paint):
 	"""全局刷新方法
-	views:视图集合
-	paint:绘图对象"""
+	views:視圖集合
+	paint:繪圖對象"""
 	if paint.onInvalidate:
 		paint.onInvalidate(paint)
 	else:
@@ -8271,8 +8271,8 @@ def invalidate(paint):
 		user32.InvalidateRect(paint.hWnd, ct.byref(rect), True)
 
 def invalidateView(view):
-	"""刷新视图方法
-	view:视图"""
+	"""刷新視圖方法
+	view:視圖"""
 	if view.paint.allowPartialPaint:
 		if view.paint.onInvalidateView:
 			view.paint.onInvalidateView(view)
@@ -8300,8 +8300,8 @@ def invalidateView(view):
 		invalidate(view.paint)
 
 def updateViewDefault(views):
-	"""更新悬浮状态
-	views:视图集合"""
+	"""更新懸浮狀態
+	views:視圖集合"""
 	for i in range(0,len(views)):
 		view = views[i]
 		if "leftstr" in view.exAttributes:
@@ -8398,7 +8398,7 @@ def updateViewDefault(views):
 			updateViewDefault(subViews)
 
 def windowResize(rect, resizePoint, nowPoint, startTouchPoint):
-	"""视图尺寸改变"""
+	"""視圖尺寸改變"""
 	if resizePoint == 0:
 		rect.left = rect.left + nowPoint.x - startTouchPoint.x
 		rect.top = rect.top + nowPoint.y - startTouchPoint.y
@@ -8421,7 +8421,7 @@ def windowResize(rect, resizePoint, nowPoint, startTouchPoint):
 		rect.bottom = rect.bottom + nowPoint.y - startTouchPoint.y
 
 def getResizeState(view, mp):
-	"""获取调整尺寸的点"""
+	"""獲取調整尺寸的點"""
 	bWidth = 5
 	width = view.size.cx
 	height = view.size.cy
@@ -8445,12 +8445,12 @@ def getResizeState(view, mp):
 		return -1
 
 def handleMouseMove(mp, buttons, clicks, delta, paint):
-	"""鼠标移动方法
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值
-	paint 绘图对象"""
+	"""鼠標移動方法
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值
+	paint 繪圖對象"""
 	if paint.touchDownView != None:
 		paint.touchMoveView = paint.touchDownView
 		cmpPoint = FCPoint(mp.x - clientX(paint.touchDownView), mp.y - clientY(paint.touchDownView))
@@ -8518,12 +8518,12 @@ def handleMouseMove(mp, buttons, clicks, delta, paint):
 				onMouseMoveDefault(view, cmpPoint, buttons, clicks, 0)
 
 def handleMouseDown(mp, buttons, clicks, delta, paint):
-	"""鼠标按下方法
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值
-	paint 绘图对象"""
+	"""鼠標按下方法
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值
+	paint 繪圖對象"""
 	if clicks == 2:
 		paint.isDoubleClick = True
 	else:
@@ -8554,12 +8554,12 @@ def handleMouseDown(mp, buttons, clicks, delta, paint):
 				paint.touchDownView.startRect = FCRect(paint.touchDownView.location.x, paint.touchDownView.location.y, paint.touchDownView.location.x + paint.touchDownView.size.cx, paint.touchDownView.location.y + paint.touchDownView.size.cy)
 
 def handleMouseUp(mp, buttons, clicks, delta, paint):
-	"""鼠标抬起方法
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值
-	paint 绘图对象"""
+	"""鼠標擡起方法
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值
+	paint 繪圖對象"""
 	paint.isDoubleClick = False
 	if paint.touchDownView != None:
 		cmpPoint = FCPoint(mp.x - clientX(paint.touchDownView), mp.y - clientY(paint.touchDownView))
@@ -8586,12 +8586,12 @@ def handleMouseUp(mp, buttons, clicks, delta, paint):
 	paint.draggingView = None
 
 def handleMouseWheel(mp, buttons, clicks, delta, paint):
-	"""鼠标滚动方法
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值
-	paint 绘图对象"""
+	"""鼠標滾動方法
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值
+	paint 繪圖對象"""
 	topViews = paint.views
 	view = findView(mp, topViews)
 	if view != None:
@@ -8605,9 +8605,9 @@ def handleMouseWheel(mp, buttons, clicks, delta, paint):
 			invalidateView(view)
 
 def getViewAttribute(view, atrName):
-	"""获取视图文本
-	view 视图
-	atrName 属性名称"""
+	"""獲取視圖文本
+	view 視圖
+	atrName 屬性名稱"""
 	viewText = ""
 	recvData = create_string_buffer(102400)
 	view.paint.gdiPlusPaint.getAttribute(view.gID, atrName, recvData)
@@ -8615,14 +8615,14 @@ def getViewAttribute(view, atrName):
 	return viewText
 
 def setViewAttribute(view, atrName, text):
-	"""设置视图文本
-	view 视图
-	atrName 属性名称
+	"""設置視圖文本
+	view 視圖
+	atrName 屬性名稱
 	text 文本"""
 	view.paint.gdiPlusPaint.setAttribute(view.gID, atrName, text)
 
 def getDaysInMonth(year, month):
-	"""获取月的日数
+	"""獲取月的日數
 	year:年
 	month:月"""
 	d31 = {1, 3, 5, 7, 8, 10, 12}
@@ -8638,14 +8638,14 @@ def getDaysInMonth(year, month):
 		return 0
 
 def getMonthStr(month):
-	"""根据字符获取月份
+	"""根據字符獲取月份
 	month:月"""
 	monthNames = { 1: "一月", 2: "二月", 3: "三月", 4: "四月", 5: "五月", 6: "六月",
 	7: "七月", 8: "八月", 9: "九月", 10: "十月", 11: "十一月", 12: "十二月"}
 	return monthNames.get(month, "")
 
 def getYear(years, year):
-	"""获取年
+	"""獲取年
 	years:年的集合
 	year:年"""
 	cy = None
@@ -8670,35 +8670,35 @@ def getYear(years, year):
 	return cy
 
 def showOrHideDayDiv(dayDiv, visible):
-	"""显示隐藏日期层
-	dayDiv:日期层
-	visible:是否可见"""
+	"""顯示隱藏日期層
+	dayDiv:日期層
+	visible:是否可見"""
 	dayButtonSize = len(dayDiv.dayButtons)
 	for i in range(0, dayButtonSize):
 		dayButton = dayDiv.dayButtons[i]
 		dayButton.visible = visible
 
 def showOrHideMonthDiv(monthDiv, visible):
-	"""显示隐藏月层
-	monthDiv:月层
-	visible:是否可见"""
+	"""顯示隱藏月層
+	monthDiv:月層
+	visible:是否可見"""
 	monthButtonSize = len(monthDiv.monthButtons)
 	for i in range(0, monthButtonSize):
 		monthButton = monthDiv.monthButtons[i]
 		monthButton.visible = visible
 
 def showOrHideYearDiv(yearDiv, visible):
-	"""显示隐藏年层
-	yearButtons:年层
-	visible:是否可见"""
+	"""顯示隱藏年層
+	yearButtons:年層
+	visible:是否可見"""
 	yearButtonSize = len(yearDiv.yearButtons)
 	for i in range(0,yearButtonSize):
 		yearButton = yearDiv.yearButtons[i]
 		yearButton.visible = visible
 
 def initCalendar(calendar):
-	"""初始化日历
-	calendar:日历"""
+	"""初始化日歷
+	calendar:日歷"""
 	calendar.dayDiv.calendar = calendar
 	calendar.monthDiv.calendar = calendar
 	calendar.yearDiv.calendar = calendar
@@ -8733,7 +8733,7 @@ def initCalendar(calendar):
 	calendar.timeDiv.calendar = calendar
 
 def dayOfWeek(y, m, d):
-	"""获取星期
+	"""獲取星期
 	y:年
 	m:月
 	d:日"""
@@ -8743,13 +8743,13 @@ def dayOfWeek(y, m, d):
 	return int((int((d + 2 * m + 3 * (m + 1) / 5) + y + int(y / 4) - int(y / 100) + int(y / 400)) + 1) % 7)
 
 def getMonth(calendar):
-	"""获取当月
-	calendar:日历"""
+	"""獲取當月
+	calendar:日歷"""
 	return getYear(calendar.years, calendar.selectedDay.year).months.get(calendar.selectedDay.month)
 
 def getNextMonth(calendar, year, month):
-	"""获取下个月
-	calendar:日历
+	"""獲取下個月
+	calendar:日歷
 	year:年
 	month:月"""
 	nextMonth = month + 1
@@ -8760,8 +8760,8 @@ def getNextMonth(calendar, year, month):
 	return getYear(calendar.years, nextYear).months.get(nextMonth)
 
 def getLastMonth(calendar, year, month):
-	"""获取上个月
-	calendar:日历
+	"""獲取上個月
+	calendar:日歷
 	year:年
 	month:月"""
 	lastMonth = month - 1
@@ -8772,9 +8772,9 @@ def getLastMonth(calendar, year, month):
 	return getYear(calendar.years, lastYear).months.get(lastMonth)
 
 def resetDayDiv(dayDiv, state):
-	"""重置日期层布局
-	dayDiv:日期层
-	state:状态"""
+	"""重置日期層布局
+	dayDiv:日期層
+	state:狀態"""
 	calendar = dayDiv.calendar
 	thisMonth = getMonth(calendar)
 	lastMonth = getLastMonth(calendar, thisMonth.year, thisMonth.month)
@@ -8872,9 +8872,9 @@ def resetDayDiv(dayDiv, state):
 			dayButton.selected = False
 
 def resetMonthDiv(monthDiv, state):
-	"""重置月层布局
-	monthDiv:月层
-	state:状态"""
+	"""重置月層布局
+	monthDiv:月層
+	state:狀態"""
 	calendar = monthDiv.calendar
 	thisYear = monthDiv.year
 	lastYear = monthDiv.year - 1
@@ -8942,9 +8942,9 @@ def resetMonthDiv(monthDiv, state):
 			left += ds.cx
 
 def resetYearDiv(yearDiv, state):
-	"""重置年层布局
-	yearDiv:年层
-	state:状态"""
+	"""重置年層布局
+	yearDiv:年層
+	state:狀態"""
 	calendar = yearDiv.calendar
 	thisStartYear = yearDiv.startYear
 	lastStartYear = yearDiv.startYear - 12
@@ -9012,9 +9012,9 @@ def resetYearDiv(yearDiv, state):
 			left += ds.cx
 
 def selectStartYear(yearDiv, startYear):
-	"""选择开始年份
-	yearDiv:年层
-	startYear:开始年"""
+	"""選擇開始年份
+	yearDiv:年層
+	startYear:開始年"""
 	if yearDiv.startYear != startYear:
 		if startYear > yearDiv.startYear:
 			yearDiv.aDirection = 1
@@ -9025,8 +9025,8 @@ def selectStartYear(yearDiv, startYear):
 		yearDiv.startYear = startYear
 
 def selectYear(monthDiv, year):
-	"""选择年份
-	monthDiv:月层
+	"""選擇年份
+	monthDiv:月層
 	year:年"""
 	if monthDiv.year != year:
 		if year > monthDiv.year:
@@ -9038,9 +9038,9 @@ def selectYear(monthDiv, year):
 		monthDiv.year = year
 
 def selectDay(dayDiv, selectedDay, lastDay):
-	"""选中日期
-	dayDiv:日期层
-	selectedDay:选中日
+	"""選中日期
+	dayDiv:日期層
+	selectedDay:選中日
 	lastDay:上一日"""
 	calendar = dayDiv.calendar
 	m = getYear(calendar.years, selectedDay.year).months.get(selectedDay.month)
@@ -9076,8 +9076,8 @@ def selectDay(dayDiv, selectedDay, lastDay):
 				dayButton.selected = False
 
 def calendarTimer(calendar):
-	"""日历的秒表
-	calendar:日历"""
+	"""日歷的秒表
+	calendar:日歷"""
 	paint = False
 	if calendar.dayDiv.aTick > 0:
 		calendar.dayDiv.aTick = int(calendar.dayDiv.aTick * 2 / 3)
@@ -9094,8 +9094,8 @@ def calendarTimer(calendar):
 			invalidateView(calendar)
 
 def updateCalendar(calendar):
-	"""更新日历的布局
-	calendar:日历"""
+	"""更新日歷的布局
+	calendar:日歷"""
 	if calendar.headDiv.visible:
 		calendar.headDiv.bounds = FCRect(0, 0, calendar.size.cx, 80)
 	else:
@@ -9111,9 +9111,9 @@ def updateCalendar(calendar):
 		resetYearDiv(calendar.yearDiv, 1)
 
 def drawHeadDiv(headDiv, paint):
-	"""绘制头部层
-	headDiv:头部层
-	paint:绘图对象"""
+	"""繪制頭部層
+	headDiv:頭部層
+	paint:繪圖對象"""
 	calendar = headDiv.calendar
 	bounds = headDiv.bounds
 	if headDiv.backColor != "none":
@@ -9146,7 +9146,7 @@ def drawHeadDiv(headDiv, paint):
 	tSize = paint.textSize(drawTitle, headDiv.titleFont)
 	paint.drawText(drawTitle, headDiv.textColor, headDiv.titleFont, bounds.left + (w - tSize.cx) / 2, 30)
 	tR = 10
-	#画左右三角
+	#畫左右三角
 	drawPoints = []
 	drawPoints.append(FCPoint(5, bounds.top + (bounds.bottom - bounds.top) / 2))
 	drawPoints.append(FCPoint(5 + tR * 2, bounds.top + (bounds.bottom - bounds.top) / 2 - tR))
@@ -9159,9 +9159,9 @@ def drawHeadDiv(headDiv, paint):
 	paint.fillPolygon(headDiv.arrowColor, drawPoints)
 
 def drawDayButton(dayButton, paint):
-	"""绘制日的按钮
-	dayButton:日期按钮
-	paint:绘图对象"""
+	"""繪制日的按鈕
+	dayButton:日期按鈕
+	paint:繪圖對象"""
 	if dayButton.day != None:
 		calendar = dayButton.calendar
 		bounds = dayButton.bounds
@@ -9178,9 +9178,9 @@ def drawDayButton(dayButton, paint):
 				paint.drawRect(dayButton.borderColor, 1, 0, bounds.left + 2, bounds.top + 2, bounds.right - 2, bounds.bottom - 2)
 
 def drawMonthButton(monthButton, paint):
-	"""绘制月的按钮
-	monthButton:月按钮
-	paint:绘图对象"""
+	"""繪制月的按鈕
+	monthButton:月按鈕
+	paint:繪圖對象"""
 	calendar = monthButton.calendar
 	bounds = monthButton.bounds
 	text = getMonthStr(monthButton.month)
@@ -9192,9 +9192,9 @@ def drawMonthButton(monthButton, paint):
 	    paint.drawRect(monthButton.borderColor, 1, 0, bounds.left + 2, bounds.top + 2, bounds.right - 2, bounds.bottom - 2)
 
 def drawYearButton(yearButton, paint):
-	"""绘制年的按钮
-	yearButton:年按钮
-	paint:绘图对象"""
+	"""繪制年的按鈕
+	yearButton:年按鈕
+	paint:繪圖對象"""
 	calendar = yearButton.calendar
 	bounds = yearButton.bounds
 	text = str(yearButton.year)
@@ -9206,9 +9206,9 @@ def drawYearButton(yearButton, paint):
 	    paint.drawRect(yearButton.borderColor, 1, 0, bounds.left + 2, bounds.top + 2, bounds.right - 2, bounds.bottom - 2)
 
 def drawCalendar(calendar, paint):
-	"""绘制日历
-	calendar:日历
-	paint:绘图对象"""
+	"""繪制日歷
+	calendar:日歷
+	paint:繪圖對象"""
 	if calendar.backColor != "none":
 		paint.fillRect(calendar.backColor, 0, 0, calendar.size.cx, calendar.size.cy)
 	if calendar.mode == "day":
@@ -9285,9 +9285,9 @@ def drawCalendar(calendar, paint):
 		paint.drawRect(calendar.borderColor, 1, 0, 0, 0, calendar.size.cx, calendar.size.cy)
 
 def clickDayButton(dayButton, mp):
-	"""点击日的按钮
-	dayButton:日期按钮
-	mp:坐标"""
+	"""點擊日的按鈕
+	dayButton:日期按鈕
+	mp:坐標"""
 	calendar = dayButton.calendar
 	lastDay = calendar.selectedDay
 	calendar.selectedDay = dayButton.day
@@ -9297,9 +9297,9 @@ def clickDayButton(dayButton, mp):
 	    invalidateView(calendar)
 
 def clickMonthButton(monthButton, mp):
-	"""点击月的按钮
-	monthButton:月按钮
-	mp:坐标"""
+	"""點擊月的按鈕
+	monthButton:月按鈕
+	mp:坐標"""
 	calendar = monthButton.calendar
 	month = getYear(calendar.years, monthButton.year).months[monthButton.month]
 	calendar.mode = "day"
@@ -9311,9 +9311,9 @@ def clickMonthButton(monthButton, mp):
 	    invalidateView(calendar)
 
 def clickYearButton(yearButton, mp):
-	"""点击年的按钮
-	mp:坐标
-	yearButton:年按钮"""
+	"""點擊年的按鈕
+	mp:坐標
+	yearButton:年按鈕"""
 	calendar = yearButton.calendar
 	calendar.mode = "month"
 	selectYear(calendar.monthDiv, yearButton.year)
@@ -9322,9 +9322,9 @@ def clickYearButton(yearButton, mp):
 	    invalidateView(calendar)
 
 def clickLastButton(headDiv, mp):
-	"""点击左侧的按钮
-	headDiv:头部层
-	mp:坐标"""
+	"""點擊左側的按鈕
+	headDiv:頭部層
+	mp:坐標"""
 	calendar = headDiv.calendar
 	if calendar.mode == "day":
 		lastMonth = getLastMonth(calendar, calendar.selectedDay.year, calendar.selectedDay.month)
@@ -9350,9 +9350,9 @@ def clickLastButton(headDiv, mp):
 		    invalidateView(calendar)
 
 def clickNextButton(headDiv, mp):
-	"""点击右侧的按钮
-	headDiv:头部层
-	mp:坐标"""
+	"""點擊右側的按鈕
+	headDiv:頭部層
+	mp:坐標"""
 	calendar = headDiv.calendar
 	if calendar.mode == "day":
 		nextMonth = getNextMonth(calendar, calendar.selectedDay.year, calendar.selectedDay.month)
@@ -9378,9 +9378,9 @@ def clickNextButton(headDiv, mp):
 		    invalidateView(calendar)
 
 def clickModeButton(headDiv, mp):
-	"""改变模式的按钮
-	headDiv:头部层
-	mp:坐标"""
+	"""改變模式的按鈕
+	headDiv:頭部層
+	mp:坐標"""
 	calendar = headDiv.calendar
 	if calendar.mode == "day":
 		calendar.mode = "month"
@@ -9397,9 +9397,9 @@ def clickModeButton(headDiv, mp):
 		    invalidateView(calendar)
 
 def clickCalendar(calendar, mp):
-	"""点击日历
-	calendar:日历
-	mp:坐标"""
+	"""點擊日歷
+	calendar:日歷
+	mp:坐標"""
 	headBounds = calendar.headDiv.bounds
 	if mp.x >= headBounds.left and mp.x <= headBounds.right and mp.y >= headBounds.top and mp.y <= headBounds.bottom:
 		tR = 10
@@ -9441,8 +9441,8 @@ def clickCalendar(calendar, mp):
 					return
 
 def adjustMenu(menu):
-	"""自动适应位置和大小
-	menu:菜单"""
+	"""自動適應位置和大小
+	menu:菜單"""
 	resetLayoutDiv(menu)
 	if menu.autoSize:
 		contentHeight = getDivContentHeight(menu)
@@ -9464,9 +9464,9 @@ def adjustMenu(menu):
 	menu.scrollV = 0
 
 def addMenuItem(item, parent):
-	"""添加菜单项
-	item:菜单项
-	menu:菜单"""
+	"""添加菜單項
+	item:菜單項
+	menu:菜單"""
 	if parent.viewType == "menu":
 		menu = parent
 		addViewToParent(item, menu)
@@ -9486,9 +9486,9 @@ def addMenuItem(item, parent):
 		menu.items.append(item)
 
 def addMenuItemToParent(item, parentItem):
-	"""添加菜单项
-	item:菜单项
-	parentItem:父菜单项"""
+	"""添加菜單項
+	item:菜單項
+	parentItem:父菜單項"""
 	item.parentItem = parentItem
 	if parentItem.dropDownMenu == None:
 		parentItem.dropDownMenu = FCMenu()
@@ -9499,8 +9499,8 @@ def addMenuItemToParent(item, parentItem):
 	parentItem.dropDownMenu.items.append(item)
 
 def checkShowMenu(paint):
-	"""控制菜单的显示隐藏
-	paint:绘图对象"""
+	"""控制菜單的顯示隱藏
+	paint:繪圖對象"""
 	paintAll = False
 	clickItem = False
 	for i in range(0, len(paint.views)):
@@ -9524,8 +9524,8 @@ def checkShowMenu(paint):
 		invalidate(paint)
 
 def closeMenus(items):
-	"""关闭网格视图
-	items:菜单集合"""
+	"""關閉網格視圖
+	items:菜單集合"""
 	itemSize = len(items)
 	close = False
 	for i in range(0, itemSize):
@@ -9540,8 +9540,8 @@ def closeMenus(items):
 	return close
 
 def touchMoveMenuItem(item):
-	"""鼠标移动到菜单项
-	item 菜单项"""
+	"""鼠標移動到菜單項
+	item 菜單項"""
 	parentItem = item.parentItem
 	items = []
 	if parentItem != None:
@@ -9553,14 +9553,14 @@ def touchMoveMenuItem(item):
 	closeMenus(items)
 	if len(item.items) > 0:
 		dropDownMenu = item.dropDownMenu
-		#获取位置和大小
+		#獲取位置和大小
 		if dropDownMenu != None and dropDownMenu.visible == False:
 			layoutStyle = dropDownMenu.layoutStyle
 			location = FCPoint(clientX(item) + item.size.cx, clientY(item))
 			if layoutStyle == "lefttoright" or layoutStyle == "righttoleft":
 				location.x = clientX(item)
 				location.y = clientY(item) + item.size.cy
-			#设置弹出位置
+			#設置彈出位置
 			dropDownMenu.location = location
 			dropDownMenu.visible = True
 			adjustMenu(dropDownMenu)
@@ -9569,10 +9569,10 @@ def touchMoveMenuItem(item):
 	invalidate(item.paint)
 
 def drawMenuItem(item, paint, clipRect):
-	"""重绘按钮
-	item:菜单项
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""重繪按鈕
+	item:菜單項
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if item == paint.touchDownView:
 		if item.pushedColor != None:
 			paint.fillRect(item.pushedColor, 0, 0, item.size.cx, item.size.cy)
@@ -9601,8 +9601,8 @@ def drawMenuItem(item, paint, clipRect):
 		paint.fillPolygon(item.textColor, drawPoints)
 
 def clickMenuItem(item):
-	"""点击菜单项
-	item:菜单项"""
+	"""點擊菜單項
+	item:菜單項"""
 	paintAll = False
 	if item.parentMenu != None:
 		if item.parentMenu.comboBox != None:
@@ -9625,10 +9625,10 @@ def clickMenuItem(item):
 		invalidate(item.paint)
 
 def drawComboBox(comboBox, paint, clipRect):
-	"""重绘按钮
+	"""重繪按鈕
 	comboBox:下拉列表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if comboBox.backColor != None:
 		paint.fillRoundRect(comboBox.backColor, 0, 0, comboBox.size.cx, comboBox.size.cy, comboBox.cornerRadius)
 	if comboBox.textColor != None and len(comboBox.text) > 0:
@@ -9644,8 +9644,8 @@ def drawComboBox(comboBox, paint, clipRect):
 	paint.fillPolygon(comboBox.textColor, drawPoints)
 
 def clickComboBox(comboBox):
-	"""点击下拉菜单
-	comboBox:下拉菜单"""
+	"""點擊下拉菜單
+	comboBox:下拉菜單"""
 	showX = clientX(comboBox)
 	showY = clientY(comboBox) + comboBox.size.cy
 	comboBox.dropDownMenu.location = FCPoint(showX, showY)
@@ -9654,9 +9654,9 @@ def clickComboBox(comboBox):
 	invalidate(comboBox.paint)
 
 def setAttributeDefault(view, child):
-	"""设置属性
-	view:视图
-	node:xml节点"""
+	"""設置屬性
+	view:視圖
+	node:xml節點"""
 	if view.paint != None:
 		if view.paint.defaultUIStyle == "dark":
 			view.backColor = "rgb(0,0,0)"
@@ -9823,10 +9823,10 @@ def setAttributeDefault(view, child):
 				view.exAttributes[name] = value
 
 def readTreeXmlNodeDefault(tree, parentNode, xmlNode):
-	"""读取Xml中的树节点
-	tree 树
-	parentNode 父节点
-	xmlNode Xml节点"""
+	"""讀取Xml中的樹節點
+	tree 樹
+	parentNode 父節點
+	xmlNode Xml節點"""
 	treeNode = FCTreeNode()
 	treeNode.value = xmlNode.attrib["text"]
 	appendTreeNode(tree, treeNode, parentNode)
@@ -9848,10 +9848,10 @@ def readTreeXmlNodeDefault(tree, parentNode, xmlNode):
 			readTreeXmlNodeDefault(tree, treeNode, child)
 
 def readXmlNodeDefault(paint, node, parent):
-	"""读取Xml
-	paint 绘图对象
-	node节点
-	parent 父视图"""
+	"""讀取Xml
+	paint 繪圖對象
+	node節點
+	parent 父視圖"""
 	for child in node:
 		view = None
 		typeStr = ""
@@ -10148,10 +10148,10 @@ def readXmlNodeDefault(paint, node, parent):
 					readXmlNodeDefault(paint, child, view)
 
 def onPaintDefault(view, paint, clipRect):
-	"""绘制视图
-	view:视图
-	paint:绘图对象
-	clipRect:区域"""
+	"""繪制視圖
+	view:視圖
+	paint:繪圖對象
+	clipRect:區域"""
 	if view.onPrePaint != None:
 		view.onPrePaint(view, paint, clipRect)
 		return
@@ -10195,10 +10195,10 @@ def onPaintDefault(view, paint, clipRect):
 		view.onPaint(view, paint, clipRect)
 
 def onPaintBorderDefault(view, paint, clipRect):
-	"""绘制视图边线
-	view:视图
-	paint:绘图对象
-	clipRect:区域"""
+	"""繪制視圖邊線
+	view:視圖
+	paint:繪圖對象
+	clipRect:區域"""
 	if view.onPrePaintBorder != None:
 		view.onPrePaintBorder(view, paint, clipRect)
 		return
@@ -10215,12 +10215,12 @@ def onPaintBorderDefault(view, paint, clipRect):
 		view.onPaintBorder(view, paint, clipRect)
 
 def onMouseMoveDefault(view, mp, buttons, clicks, delta):
-	"""视图的鼠标移动方法
-	view 视图
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值"""
+	"""視圖的鼠標移動方法
+	view 視圖
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值"""
 	if view.onPreMouseMove != None:
 		view.onPreMouseMove(view, mp, buttons, clicks, delta)
 		return
@@ -10259,12 +10259,12 @@ def onMouseMoveDefault(view, mp, buttons, clicks, delta):
 		view.onMouseMove(view, mp, buttons, clicks, delta)
 		
 def onMouseDownDefault(view, mp, buttons, clicks, delta):
-	"""视图的鼠标按下方法
-	view 视图
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值"""
+	"""視圖的鼠標按下方法
+	view 視圖
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值"""
 	if view.onPreMouseDown != None:
 		view.onPreMouseDown(view, mp, buttons, clicks, delta)
 		return
@@ -10296,12 +10296,12 @@ def onMouseDownDefault(view, mp, buttons, clicks, delta):
 		view.onMouseDown(view, mp, buttons, clicks, delta)
 
 def onMouseUpDefault(view, mp, buttons, clicks, delta):
-	"""视图的鼠标抬起方法
-	view 视图
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值"""
+	"""視圖的鼠標擡起方法
+	view 視圖
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值"""
 	if view.onPreMouseUp != None:
 		view.onPreMouseUp(view, mp, buttons, clicks, delta)
 		return
@@ -10326,13 +10326,13 @@ def onMouseUpDefault(view, mp, buttons, clicks, delta):
 		view.onMouseUp(view, mp, buttons, clicks, delta)	
 
 def onClickDefault(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""视图的鼠标点击方法
-	view 视图
-	firstTouch:是否第一次触摸 
-	firstPoint:第一次触摸的坐标 
-	secondTouch:是否第二次触摸 
-	secondPoint:第二次触摸的坐标
-	clicks 点击次数"""
+	"""視圖的鼠標點擊方法
+	view 視圖
+	firstTouch:是否第一次觸摸 
+	firstPoint:第一次觸摸的坐標 
+	secondTouch:是否第二次觸摸 
+	secondPoint:第二次觸摸的坐標
+	clicks 點擊次數"""
 	if view.onPreClick != None:
 		view.onPreClick(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks)
 		return
@@ -10359,12 +10359,12 @@ def onClickDefault(view, firstTouch, firstPoint, secondTouch, secondPoint, click
 		view.onClick(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks)
 
 def onMouseWheelDefault(view, mp, buttons, clicks, delta):
-	"""视图的鼠标滚动方法
-	view 视图
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值"""
+	"""視圖的鼠標滾動方法
+	view 視圖
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值"""
 	if view.onPreMouseWheel != None:
 		view.onPreMouseWheel(view, mp, buttons, clicks, delta)
 		return
@@ -10387,9 +10387,9 @@ def onMouseWheelDefault(view, mp, buttons, clicks, delta):
 		view.onMouseWheel(view, mp, buttons, clicks, delta)
 
 def onKeyDownDefault(view, value):
-	"""视图的键盘按下方法
-	view 视图
-	value 按键值"""
+	"""視圖的鍵盤按下方法
+	view 視圖
+	value 按鍵值"""
 	if view.onPreKeyDown != None:
 		view.onPreKeyDown(view, value)
 		return
@@ -10400,9 +10400,9 @@ def onKeyDownDefault(view, value):
 		view.onKeyDown(view, value)
 
 def onKeyUpDefault(view, value):
-	"""视图的键盘抬起方法
-	view 视图
-	value 按键值"""
+	"""視圖的鍵盤擡起方法
+	view 視圖
+	value 按鍵值"""
 	if view.onPreKeyUp != None:
 		view.onPreKeyUp(view, value)
 		return
@@ -10410,13 +10410,13 @@ def onKeyUpDefault(view, value):
 		view.onKeyUp(view, value)
 
 def onCharDefault(view, value):
-	"""视图的输入方法
-	view 视图
-	value 按键值"""
+	"""視圖的輸入方法
+	view 視圖
+	value 按鍵值"""
 	key = value
 
 def WndProcDefault(paint, hwnd, msg, wParam, lParam):
-	"""消息循环"""
+	"""消息循環"""
 	global mainWindowHandle
 	if msg == 0x0020:
 		if lParam == 33554433:
@@ -10444,7 +10444,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 	if hwnd == paint.hWnd:
 		if msg == WM_ERASEBKGND:
 			return 1
-		#大小改变
+		#大小改變
 		elif msg == WM_SIZE:
 			rect = RECT()
 			user32.GetClientRect(paint.hWnd, ct.byref(rect))
@@ -10458,7 +10458,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 					else:
 						updateViewDefault(paint.views)
 				invalidate(paint)
-		#鼠标左键按下
+		#鼠標左鍵按下
 		elif msg == WM_LBUTTONDOWN:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10467,7 +10467,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 			mp.x /= paint.scaleFactorX
 			mp.y /= paint.scaleFactorY
 			handleMouseDown(mp, 1, 1, 0, paint)
-		#鼠标左键按下
+		#鼠標左鍵按下
 		elif msg == WM_RBUTTONDOWN:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10476,7 +10476,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 			mp.x /= paint.scaleFactorX
 			mp.y /= paint.scaleFactorY
 			handleMouseDown(mp, 2, 1, 0, paint)
-		#鼠标左键双击
+		#鼠標左鍵雙擊
 		elif msg == WM_LBUTTONDBLCLK:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10485,7 +10485,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 			mp.x /= paint.scaleFactorX
 			mp.y /= paint.scaleFactorY
 			handleMouseDown(mp, 1, 2, 0, paint)
-		#鼠标左键双击
+		#鼠標左鍵雙擊
 		elif msg == WM_RBUTTONDBLCLK:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10494,7 +10494,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 			mp.x /= paint.scaleFactorX
 			mp.y /= paint.scaleFactorY
 			handleMouseDown(mp, 2, 2, 0, paint)
-		#鼠标左键抬起
+		#鼠標左鍵擡起
 		elif msg == WM_LBUTTONUP:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10506,7 +10506,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 				handleMouseUp(mp, 1, 2, 0, paint)
 			else:
 				handleMouseUp(mp, 1, 1, 0, paint)
-		#鼠标左键抬起
+		#鼠標左鍵擡起
 		elif msg == WM_RBUTTONUP:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10518,7 +10518,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 				handleMouseUp(mp, 2, 2, 0, paint)
 			else:
 				handleMouseUp(mp, 2, 1, 0, paint)
-		#鼠标滚动
+		#鼠標滾動
 		elif msg == WM_MOUSEWHEEL:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10530,7 +10530,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 				handleMouseWheel(mp, 0, 0, -1, paint)
 			else:
 				handleMouseWheel(mp, 0, 0, 1, paint)
-		#鼠标移动
+		#鼠標移動
 		elif msg == WM_MOUSEMOVE:
 			point = POINT()
 			user32.GetCursorPos(ct.byref(point))
@@ -10544,7 +10544,7 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 				handleMouseMove(mp, 2, 1, 0, paint)
 			else:
 				handleMouseMove(mp, 0, 0, 0, paint)
-		#重绘
+		#重繪
 		elif msg == WM_PAINT:
 			rect = RECT()
 			user32.GetClientRect(paint.hWnd, ct.byref(rect))
@@ -10572,11 +10572,11 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 					renderViews(paint.views, paint, drawRect)
 				paint.endPaint()
 				user32.ReleaseDC(paint.hWnd, hDC)
-	#输入法事件
+	#輸入法事件
 		elif msg == 0x010F or msg == 0x0286 or msg == 0x0281:
 			if paint.gdiPlusPaint != None:
 				paint.gdiPlusPaint.onMessage(hwnd,msg,wParam,lParam)
-		#按键输入
+		#按鍵輸入
 		elif msg == WM_CHAR or msg == WM_KEYDOWN or msg == WM_SYSKEYDOWN or msg == WM_KEYUP or msg == WM_SYSKEYUP:
 			if paint.focusedView != None:
 				if paint.focusedView.exView:
@@ -10607,14 +10607,14 @@ def WndProcDefault(paint, hwnd, msg, wParam, lParam):
 	return DefWindowProc(hwnd,msg,wParam,lParam)
 
 def renderFaceCat(paint, xml):
-	"""加载FaceCat
-	paint:绘图对象
-	xml:Xml内容"""
+	"""加載FaceCat
+	paint:繪圖對象
+	xml:Xml內容"""
 	root  = ET.fromstring(xml)
 	for child in root:
 		if child.tag == "{facecat}body":
 			readXmlNodeDefault(paint, child, None)
-	#获取窗体大小
+	#獲取窗體大小
 	rect = RECT()
 	user32.GetClientRect(paint.hWnd, ct.byref(rect))
 	#更新布局
@@ -10627,9 +10627,9 @@ def renderFaceCat(paint, xml):
 		invalidate(paint)
 
 def renderFaceCatInParent(parent, xml):
-	"""加载FaceCat到父视图
-	parent:父视图
-	xml:Xml内容"""
+	"""加載FaceCat到父視圖
+	parent:父視圖
+	xml:Xml內容"""
 	paint = parent.paint
 	root  = ET.fromstring(xml)
 	for child in root:
@@ -10641,47 +10641,47 @@ def renderFaceCatInParent(parent, xml):
 		updateViewDefault(paint.views)
 	invalidate(paint)
 
-mainWindowHandle = 0 #主窗体句柄
-showWindowState = 0 #显示的窗体状态
-showWindowSize = FCSize(0, 0) #显示的窗体大小
-showWindowLocation = FCPoint(0, 0) #显示的窗体位置
-centerScreenWindow = False #是否居中显示
+mainWindowHandle = 0 #主窗體句柄
+showWindowState = 0 #顯示的窗體狀態
+showWindowSize = FCSize(0, 0) #顯示的窗體大小
+showWindowLocation = FCPoint(0, 0) #顯示的窗體位置
+centerScreenWindow = False #是否居中顯示
 
 def setMaxWindow():
-	"""设置显示最大化"""
+	"""設置顯示最大化"""
 	global showWindowState
 	showWindowState = 1
 
 def hideWindow(paint):
-	"""隐藏窗体"""
+	"""隱藏窗體"""
 	global showWindowState
 	showWindowState = 1
 	user32.ShowWindow(paint.hWnd, SW_HIDE)
 
 def setWindowRect(location, size):
-	"""设置要创建的窗体大小"""
+	"""設置要創建的窗體大小"""
 	global showWindowSize
 	global showWindowLocation
 	showWindowLocation = location
 	showWindowSize = size
 
 def setWindowLocation(location):
-	"""设置窗体的位置"""
+	"""設置窗體的位置"""
 	global showWindowLocation
 	showWindowLocation = location
 
 def setCenterScreen(isCenter):
-	"""是否居中显示"""
+	"""是否居中顯示"""
 	global centerScreenWindow
 	centerScreenWindow = isCenter
 
 def setWindowSize(size):
-	"""设置窗体的大小"""
+	"""設置窗體的大小"""
 	global showWindowSize
 	showWindowSize = size
 
 def showWindow(paint, parentHwnd = 0):
-	"""显示窗体"""
+	"""顯示窗體"""
 	global mainWindowHandle
 	global showWindowState
 	global showWindowSize
@@ -10717,7 +10717,7 @@ def showWindow(paint, parentHwnd = 0):
 
 lastWndClass = []
 def createMainWindow(paint, title, wndProc):
-	"""创建默认的窗体"""
+	"""創建默認的窗體"""
 	global mainWindowHandle
 	global lastWndClass
 	clsName = str(uuid.uuid4())
@@ -10734,7 +10734,7 @@ def createMainWindow(paint, title, wndProc):
 	mainWindowHandle = hwnd
 
 def createWindow(paint, title, wndProc):
-	"""创建默认的窗体"""
+	"""創建默認的窗體"""
 	global lastWndClass
 	clsName = str(uuid.uuid4())
 	wcx = WNDCLASSEXW()
@@ -10749,20 +10749,20 @@ def createWindow(paint, title, wndProc):
 	paint.hWnd = hwnd
 
 class FCWorkInfo:
-	"""任务信息"""
+	"""任務信息"""
 	def __init__(self):
-	    self.index = 0          # 编号 ID
-	    self.name = ""          # 名称 Name
+	    self.index = 0          # 編號 ID
+	    self.name = ""          # 名稱 Name
 	    self.info = ""          # 信息 Information
-	    self.tag = None  # 对象 Object
+	    self.tag = None  # 對象 Object
 
 class FCMultiWork:
-	"""并行任务处理"""
+	"""並行任務處理"""
 	def __init__(self):
-		"""构造函数"""
-		self.isRunning = False  # 是否正在运行
-		self.waitWorks = []  # 等待处理的工作
-		self._lock = threading.Lock()   # 线程锁
+		"""構造函數"""
+		self.isRunning = False  # 是否正在運行
+		self.waitWorks = []  # 等待處理的工作
+		self._lock = threading.Lock()   # 線程鎖
 	def addWork(self, info):
 		"""添加工作
 		info:工作信息"""
@@ -10775,7 +10775,7 @@ class FCMultiWork:
 		"""工作完成"""
 		pass
 	def runThread(self):
-		"""启动线程"""
+		"""啟動線程"""
 		while self.isRunning:
 			newWorkInfo = None
 			isLast = False
@@ -10794,8 +10794,8 @@ class FCMultiWork:
 			else:
 				break
 	def run(self, threadCount):
-		"""启动
-		threadCount:线程数量"""
+		"""啟動
+		threadCount:線程數量"""
 		self.isRunning = True
 		for _ in range(threadCount):
 			tThread = threading.Thread(target=self.runThread)

@@ -1,43 +1,44 @@
-﻿from facecat import *
+# -*- coding:utf-8 -*-
+from facecat import *
 from datetime import datetime
 
 class ClientTickDataCache:
 	def __init__(self):
-	    self.code = ""  # 初始化代码
-	    self.lastAmount = 0  # 初始化上次成交额
+	    self.code = ""  # 初始化代碼
+	    self.lastAmount = 0  # 初始化上次成交額
 	    self.lastDate = 0  # 初始化上次日期
 	    self.lastVolume = 0  # 初始化上次成交量
 
 class ADJUSTMENTFACTOR:
 	def __init__(self):
 	    self.dwDate = 0  # 初始化日期
-	    self.f1 = 0  # 每10股派现
-	    self.f2 = 0  # 配股价
+	    self.f1 = 0  # 每10股派現
+	    self.f2 = 0  # 配股價
 	    self.f3 = 0  # 每10股送股
 	    self.f4 = 0  # 每10股配股
 
 def getDateNum(year, month, day, hour, minute, second, millisecond):
-	""" 获取日期的时间戳
+	""" 獲取日期的時間戳
 	 year 年份
 	 month 月份
 	 day 日
-	 hour 小时
-	 minute 分钟
+	 hour 小時
+	 minute 分鐘
 	 second 秒
 	 millisecond 毫秒
-	 @returns 返回日期的时间戳"""
+	 @returns 返回日期的時間戳"""
 	date = datetime(year, month, day, hour, minute, second, millisecond)
 	return int(date.timestamp())
 
 def numToDate(num):
-	""" 时间戳转日期
-	 num 时间戳
-	 @returns 返回日期对象"""
+	""" 時間戳轉日期
+	 num 時間戳
+	 @returns 返回日期對象"""
 	date = datetime.fromtimestamp(num)
 	return date
 
 def getSeason(month):
-	""" 获取季度
+	""" 獲取季度
 	 month 月份
 	 @returns 返回季度"""
 	if 1 <= month <= 3:
@@ -50,9 +51,9 @@ def getSeason(month):
 	    return 4
 
 def copySecurityData(data):
-	""" 拷贝数据
-	 data 原来的数据
-	 @returns 新数据"""
+	""" 拷貝數據
+	 data 原來的數據
+	 @returns 新數據"""
 	newData = SecurityData()
 	newData.date = data.date
 	newData.high = data.high
@@ -64,9 +65,9 @@ def copySecurityData(data):
 	return newData
 
 def multiMinuteSecurityDatas(newDatas, minuteDatas, cycle):
-	""" 多分钟数据处理
-	 newDatas 新数据数组
-	 minuteDatas 分钟数据数组
+	""" 多分鐘數據處理
+	 newDatas 新數據數組
+	 minuteDatas 分鐘數據數組
 	 cycle 周期"""
 	lastMinutes = 0
 	for minuteData in minuteDatas:
@@ -89,10 +90,10 @@ def multiMinuteSecurityDatas(newDatas, minuteDatas, cycle):
 	        lastMinutes = minutes
 
 def getHistoryWeekDatas(weekDatas, dayDatas):
-	""" 获取历史周数据
-	 weekDatas 周数据数组
-	 dayDatas 日数据数组
-	 @returns 返回操作结果"""
+	""" 獲取歷史周數據
+	 weekDatas 周數據數組
+	 dayDatas 日數據數組
+	 @returns 返回操作結果"""
 	dayDatasSize = len(dayDatas)
 	if dayDatasSize > 0:
 	    firstDate = getDateNum(1970, 1, 5, 0, 0, 0, 0)
@@ -122,10 +123,10 @@ def getHistoryWeekDatas(weekDatas, dayDatas):
 	return 1
 
 def getHistoryMonthDatas(monthDatas, dayDatas):
-	""" 获取历史月数据
-	 monthDatas 月数据数组
-	 dayDatas 日数据数组
-	 返回操作结果"""
+	""" 獲取歷史月數據
+	 monthDatas 月數據數組
+	 dayDatas 日數據數組
+	 返回操作結果"""
 	dayDatasSize = len(dayDatas)
 	if dayDatasSize > 0:
 	    monthData = copySecurityData(dayDatas[0])
@@ -162,10 +163,10 @@ def getHistoryMonthDatas(monthDatas, dayDatas):
 	return 1
 
 def getHistorySeasonDatas(seasonDatas, dayDatas):
-	""" 获取历史季节数据
-	 seasonDatas 季节数据数组
-	 dayDatas 日数据数组
-	 @returns 返回操作结果"""
+	""" 獲取歷史季節數據
+	 seasonDatas 季節數據數組
+	 dayDatas 日數據數組
+	 @returns 返回操作結果"""
 	dayDatasSize = len(dayDatas)
 	if dayDatasSize > 0:
 	    seasonData = copySecurityData(dayDatas[0])
@@ -202,10 +203,10 @@ def getHistorySeasonDatas(seasonDatas, dayDatas):
 	return 1
 
 def getHistoryHalfYearDatas(halfYearDatas, dayDatas):
-	""" 获取历史半年数据
-	 halfYearDatas 半年数据数组
-	 dayDatas 日数据数组
-	 @returns  返回操作结果"""
+	""" 獲取歷史半年數據
+	 halfYearDatas 半年數據數組
+	 dayDatas 日數據數組
+	 @returns  返回操作結果"""
 	dayDatasSize = len(dayDatas)
 	if dayDatasSize > 0:
 	    yearData = copySecurityData(dayDatas[0])
@@ -239,10 +240,10 @@ def getHistoryHalfYearDatas(halfYearDatas, dayDatas):
 	return 1
 
 def getHistoryYearDatas(yearDatas, dayDatas):
-	""" 获取历史年数据
-	 yearDatas 年数据数组
-	 dayDatas 日数据数组
-	 @returns 返回操作结果"""
+	""" 獲取歷史年數據
+	 yearDatas 年數據數組
+	 dayDatas 日數據數組
+	 @returns 返回操作結果"""
 	dayDatasSize = len(dayDatas)
 	if dayDatasSize > 0:
 	    yearData = copySecurityData(dayDatas[0])
@@ -276,11 +277,11 @@ def getHistoryYearDatas(yearDatas, dayDatas):
 	return 1
 
 def mergeLatestData(code, oldDatas, latestData, tickDataCache, dCycle):
-	""" 合并最新数据
-	 code 代码
-	 oldDatas 老数据数组
-	 latestData 新数据对象
-	 tickDataCache TICK数据缓存对象
+	""" 合並最新數據
+	 code 代碼
+	 oldDatas 老數據數組
+	 latestData 新數據對象
+	 tickDataCache TICK數據緩存對象
 	 dCycle 周期"""
 	cycle = dCycle
 	if cycle == 0:
@@ -373,14 +374,14 @@ def mergeLatestData(code, oldDatas, latestData, tickDataCache, dCycle):
 	tickDataCache.lastDate = latestData.date
 	tickDataCache.lastVolume = latestData.volume
 
-#创建一个存储调整因子的Map
+#創建一個存儲調整因子的Map
 factorsMap = {}
 
 def fq_price_func(price, factor):
-	""" 前复权价格计算函数
-	 price 股票价格
-	 factor 调整因子
-	 @returns 调整后的价格"""
+	""" 前覆權價格計算函數
+	 price 股票價格
+	 factor 調整因子
+	 @returns 調整後的價格"""
 	cash_bt = factor.f1
 	bonus_shr = factor.f3
 	allot_pct = factor.f4
@@ -388,10 +389,10 @@ def fq_price_func(price, factor):
 	return (10.0 * price - cash_bt + allot_pct * allot_price) / (10.0 + allot_pct + bonus_shr)
 
 def fq_price_func2(price, factor):
-	""" 后复权价格计算函数
-	 price 股票价格
-	 factor 调整因子
-	 @returns 调整后的价格"""
+	""" 後覆權價格計算函數
+	 price 股票價格
+	 factor 調整因子
+	 @returns 調整後的價格"""
 	cash_bt = factor.f1
 	bonus_shr = factor.f3
 	allot_pct = factor.f4
@@ -399,11 +400,11 @@ def fq_price_func2(price, factor):
 	return (price * (10.0 + allot_pct + bonus_shr) - allot_pct * allot_price + cash_bt) / 10.0
 
 def convertXdrBeforePrice(kd, trade_date, factor):
-	""" 转换前复权
-	 code 股票代码
-	 kd 数据
+	""" 轉換前覆權
+	 code 股票代碼
+	 kd 數據
 	 trade_date 交易日期
-	 factor 调整因子数组"""
+	 factor 調整因子數組"""
 	size = len(factor)
 	if size > 0:
 	    pos = 0
@@ -424,11 +425,11 @@ def convertXdrBeforePrice(kd, trade_date, factor):
 	            kd.close = fq_price_func(kd.close, factor[i])
 
 def convertXdrAfterPrice(kd, trade_date, factor):
-	""" 转换后复权
-	 code 股票代码
-	 kd 数据
+	""" 轉換後覆權
+	 code 股票代碼
+	 kd 數據
 	 trade_date 交易日期
-	 factor 调整因子数组"""
+	 factor 調整因子數組"""
 	size = len(factor)
 	if size > 0:
 	    date = kd.date
@@ -445,10 +446,10 @@ def convertXdrAfterPrice(kd, trade_date, factor):
 	        kd.close = fq_price_func2(kd.close, factors[i])
 
 def convertXdr(code, rights_offering, datas):
-	""" 转换XDR
-	 code 股票代码
-	 rights_offering 权利发行类型
-	 datas 数据数组"""
+	""" 轉換XDR
+	 code 股票代碼
+	 rights_offering 權利發行類型
+	 datas 數據數組"""
 	if code in factorsMap:
 	    factor = factorsMap[code]
 	    datas_size = len(datas)

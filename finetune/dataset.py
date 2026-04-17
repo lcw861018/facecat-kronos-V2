@@ -1,3 +1,4 @@
+# -*- coding:UTF-8 -*-
 import pickle
 import random
 import numpy as np

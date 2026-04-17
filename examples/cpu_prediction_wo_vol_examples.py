@@ -1,4 +1,5 @@
-# 官方案例，可在cpu环境下运行，需移到官方examples目录下运行
+# -*- coding: UTF-8 -*-
+# �x��רҡA�i�bcpu?�ҤU?��A�ݲ���x��examples��?�U?��
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -75,4 +76,3 @@ kline_df = df.loc[:lookback+pred_len-1]
 
 # visualize
 plot_prediction(kline_df, pred_df)
-

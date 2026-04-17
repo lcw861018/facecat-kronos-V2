@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from .kronos import KronosTokenizer, Kronos, KronosPredictor
 
 model_dict = {
@@ -13,5 +14,4 @@ def get_model_class(model_name):
     else:
         print(f"Model {model_name} not found in model_dict")
         raise NotImplementedError
-
 
