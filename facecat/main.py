@@ -1,11 +1,12 @@
-# -*- coding:utf-8 -*-
+# -*- coding:UTF-8 -*-
 #! python3
 from facecat import *
-#这里可能需要pip install requests
+#這里可能需要pip install requests
 import requests
 from requests.adapters import HTTPAdapter
 import random
 from datetime import datetime
+import json
 from stock import *
 
 
@@ -16,8 +17,11 @@ import torch
 
 latestDataStr = ""
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FACECAT_DIR = os.path.dirname(os.path.abspath(__file__))
 LOCAL_TOKENIZER_DIR = os.path.join(BASE_DIR, "model", "Kronos-Tokenizer-base")
 LOCAL_MODEL_DIR = os.path.join(BASE_DIR, "model", "Kronos-small")
+LOCAL_TOKENIZER_DIR_ALT = os.path.join(FACECAT_DIR, "model", "Kronos-Tokenizer-base")
+LOCAL_MODEL_DIR_ALT = os.path.join(FACECAT_DIR, "model", "Kronos-small")
 HF_TOKENIZER_REPO = "NeoQuasar/Kronos-Tokenizer-base"
 HF_MODEL_REPO = "NeoQuasar/Kronos-small"
 
@@ -25,29 +29,176 @@ def resolve_pretrained_source(local_dir, repo_id):
 	"""Prefer local weights; otherwise use the official Hugging Face repo."""
 	if os.path.isdir(local_dir):
 		return local_dir
+	if "Tokenizer" in local_dir and os.path.isdir(LOCAL_TOKENIZER_DIR_ALT):
+		return LOCAL_TOKENIZER_DIR_ALT
+	if "Kronos-small" in local_dir and os.path.isdir(LOCAL_MODEL_DIR_ALT):
+		return LOCAL_MODEL_DIR_ALT
 	return repo_id
 # tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base",force_download=True, cache_dir="model/Kronos-Tokenizer-base")
 # model = Kronos.from_pretrained("NeoQuasar/Kronos-small",force_download=True, cache_dir="model/Kronos-small")
-tokenizer = KronosTokenizer.from_pretrained(
-    resolve_pretrained_source(LOCAL_TOKENIZER_DIR, HF_TOKENIZER_REPO)
-)
-model = Kronos.from_pretrained(
-    resolve_pretrained_source(LOCAL_MODEL_DIR, HF_MODEL_REPO)
-)
 if torch.cuda.is_available():
 	device = "cuda:0"
 elif torch.backends.mps.is_available():
 	device = "mps"
 else:
 	device = "cpu"
-predictor = KronosPredictor(model, tokenizer, device=device, max_context=512, )
-print(f"[startup] model ready on {device}")
+tokenizer = None
+model = None
+predictor = None
+print(f"[startup] app ready on {device}")
 latestDataStr = ""
 findMyCharts = []
 charts = []
-currentCode = "600000.SH"
+currentCode = "2330"
 clientTicks = dict()
 priceRowMap = dict()
+latestQuote = {}
+
+TAIWAN_WATCHLIST = [
+	{"code": "2330", "name": "台積電", "market": "tse", "suffix": "TW"},
+	{"code": "2317", "name": "鴻海", "market": "tse", "suffix": "TW"},
+	{"code": "2454", "name": "聯發科", "market": "tse", "suffix": "TW"},
+	{"code": "2308", "name": "台達電", "market": "tse", "suffix": "TW"},
+	{"code": "2603", "name": "長榮", "market": "tse", "suffix": "TW"},
+	{"code": "2881", "name": "富邦金", "market": "tse", "suffix": "TW"},
+	{"code": "2882", "name": "國泰金", "market": "tse", "suffix": "TW"},
+	{"code": "0050", "name": "元大台灣50", "market": "tse", "suffix": "TW"},
+	{"code": "00878", "name": "國泰永續高股息", "market": "tse", "suffix": "TW"},
+	{"code": "6488", "name": "環球晶", "market": "otc", "suffix": "TWO"},
+]
+TAIWAN_STOCK_MAP = {item["code"]: item for item in TAIWAN_WATCHLIST}
+HTTP_HEADERS = {
+	"User-Agent": "Mozilla/5.0",
+	"Accept": "application/json,text/plain,*/*",
+}
+
+
+def safe_float(value, default=0.0):
+	"""Convert loose number strings from public APIs into floats."""
+	if value in (None, "", "-", "--", "---", "null"):
+		return default
+	if isinstance(value, (int, float)):
+		return float(value)
+	try:
+		return float(str(value).replace(",", ""))
+	except (TypeError, ValueError):
+		return default
+
+
+def get_stock_profile(code):
+	"""Look up Taiwan stock metadata by 4/5 digit code."""
+	normalized = str(code).split(".")[0]
+	return TAIWAN_STOCK_MAP.get(normalized, {
+		"code": normalized,
+		"name": normalized,
+		"market": "tse",
+		"suffix": "TW",
+	})
+
+
+def get_yahoo_symbol(code):
+	profile = get_stock_profile(code)
+	return f"{profile['code']}.{profile['suffix']}"
+
+
+def get_mis_channel(code):
+	profile = get_stock_profile(code)
+	return f"{profile['market']}_{profile['code']}.tw"
+
+
+def parse_twse_order_book(price_text, volume_text, reverse=False):
+	"""Parse MIS order book strings into [(price, volume), ...]."""
+	prices = [safe_float(item) for item in str(price_text or "").split("_")]
+	volumes = [safe_float(item) for item in str(volume_text or "").split("_")]
+	book = []
+	for price, volume in zip(prices, volumes):
+		if price > 0:
+			book.append((price, volume))
+	if reverse:
+		book.reverse()
+	return book
+
+
+def build_latest_quote(stock_info):
+	"""Convert MIS quote payload into the structure used by the detail panel."""
+	code = stock_info.get("c", "")
+	profile = get_stock_profile(code)
+	close = safe_float(stock_info.get("z")) or safe_float(stock_info.get("b").split("_")[0] if stock_info.get("b") else 0)
+	last_close = safe_float(stock_info.get("y"))
+	open_price = safe_float(stock_info.get("o"))
+	high = safe_float(stock_info.get("h"))
+	low = safe_float(stock_info.get("l"))
+	volume = safe_float(stock_info.get("v"))
+	total_volume = safe_float(stock_info.get("tv"))
+	if total_volume <= 0:
+		total_volume = volume
+	amount = close * total_volume
+	sell_book = parse_twse_order_book(stock_info.get("a"), stock_info.get("f"), reverse=True)
+	buy_book = parse_twse_order_book(stock_info.get("b"), stock_info.get("g"))
+	return {
+		"code": code,
+		"name": profile["name"],
+		"close": close,
+		"high": high,
+		"low": low,
+		"open": open_price,
+		"volume": total_volume,
+		"amount": amount,
+		"last_close": last_close,
+		"sell_book": sell_book[:5],
+		"buy_book": buy_book[:5],
+		"time": stock_info.get("tlong") or stock_info.get("tt"),
+	}
+
+
+def build_mis_url(codes):
+	"""Build a TWSE MIS quote URL for one or more stock codes."""
+	ex_ch = "|".join([get_mis_channel(code) for code in codes])
+	return f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={ex_ch}&json=1&delay=0"
+
+
+def build_yahoo_chart_url(code, interval, range_value):
+	"""Build a Yahoo Finance chart endpoint for Taiwan stocks."""
+	symbol = get_yahoo_symbol(code)
+	return f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval={interval}&range={range_value}&includePrePost=false&events=div%2Csplits"
+
+
+def parse_yahoo_history(result_text):
+	"""Parse Yahoo chart JSON into SecurityData records."""
+	data = json.loads(result_text)
+	result = data.get("chart", {}).get("result", [])
+	if not result:
+		return []
+	chart_result = result[0]
+	timestamps = chart_result.get("timestamp") or []
+	quote_list = chart_result.get("indicators", {}).get("quote", [])
+	if not quote_list:
+		return []
+	quote = quote_list[0]
+	opens = quote.get("open", [])
+	highs = quote.get("high", [])
+	lows = quote.get("low", [])
+	closes = quote.get("close", [])
+	volumes = quote.get("volume", [])
+	data_list = []
+	for index, ts in enumerate(timestamps):
+		close = safe_float(closes[index] if index < len(closes) else 0)
+		open_price = safe_float(opens[index] if index < len(opens) else close, close)
+		high = safe_float(highs[index] if index < len(highs) else close, close)
+		low = safe_float(lows[index] if index < len(lows) else close, close)
+		volume = safe_float(volumes[index] if index < len(volumes) else 0)
+		if close <= 0:
+			continue
+		stock_data = SecurityData()
+		stock_data.date = int(ts)
+		stock_data.open = open_price
+		stock_data.high = high if high > 0 else close
+		stock_data.low = low if low > 0 else close
+		stock_data.close = close
+		stock_data.volume = volume
+		stock_data.amount = close * volume * 1000
+		data_list.append(stock_data)
+	return data_list
 
 def transToPanda(datas):
 	data_list = []
@@ -83,9 +234,31 @@ def progress_callback(progress, total):
 	progressDiv.text = str(progress/total)
 	progressDiv.invalidate()
 
+
+def ensure_predictor_loaded():
+	"""Load predictor lazily so the stock UI can start without model files."""
+	global tokenizer
+	global model
+	global predictor
+	if predictor is not None:
+		return predictor
+	try:
+		tokenizer = KronosTokenizer.from_pretrained(
+			resolve_pretrained_source(LOCAL_TOKENIZER_DIR, HF_TOKENIZER_REPO)
+		)
+		model = Kronos.from_pretrained(
+			resolve_pretrained_source(LOCAL_MODEL_DIR, HF_MODEL_REPO)
+		)
+		predictor = KronosPredictor(model, tokenizer, device=device, max_context=512)
+		print(f"[startup] model ready on {device}")
+		return predictor
+	except Exception as ex:
+		popupWindow(f"AI 模型載入失敗: {ex}")
+		return None
+
 def predict(chart):
 	"""
-	使用历史K线数据对未来进行预测
+	使用歷史K線數據對未來進行預測
 	"""
 	preButton = gPaint.findView("preButton")
 	preButton.enabled = False
@@ -98,29 +271,29 @@ def predict(chart):
 	mode = chart.preMode
 	
 	if len(chart.datas) < lookback and mode == "predict":
-		popupWindow(f"k线数量{len(chart.datas)}小于训练数量{lookback}")
+		popupWindow(f"k線數量{len(chart.datas)}小於訓練數量{lookback}")
 		progressDiv.text = "0"
 		progressDiv.invalidate()
 		preButton.enabled = True
 		preButton.invalidate()
 		return
 	elif len(chart.datas) < lookback + pred_len and mode == "backtest":
-		popupWindow(f"k线数量{len(chart.datas)}小于训练数量{lookback + pred_len}")
+		popupWindow(f"k線數量{len(chart.datas)}小於訓練數量{lookback + pred_len}")
 		progressDiv.text = "0"
 		progressDiv.invalidate()
 		preButton.enabled = True
 		preButton.invalidate()
 		return
-	if mode == "predict": # 预测模式
+	if mode == "predict": # 預測模式
 		print(f"Using device: {device} mode: {mode}")
-		# 可见k线数量
+		# 可見k線數量
 		klines = chart.lastVisibleIndex - chart.firstVisibleIndex 
 		if chart.pred_len > 50 and klines > 50:
 			chart.firstVisibleIndex += 50
 		elif chart.pred_len <= 50 and klines > chart.pred_len:
 			chart.firstVisibleIndex += chart.pred_len
 		chart.invalidate()
-	# 获取图表数据，转化成panda格式
+	# 獲取圖表數據，轉化成panda格式
 		df = transToPanda(chart.datas)
 		df['timestamps'] = pd.to_datetime(df['timestamps'])
 
@@ -129,9 +302,9 @@ def predict(chart):
 		x_df = df.tail(lookback)[['open', 'high', 'low', 'close', 'volume', 'amount']].reset_index(drop=True)
 		x_timestamp = df.tail(lookback)['timestamps'].reset_index(drop=True)
 
-		# 3. 生成未来的时间戳 (这里我们假设是连续的未来日期)
+		# 3. 生成未來的時間戳 (這里我們假設是連續的未來日期)
 		last_timestamp = x_timestamp.iloc[-1]
-		# 注意：对于股票市场，应该生成交易日，但为简单起见，我们先生成连续日历日
+		# 注意：對於股票市場，應該生成交易日，但為簡單起見，我們先生成連續日歷日
 		y_timestamp = pd.Series(pd.date_range(start=last_timestamp + pd.Timedelta(days=1), periods=pred_len))
 		pred_df = predictor.predict(
 			df=x_df,
@@ -145,7 +318,7 @@ def predict(chart):
 			progress_callback=progress_callback
 		)
 		chart.datas2 = transToChartData(pred_df)
-	elif mode == "backtest": # 回测模式
+	elif mode == "backtest": # 回測模式
 		# popupWindow()
 		print(f"Using device: {device} mode: {mode}")
 		df = transToPanda(chart.datas)
@@ -179,22 +352,23 @@ def predict(chart):
 
 def predict_in_thread(chart):
 	"""
-	在独立线程中运行预测，以避免UI阻塞.
+	在獨立線程中運行預測，以避免UI阻塞.
 	"""
 	predict(chart)
 	chart.invalidate()
 
 def startHttpRequest(url, callBack, tag):
-	"""开始Http请求
+	"""開始Http請求
 	url:地址
-	callBack回调"""
+	callBack回調"""
 	data = FCData()
 	data.key = url
 	data.callBack = callBack
 	try:
 		s = requests.Session()
 		s.mount('http://', HTTPAdapter(max_retries=3))
-		response = s.get(url)
+		s.mount('https://', HTTPAdapter(max_retries=3))
+		response = s.get(url, headers=HTTP_HEADERS, timeout=15)
 		result = response.text
 		data.success = True
 		data.data = result
@@ -206,29 +380,29 @@ def startHttpRequest(url, callBack, tag):
 	user32.PostMessageW(gPaint.hWnd, 0x0401, 0, 0)
 
 def startQueryNewData():
-	"""开始请求最新数据"""
+	"""開始請求最新數據"""
 	while gPaint.hWnd != 0:
 		time.sleep(3)
 		queryNewData()
 
 def startQueryPriceData():
-	"""开始请求最新数据"""
+	"""開始請求最新數據"""
 	while gPaint.hWnd != 0:
 		time.sleep(6)
 		queryPrice()
 
 def httpRequest(url, callBack, tag):
-	"""进行Http请求
+	"""進行Http請求
 	url:地址
-	callBack回调"""
+	callBack回調"""
 	thread = threading.Thread(target=startHttpRequest, args=(url, callBack, tag))
 	thread.start()
 
 def onPaint(view, paint, clipRect):
-	"""绘制视图
-	view:视图
-	paint:绘图对象
-	clipRect:区域"""
+	"""繪制視圖
+	view:視圖
+	paint:繪圖對象
+	clipRect:區域"""
 	if view.viewType == "latestdiv":
 		drawLatestDiv(view, paint, clipRect)
 	else:
@@ -243,7 +417,7 @@ def drawMyDiv(view, paint, clipRect):
 	
 def drawProgressDiv(view, paint, clipRect):
 	if view.text == "-1":
-		paint.drawText("训练中...", "rgb(255,255,255)", "Default,14", 3, 7)
+		paint.drawText("訓練中...", "rgb(255,255,255)", "Default,14", 3, 7)
 	else:
 		cx = float(view.text) * view.size.cx
 		if cx > 0 and cx < view.size.cx:
@@ -313,34 +487,34 @@ def drawPreChart(view, paint, clipRect):
 					paint.drawLine(barColor, view.lineWidth, 0, x - cWidth, volY, x + cWidth, zeroY)
 
 def drawUpButton(button, paint, clipRect):
-	"""绘制温度按钮
-	view:视图
-	paint:绘图对象
-	clipRect:区域"""
-	"""重绘按钮 
-	button:视图 
-	paint:绘图对象 
-	clipRect:裁剪区域"""
+	"""繪制溫度按鈕
+	view:視圖
+	paint:繪圖對象
+	clipRect:區域"""
+	"""重繪按鈕 
+	button:視圖 
+	paint:繪圖對象 
+	clipRect:裁剪區域"""
 	r_left = 0
 	r_right = button.size.cx
 	r_top = 0
 	r_bottom = button.size.cy
 	r_width = r_right - r_left
-	#常规情况
+	#常規情況
 	if button.backColor != "none":
 		apt = []
 		apt.append(FCPoint(r_left + r_width/2,r_top))
 		apt.append(FCPoint(r_left, r_top + r_width/2))
 		apt.append(FCPoint(r_right, r_top + r_width/2))
 		paint.fillPolygon(button.textColor, apt)
-	#鼠标按下
+	#鼠標按下
 	if button == paint.touchDownView:
 		apt = []
 		apt.append(FCPoint(r_left + r_width/2,r_top))
 		apt.append(FCPoint(r_left, r_top + r_width/2))
 		apt.append(FCPoint(r_right, r_top + r_width/2))
 		paint.fillPolygon(button.pushedColor, apt)
-	#鼠标悬停
+	#鼠標懸停
 	elif button == paint.touchMoveView:
 		apt = []
 		apt.append(FCPoint(r_left + r_width/2,r_top))
@@ -354,21 +528,21 @@ def drawDownButton(button, paint, clipRect):
 	r_top = 0
 	r_bottom = button.size.cy
 	r_width = r_right - r_left
-	#常规情况
+	#常規情況
 	if button.backColor != "none":
 		apt2 = []
 		apt2.append(FCPoint(r_left + r_width/2,r_bottom))
 		apt2.append(FCPoint(r_right, r_bottom - r_width/2))
 		apt2.append(FCPoint(r_left, r_bottom - r_width/2))
 		paint.fillPolygon(button.textColor, apt2)
-	#鼠标按下
+	#鼠標按下
 	if button == paint.touchDownView:
 		apt2 = []
 		apt2.append(FCPoint(r_left + r_width/2,r_bottom))
 		apt2.append(FCPoint(r_right, r_bottom - r_width/2))
 		apt2.append(FCPoint(r_left, r_bottom - r_width/2))
 		paint.fillPolygon(button.pushedColor, apt2)
-	#鼠标悬停
+	#鼠標懸停
 	elif button == paint.touchMoveView:
 		apt2 = []
 		apt2.append(FCPoint(r_left + r_width/2,r_bottom))
@@ -377,10 +551,10 @@ def drawDownButton(button, paint, clipRect):
 		paint.fillPolygon(button.hoveredColor, apt2)
 
 def drawLatestDiv(view, paint, clipRect):
-	"""绘制买卖档
-	view:视图
-	paint:绘图对象
-	clipRect:区域"""
+	"""繪制買賣檔
+	view:視圖
+	paint:繪圖對象
+	clipRect:區域"""
 	global latestDataStr
 	avgHeight = 20
 	drawFont = "Default,14"
@@ -420,16 +594,16 @@ def drawLatestDiv(view, paint, clipRect):
 		volList.append(float(dataStrs[17]))
 		volList.append(float(dataStrs[18]))
 
-	buySellTexts.append("卖5")
-	buySellTexts.append("卖4")
-	buySellTexts.append("卖3")
-	buySellTexts.append("卖2")
-	buySellTexts.append("卖1")
-	buySellTexts.append("买1")
-	buySellTexts.append("买2")
-	buySellTexts.append("买3")
-	buySellTexts.append("买4")
-	buySellTexts.append("买5")
+	buySellTexts.append("賣5")
+	buySellTexts.append("賣4")
+	buySellTexts.append("賣3")
+	buySellTexts.append("賣2")
+	buySellTexts.append("賣1")
+	buySellTexts.append("買1")
+	buySellTexts.append("買2")
+	buySellTexts.append("買3")
+	buySellTexts.append("買4")
+	buySellTexts.append("買5")
 	maxVol = maxValue(volList)
 	for i in range(0, 10):
 		tSize = paint.textSize(buySellTexts[i], drawFont)
@@ -450,11 +624,11 @@ def drawLatestDiv(view, paint, clipRect):
 			paint.drawText(volText, textColor, drawFont, view.size.cx - volTextSize.cx - 10, dTop + avgHeight / 2 - volTextSize.cy / 2)
 		dTop += avgHeight
 	paint.drawLine(view.borderColor, 1, 0, 0, dTop, view.size.cx, dTop)
-	paint.drawText("现价", textColor, drawFont, 5, dTop + 10)
+	paint.drawText("現價", textColor, drawFont, 5, dTop + 10)
 	paint.drawText("幅度", textColor, drawFont, 5, dTop + 35)
-	paint.drawText("总额", textColor, drawFont, 5, dTop + 60)
-	paint.drawText("总量", textColor, drawFont, 5, dTop + 85)
-	paint.drawText("开盘", textColor, drawFont, 110, dTop + 10)
+	paint.drawText("總額", textColor, drawFont, 5, dTop + 60)
+	paint.drawText("總量", textColor, drawFont, 5, dTop + 85)
+	paint.drawText("開盤", textColor, drawFont, 110, dTop + 10)
 	paint.drawText("振幅", textColor, drawFont, 110, dTop + 35)
 	paint.drawText("最高", textColor, drawFont, 110, dTop + 60)
 	paint.drawText("最低", textColor, drawFont, 110, dTop + 85)
@@ -482,7 +656,7 @@ def drawLatestDiv(view, paint, clipRect):
 		paint.drawText(toFixed(low, 2), getPriceColor(low, lastClose), drawFont, 150, dTop + 85)
 
 def historyDataCallBack(data):
-	"""历史数据回调"""
+	"""歷史數據回調"""
 	if data.success:
 		code = data.tag[0]
 		name = data.tag[1]
@@ -491,7 +665,7 @@ def historyDataCallBack(data):
 		result = data.data
 		dataList = []
 		strs = result.split("\r\n")
-		#分时线处理
+		#分時線處理
 		for c in range(0, len(myCharts)):
 			myChart = myCharts[c]
 			chart = myChart.views[0].secondView.views[0]
@@ -518,7 +692,7 @@ def historyDataCallBack(data):
 					data.volume = float(subStrs[6])
 					date_obj = datetime.strptime(dateStr, "%Y-%m-%d %H:%M:%S")
 					data.date = time.mktime(date_obj.timetuple())
-					#分时线处理
+					#分時線處理
 					if cycle == 0 and (data.volume > 0 or len(dataList) == 0):
 						for c in range(0, len(myCharts)):
 							myChart = myCharts[c]
@@ -545,18 +719,18 @@ def historyDataCallBack(data):
 			copyDatas = []
 			for d in range(0, len(dataList)):
 				copyDatas.append(dataList[d])
-			#分时线
+			#分時線
 			if cycle == 0 and myCycle == 0:
 				chart.autoFillHScale = True
 				chart.cycle = "trend"
-			#分钟线
+			#分鐘線
 			elif cycle == 1 and (myCycle > 0 and myCycle < 1440):
 				chart.cycle = "minute"
 				if myCycle > 1:
 					newDatas = []
 					multiMinuteSecurityDatas(newDatas, copyDatas, myCycle)
 					copyDatas = newDatas
-			#日线
+			#日線
 			elif cycle == 1440 and myCycle >= 1440:
 				chart.cycle = "day"
 				if myCycle == 10080:
@@ -579,7 +753,7 @@ def historyDataCallBack(data):
 					newDatas = []
 					getHistoryYearDatas(newDatas, copyDatas)
 					copyDatas = newDatas
-			#不符合的K线
+			#不符合的K線
 			else:
 				continue
 			clientTicks[c] = ClientTickDataCache()
@@ -599,7 +773,7 @@ def historyDataCallBack(data):
 			chart.invalidate()
 
 def queryHistoryData(code, name, cycle, myCharts):
-	"""请求历史数据"""
+	"""請求歷史數據"""
 	url = "http://www.jjmfc.com:9968/quote?func=getkline&code=" + code +  "&cycle=" + str(cycle) + "&count=5000"
 	if cycle == 0:
 		url = "http://www.jjmfc.com:9968/quote?func=getkline&code=" + code +  "&cycle=0&count=240"
@@ -611,7 +785,7 @@ def queryHistoryData(code, name, cycle, myCharts):
 	httpRequest(url, historyDataCallBack, tag)
 
 def newDataCallBack(data):
-	"""最新数据回调"""
+	"""最新數據回調"""
 	if data.success:
 		global latestDataStr
 		result = data.data
@@ -663,13 +837,13 @@ def newDataCallBack(data):
 		gPaint.update()
 
 def queryNewData():
-	"""请求最新数据"""
+	"""請求最新數據"""
 	url = "http://www.jjmfc.com:9968/quote?func=getnewdata&codes=" + currentCode
 	tag = []
 	httpRequest(url, newDataCallBack, tag)
 
 def setChartTheme(chart, index):
-	"""黑色风格"""
+	"""黑色風格"""
 	if chart.paint.defaultUIStyle == "dark":
 		chart.backColor = "rgb(0,0,0)"
 		chart.borderColor = "none"
@@ -700,27 +874,27 @@ def setChartTheme(chart, index):
 		chart.trendColor = "rgb(50,50,50)"
 
 def setChartTitle(chart, code, name, intCycle):
-	"""设置图表的标题"""
+	"""設置圖表的標題"""
 	chart.text = code + " " + name
 	if intCycle == 0:
-		chart.text += " 分时"
+		chart.text += " 分時"
 	elif intCycle < 1440:
-		chart.text += " " + str(intCycle) + "分钟"
+		chart.text += " " + str(intCycle) + "分鐘"
 	elif intCycle == 1440:
-		chart.text += " 日线"
+		chart.text += " 日線"
 	elif intCycle == 10080:
-		chart.text += " 周线"
+		chart.text += " 周線"
 	elif intCycle == 43200:
-		chart.text += " 月线"
+		chart.text += " 月線"
 	elif intCycle == 129600:
-		chart.text += " 季线"
+		chart.text += " 季線"
 	elif intCycle == 259200:
-		chart.text += " 半年线"
+		chart.text += " 半年線"
 	elif intCycle == 518400:
-		chart.text += " 年线"
+		chart.text += " 年線"
 
 def getPriceColor(price, comparePrice):
-	"""获取价格数据"""
+	"""獲取價格數據"""
 	if gPaint.defaultUIStyle == "dark":
 		if price != 0:
 			if price > comparePrice:
@@ -737,7 +911,7 @@ def getPriceColor(price, comparePrice):
 		return "rgb(0,0,0)"
 
 def findViewsByType(findType, views, refViews):
-	"""查找同类型视图"""
+	"""查找同類型視圖"""
 	size = len(views)
 	for i in range(0, size):
 		view = views[i]
@@ -747,7 +921,7 @@ def findViewsByType(findType, views, refViews):
 			findViewsByType(findType, view.views, refViews)
 
 def onClickGridCell(grid, row, gridColumn, cell, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""点击单元格"""
+	"""點擊單元格"""
 	global currentCode
 	code = row.cells[1].value
 	name = row.cells[2].value
@@ -761,12 +935,12 @@ def onClickGridCell(grid, row, gridColumn, cell, firstTouch, firstPoint, secondT
 	invalidate(grid.paint)
 
 def onClick(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
-	"""视图的鼠标点击方法
-	view 视图
-	mp 坐标
-	buttons 按钮 0未按下 1左键 2右键
-	clicks 点击次数
-	delta 滚轮值"""
+	"""視圖的鼠標點擊方法
+	view 視圖
+	mp 坐標
+	buttons 按鈕 0未按下 1左鍵 2右鍵
+	clicks 點擊次數
+	delta 滾輪值"""
 	onClickDefault(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks)
 	if view.viewName.find("cycle,") == 0:
 		strs = view.viewName.split(",")
@@ -788,7 +962,7 @@ def onClick(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 			chart.datas2 = []
 		queryHistoryData(code, name, queryCycle, myCharts)
 	elif view.viewName == "preButton":
-		if view.text == "预测中...":
+		if view.text == "預測中...":
 			return
 		chart = gPaint.findView("preChart")
 		thread = threading.Thread(target=predict_in_thread, args=(chart,))
@@ -844,7 +1018,7 @@ def onClick(view, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 		topPDiv.parent.invalidate()
 
 def createGridCell (grid):
-	"""创建单元格"""
+	"""創建單元格"""
 	gridCell = FCGridCell()
 	if grid.paint.defaultUIStyle == "dark":
 		gridCell.backColor = "none"
@@ -858,7 +1032,7 @@ def createGridCell (grid):
 	return gridCell
 
 def queryPriceCallBack(data):
-	"""板块数据回调"""
+	"""板塊數據回調"""
 	global priceRowMap
 	if data.success:
 		global gridStocks
@@ -988,9 +1162,9 @@ def queryPriceCallBack(data):
 
 				volume = float(subStrs[6])
 				amount = float(subStrs[7])
-				cell7.value = toFixed(volume / 100 / 10000, 2) + "万"
+				cell7.value = toFixed(volume / 100 / 10000, 2) + "萬"
 
-				cell8.value = toFixed(amount / 100000000, 2) + "亿"
+				cell8.value = toFixed(amount / 100000000, 2) + "億"
 
 				cell9.value = toFixed(float(subStrs[12]), 2)
 
@@ -1004,10 +1178,10 @@ def queryPriceCallBack(data):
 				cell12.value = toFixed(float(subStrs[13]), 2)
 
 				marketValue = float(subStrs[9]) * close
-				cell13.value = toFixed(marketValue / 100000000, 2) + "亿"
+				cell13.value = toFixed(marketValue / 100000000, 2) + "億"
 
 				flowValue = float(subStrs[10]) * close
-				cell14.value = toFixed(flowValue / 100000000, 2) + "亿"
+				cell14.value = toFixed(flowValue / 100000000, 2) + "億"
 
 				cell15.value = ""
 
@@ -1031,17 +1205,17 @@ def queryPriceCallBack(data):
 		gridStocks.invalidate()
 
 def queryPrice():
-	"""查询报价数据"""
+	"""查詢報價數據"""
 	url = "http://www.jjmfc.com:9968/quote?func=price&codes=all&count=200"
 	tag = []
 	httpRequest(url, queryPriceCallBack, tag)
 
 def drawChartHScale(chart, paint, clipRect):
-	"""绘制横轴刻度的自定义方法
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
-	#判断数据是否为空
+	"""繪制橫軸刻度的自定義方法
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
+	#判斷數據是否為空
 	if chart.datas != None and len(chart.datas) > 0 and chart.hScaleHeight > 0:
 		if chart.cycle == "trend":
 			times = []
@@ -1100,75 +1274,75 @@ def drawChartHScale(chart, paint, clipRect):
 						i = i + int((tSize.cx + chart.hScaleTextDistance) / chart.hScalePixel) + 1
 				i = i + 1						
 		else:
-			drawLeft = chart.leftVScaleWidth #左侧起画点
-			i = chart.firstVisibleIndex #开始索引
-			lastYear = 0 #缓存年份，用于判断是否换年
-			drawYearsCache = [] #实际绘制到图形上的年份文字
-			lastTextRight = 0 #上个文字的右侧
-			timeCache = [] #保存日期的缓存
-			yearTextLeftCache = [] #绘制年文字的左侧位置缓存
-			yearTextRightCache = [] #绘制年文字的右侧位置缓存
-			textPadding = 5 #两个文字之间的最小间隔
-			#逐步递增索引，先绘制年
+			drawLeft = chart.leftVScaleWidth #左側起畫點
+			i = chart.firstVisibleIndex #開始索引
+			lastYear = 0 #緩存年份，用於判斷是否換年
+			drawYearsCache = [] #實際繪制到圖形上的年份文字
+			lastTextRight = 0 #上個文字的右側
+			timeCache = [] #保存日期的緩存
+			yearTextLeftCache = [] #繪制年文字的左側位置緩存
+			yearTextRightCache = [] #繪制年文字的右側位置緩存
+			textPadding = 5 #兩個文字之間的最小間隔
+			#逐步遞增索引，先繪制年
 			while i <= chart.lastVisibleIndex:
-				dateObj = time.localtime(chart.datas[i].date) #将时间戳转换为time，并缓存到集合中
+				dateObj = time.localtime(chart.datas[i].date) #將時間戳轉換為time，並緩存到集合中
 				timeCache.append(dateObj)
-				year = dateObj.tm_year #从结构中获取年份			
-				x = getChartX(chart, i) #获取索引对应的位置
-				#判断是否换年，以及是否在绘图区间内
+				year = dateObj.tm_year #從結構中獲取年份			
+				x = getChartX(chart, i) #獲取索引對應的位置
+				#判斷是否換年，以及是否在繪圖區間內
 				if year != lastYear and x >= drawLeft and x < chart.size.cx - chart.rightVScaleWidth:
-					month = dateObj.tm_mon #获取月的结构
-					xText = str(year) #拼接要绘制的文字
+					month = dateObj.tm_mon #獲取月的結構
+					xText = str(year) #拼接要繪制的文字
 					if month < 10:
-						xText = xText + "/0" + str(month) #如果小于10月要补0
+						xText = xText + "/0" + str(month) #如果小於10月要補0
 					else:
-						xText = xText + "/" + str(month) #大于等于10月不用补0
-					tSize = paint.textSize(xText, chart.font) #计算要绘制文字的大小
-					paint.drawLine(chart.scaleColor, 1, 0, x, chart.size.cy - chart.hScaleHeight, x, chart.size.cy - chart.hScaleHeight + 8) #绘制刻度线
-					#判断是否和上个文字重影
+						xText = xText + "/" + str(month) #大於等於10月不用補0
+					tSize = paint.textSize(xText, chart.font) #計算要繪制文字的大小
+					paint.drawLine(chart.scaleColor, 1, 0, x, chart.size.cy - chart.hScaleHeight, x, chart.size.cy - chart.hScaleHeight + 8) #繪制刻度線
+					#判斷是否和上個文字重影
 					if x + 2 > lastTextRight + textPadding:
-						paint.drawText(xText, chart.hScaleTextColor, "Default,12", x + 2, chart.size.cy - chart.hScaleHeight + 8  - tSize.cy / 2 + 7) #绘制文字
-						yearTextLeftCache.append(x + 2) #将年文字的左侧位置缓存
-						yearTextRightCache.append(x + 2 + tSize.cx) #将年文字的右侧位置缓存
-						drawYearsCache.append(year) #缓存要绘制的年
-						lastTextRight = x + 2 + tSize.cx #缓存上个文字的右侧位置
-					lastYear = year #记录上次绘制的年份
+						paint.drawText(xText, chart.hScaleTextColor, "Default,12", x + 2, chart.size.cy - chart.hScaleHeight + 8  - tSize.cy / 2 + 7) #繪制文字
+						yearTextLeftCache.append(x + 2) #將年文字的左側位置緩存
+						yearTextRightCache.append(x + 2 + tSize.cx) #將年文字的右側位置緩存
+						drawYearsCache.append(year) #緩存要繪制的年
+						lastTextRight = x + 2 + tSize.cx #緩存上個文字的右側位置
+					lastYear = year #記錄上次繪制的年份
 				i = i + 1	#索引累加	
-			#绘制月份
+			#繪制月份
 			for m in range(0, len(drawYearsCache)):
-				cacheYear = drawYearsCache[m] #从缓存中获取年份
-				lastMonth = 0 #缓存月份，用于判断是否换月
-				i = chart.firstVisibleIndex #重置开始索引
-				lastTextRight = 0 #重置上个文字的右侧
-				#逐步递增索引
+				cacheYear = drawYearsCache[m] #從緩存中獲取年份
+				lastMonth = 0 #緩存月份，用於判斷是否換月
+				i = chart.firstVisibleIndex #重置開始索引
+				lastTextRight = 0 #重置上個文字的右側
+				#逐步遞增索引
 				while i <= chart.lastVisibleIndex:
-					dateObj = timeCache[i - chart.firstVisibleIndex] #从缓存中获取time
-					year = dateObj.tm_year #从结构中获取年份
-					#判断是否同一年	
+					dateObj = timeCache[i - chart.firstVisibleIndex] #從緩存中獲取time
+					year = dateObj.tm_year #從結構中獲取年份
+					#判斷是否同一年	
 					if cacheYear == year:
-						month = dateObj.tm_mon #从结构中获取月份
+						month = dateObj.tm_mon #從結構中獲取月份
 						x = getChartX(chart, i)
-						#判断是否换月，以及是否在绘图区间内
+						#判斷是否換月，以及是否在繪圖區間內
 						if lastMonth != month and x >= drawLeft and x < chart.size.cx - chart.rightVScaleWidth:			
-							xText = str(month) #获取绘制的月份文字
-							tSize = paint.textSize(xText, chart.font) #计算要绘制文字的大小
-							#判断是否和上个文字重影
+							xText = str(month) #獲取繪制的月份文字
+							tSize = paint.textSize(xText, chart.font) #計算要繪制文字的大小
+							#判斷是否和上個文字重影
 							if x + 2 > lastTextRight + textPadding:
-								#判断是否和年的文字重影
+								#判斷是否和年的文字重影
 								if (x + 2 > yearTextRightCache[m] + textPadding) and ((m == len(drawYearsCache) - 1) or (m < len(drawYearsCache) - 1 and x + 2 + tSize.cx < yearTextLeftCache[m + 1] - textPadding)):
-									paint.drawLine(chart.scaleColor, 1, 0, x, chart.size.cy - chart.hScaleHeight, x, chart.size.cy - chart.hScaleHeight + 6) #绘制刻度
-									paint.drawText(xText, chart.hScaleTextColor, "Default,12", x + 2, chart.size.cy - chart.hScaleHeight + 8  - tSize.cy / 2 + 7) #绘制文字
-									lastTextRight = x + 2 + tSize.cx #缓存上个文字的右侧位置
-							lastMonth = month #记录上次绘制的月份
+									paint.drawLine(chart.scaleColor, 1, 0, x, chart.size.cy - chart.hScaleHeight, x, chart.size.cy - chart.hScaleHeight + 6) #繪制刻度
+									paint.drawText(xText, chart.hScaleTextColor, "Default,12", x + 2, chart.size.cy - chart.hScaleHeight + 8  - tSize.cy / 2 + 7) #繪制文字
+									lastTextRight = x + 2 + tSize.cx #緩存上個文字的右側位置
+							lastMonth = month #記錄上次繪制的月份
 					elif cacheYear < year:
-						break #超过区间，退出循环
+						break #超過區間，退出循環
 					i = i + 1	#索引累加
 
 def drawChartTip(chart, paint, clipRect):
-	"""绘制图表提示
-	chart:图表
-	paint:绘图对象
-	clipRect:裁剪区域"""
+	"""繪制圖表提示
+	chart:圖表
+	paint:繪圖對象
+	clipRect:裁剪區域"""
 	if paint.touchMoveView == chart and chart.cycle != "trend":
 		crossLineIndex = chart.crossStopIndex
 		if crossLineIndex != -1 and crossLineIndex >= chart.firstVisibleIndex and crossLineIndex <= chart.lastVisibleIndex:
@@ -1213,7 +1387,7 @@ def drawChartTip(chart, paint, clipRect):
 				paint.drawText(xText, chart.textColor, xFont, tipRect.left + 5, tipRect.top + 5)
 				paint.drawText("高:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 25)
 				paint.drawText(toFixed(high, chart.candleDigit), getPriceColor(high, lastClose), xFont, tipRect.left + 25, tipRect.top + 25)
-				paint.drawText("开:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 45)
+				paint.drawText("開:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 45)
 				paint.drawText(toFixed(openPrice, chart.candleDigit), getPriceColor(openPrice, lastClose), xFont, tipRect.left + 25, tipRect.top + 45)
 				paint.drawText("低:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 65)
 				paint.drawText(toFixed(low, chart.candleDigit), getPriceColor(low, lastClose), xFont, tipRect.left + 25, tipRect.top + 65)
@@ -1223,7 +1397,7 @@ def drawChartTip(chart, paint, clipRect):
 				paint.drawText(toFixed(volume, 0), "rgb(80,255,255)", xFont, tipRect.left + 25, tipRect.top + 105)
 
 def WndProcPopup(hwnd,msg,wParam,lParam):
-	"""消息循环"""
+	"""消息循環"""
 	global popupPaint
 	if (hwnd in popupPaint) == True:
 		return WndProcDefault(popupPaint[hwnd],hwnd,msg,wParam,lParam)
@@ -1231,30 +1405,30 @@ def WndProcPopup(hwnd,msg,wParam,lParam):
 		return DefWindowProc(hwnd,msg,wParam,lParam)
 
 popupPaint = dict()
-# 子窗体
+# 子窗體
 def popupWindow(text):
 	global popupPaint
-	pPaint = FCPaint() #创建绘图对象
+	pPaint = FCPaint() #創建繪圖對象
 	wSize = FCSize(500, 200)
 	setWindowSize(wSize)
 	setCenterScreen(True)
-	#初始化窗体
+	#初始化窗體
 	createWindow(pPaint, "提示", WndProcPopup)
 	popupPaint[pPaint.hWnd] = pPaint
-	# 转义文本，避免XML注入/渲染失败
+	# 轉義文本，避免XML注入/渲染失敗
 	safe_text = str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 	xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 		<html xmlns="facecat">
 		<body>
 			<div dock="fill" backcolor="rgb(170,178,189)">
 				<label name="labelText" size="350,33" text="{safe_text}" font="Default,30" location="100,20"/>
-				<label name="labelText2" size="350,33" text="请切换周期或修改训练参数。" font="Default,30" location="100,55"/>
+				<label name="labelText2" size="350,33" text="請切換周期或修改訓練參數。" font="Default,30" location="100,55"/>
 			</div>
 		</body>
 		</html>"""
 	renderFaceCat(pPaint, xml)
 	showWindow(pPaint)
-	# 模态阻塞：直到窗口被关闭
+	# 模態阻塞：直到窗口被關閉
 	msg = cwintypes.MSG()
 	pmsg = ct.byref(msg)
 	while user32.IsWindow(pPaint.hWnd):
@@ -1263,13 +1437,550 @@ def popupWindow(text):
 			break
 		user32.TranslateMessage(pmsg)
 		user32.DispatchMessageW(pmsg)
+
+MAIN_XML = """<?xml version="1.0" encoding="utf-8" ?>
+<html xmlns="facecat">
+<body>
+	<div bordercolor="none" name="divInner" dock="fill">
+		<div type="tab" dock="fill" selectedindex="0" backcolor="none" bordercolor="none" name="tabFunc">
+			<div type="tabpage" text="主畫面" name="divMain" backcolor="none">
+				<div type="splitlayout" layoutstyle="lefttoright" bordercolor="none" dock="fill" size="650,510" candragsplitter="true" splitterposition="650,1" name="divCodingRight2">
+					<table name="gridStocks" headerheight="30" dock="fill" gridlinecolor="none" bordercolor="none" showvscrollbar="true" showhscrollbar="true" allowpreviewsevent="true" allowdragscroll="true">
+						<tr>
+							<th name="colP0" text="序" width="40" allowdrag="true" allowresize="true" coltype="no"/>
+							<th name="colP1" text="代碼" width="70" allowdrag="true" allowresize="true"/>
+							<th name="colP2" text="名稱" width="90" allowdrag="true" allowresize="true"/>
+							<th name="colP3" text="現價" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP4" text="漲幅" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP5" text="漲跌" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP6" text="開盤" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP7" text="最高" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP8" text="最低" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP9" text="成交量" width="90" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP10" text="昨收" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+						</tr>
+					</table>
+					<div type="tab" dock="fill" selectedindex="0" backcolor="none" bordercolor="none" name="tabFunc">
+						<div type="tabpage" text="AI 預測" name="preTab" backcolor="none">
+							<div type="splitlayout" layoutstyle="toptobottom" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitterposition="25,1">
+								<div type="splitlayout" layoutstyle="righttoleft" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitterposition="300,1" splitmode="percentsize">
+									<div type="layout" backcolor="none" allowResize="false" bordercolor="none">
+										<input type="button" name="preButton" text="預測" textcolor="rgb(255,255,255)" />
+										<select name="modeSwich" selectedindex="0">
+											<option text="預測模式" name="mode_predict" value="predict"/>
+											<option text="回測模式" name="mode_backtest" value="backtest"/>
+										</select>
+									</div>
+									<div type="layout" backcolor="none" bordercolor="none">
+										<select name="lookback" selectedindex="0" size="90,25">
+											<option text="樣本 50" name="lookback_50" value="50"/>
+											<option text="樣本 10" name="lookback_10" value="10"/>
+											<option text="樣本 20" name="lookback_20" value="20"/>
+											<option text="樣本 100" name="lookback_100" value="100"/>
+											<option text="樣本 200" name="lookback_200" value="200"/>
+											<option text="樣本 300" name="lookback_300" value="300"/>
+											<option text="樣本 400" name="lookback_400" value="400"/>
+										</select>
+										<select name="pred_len" size="90,25">
+											<option text="預測 5" name="pred_len_5" value="5"/>
+											<option text="預測 1" name="pred_len_1" value="1"/>
+											<option text="預測 10" name="pred_len_10" value="10"/>
+											<option text="預測 20" name="pred_len_20" value="20"/>
+											<option text="預測 50" name="pred_len_50" value="50"/>
+											<option text="預測 120" name="pred_len_120" value="120"/>
+										</select>
+										<div size="90,25" name="temperatureDiv" text="Temp:1.0">
+											<input type="button" location="72,4" size="10,12" name="temperatureUp" hoveredColor="rgb(180,180,180)" pushedColor="rgb(100,100,100)"/>
+											<input type="button" location="72,8" size="10,12" name="temperatureDown" hoveredColor="rgb(180,180,180)" pushedColor="rgb(100,100,100)"/>
+										</div>
+										<div size="90,25" name="topPDiv" text="topP:0.9">
+											<input type="button" location="72,4" size="10,12" name="topPUp" hoveredColor="rgb(180,180,180)" pushedColor="rgb(100,100,100)"/>
+											<input type="button" location="72,8" size="10,12" name="topPDown" hoveredColor="rgb(180,180,180)" pushedColor="rgb(100,100,100)"/>
+										</div>
+										<div name="progress" bordercolor="none" text="0"/>
+									</div>
+								</div>
+								<div type="custom" cid="mychart" name="preDiv" cycle="1440" size="200,200" nativerefresh="true" candledivpercent="0.7" voldivpercent="0.3"/>
+							</div>
+						</div>
+						<div type="tabpage" text="走勢圖" name="quoteTab" backcolor="none">
+							<div type="splitlayout" layoutstyle="toptobottom" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitterposition="380,1">
+								<div type="splitlayout" layoutstyle="righttoleft" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitterposition="200,1">
+									<div type="custom" cid="latestdiv" name="divLatest"/>
+									<div type="custom" cid="mychart" name="mainChart1" cycle="0" candledivpercent="0.7" voldivpercent="0.3" backcolor="none" bordercolor="none"/>
+								</div>
+								<div type="splitlayout" layoutstyle="lefttoright" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="200,1">
+									<div type="custom" cid="mychart" name="mainChart2" cycle="5" candledivpercent="0.7" voldivpercent="0.3" backcolor="none" bordercolor="none"/>
+									<div type="custom" cid="mychart" name="mainChart3" cycle="1440" candledivpercent="0.7" voldivpercent="0.3" backcolor="none" bordercolor="none"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div type="tabpage" text="多 K 線" name="divMulti" backcolor="none">
+				<div type="splitlayout" layoutstyle="lefttoright" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="133,1">
+					<div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="267,1">
+						<div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="200,1">
+							<div type="custom" cid="mychart" name="chart1" cycle="1" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+							<div type="custom" cid="mychart" name="chart2" cycle="5" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+						</div>
+						<div type="custom" cid="mychart" name="chart3" cycle="10" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+					</div>
+					<div type="splitlayout" layoutstyle="lefttoright" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="200,1">
+						<div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="267,1">
+							<div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="200,1">
+								<div type="custom" cid="mychart" name="chart4" cycle="15" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+								<div type="custom" cid="mychart" name="chart5" cycle="20" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+							</div>
+							<div type="custom" cid="mychart" name="chart6" cycle="30" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+						</div>
+						<div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="267,1">
+							<div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="200,1">
+								<div type="custom" cid="mychart" name="chart7" cycle="1440" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+								<div type="custom" cid="mychart" name="chart8" cycle="10080" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+							</div>
+							<div type="custom" cid="mychart" name="chart9" cycle="43200" nativerefresh="true" candledivpercent="1" voldivpercent="0" backcolor="none" bordercolor="none"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>"""
+
+
+def drawProgressDiv(view, paint, clipRect):
+	if view.text == "-1":
+		paint.drawText("預測中...", "rgb(255,255,255)", "Default,14", 3, 7)
+	else:
+		cx = float(view.text) * view.size.cx
+		if cx > 0 and cx < view.size.cx:
+			paint.fillRect(view.textColor, 0, 0, cx, view.size.cy)
+
+
+def drawLatestDiv(view, paint, clipRect):
+	global latestQuote
+	avgHeight = 20
+	drawFont = "Default,14"
+	textColor = "rgb(175,196,228)"
+	if view.paint.defaultUIStyle == "light":
+		textColor = "rgb(0,0,0)"
+	dTop = 30
+	paint.drawLine(view.borderColor, 1, 0, 0, dTop, view.size.cx, dTop)
+	last_close = safe_float(latestQuote.get("last_close"))
+	sell_book = latestQuote.get("sell_book", [])
+	buy_book = latestQuote.get("buy_book", [])
+	book = sell_book + buy_book
+	labels = ["賣5", "賣4", "賣3", "賣2", "賣1", "買1", "買2", "買3", "買4", "買5"]
+	if latestQuote:
+		paint.drawText(latestQuote.get("code", ""), textColor, drawFont, 5, 7)
+		paint.drawText(latestQuote.get("name", ""), "rgb(194,151,18)", drawFont, 80, 7)
+	for i in range(0, 10):
+		tSize = paint.textSize(labels[i], drawFont)
+		paint.drawText(labels[i], textColor, drawFont, 5, dTop + avgHeight / 2 - tSize.cy / 2)
+		if i < len(book):
+			price, volume = book[i]
+			price_color = "rgb(255,82,82)"
+			if price < last_close:
+				price_color = "rgb(46,255,50)"
+				if paint.defaultUIStyle == "light":
+					price_color = "rgb(0,200,0)"
+			paint.drawText(toFixed(price, 2), price_color, drawFont, 50, dTop + avgHeight / 2 - tSize.cy / 2)
+			vol_text = toFixed(volume, 0)
+			vol_size = paint.textSize(vol_text, drawFont)
+			paint.drawText(vol_text, textColor, drawFont, view.size.cx - vol_size.cx - 10, dTop + avgHeight / 2 - vol_size.cy / 2)
+		dTop += avgHeight
+	paint.drawLine(view.borderColor, 1, 0, 0, dTop, view.size.cx, dTop)
+	paint.drawText("現價", textColor, drawFont, 5, dTop + 10)
+	paint.drawText("漲幅", textColor, drawFont, 5, dTop + 35)
+	paint.drawText("成交額", textColor, drawFont, 5, dTop + 60)
+	paint.drawText("成交量", textColor, drawFont, 5, dTop + 85)
+	paint.drawText("開盤", textColor, drawFont, 110, dTop + 10)
+	paint.drawText("振幅", textColor, drawFont, 110, dTop + 35)
+	paint.drawText("最高", textColor, drawFont, 110, dTop + 60)
+	paint.drawText("最低", textColor, drawFont, 110, dTop + 85)
+	if latestQuote:
+		close = safe_float(latestQuote.get("close"))
+		high = safe_float(latestQuote.get("high"))
+		low = safe_float(latestQuote.get("low"))
+		open_price = safe_float(latestQuote.get("open"))
+		volume = safe_float(latestQuote.get("volume"))
+		amount = safe_float(latestQuote.get("amount"))
+		diff = 0
+		diff2 = 0
+		if last_close > 0:
+			diff = 100 * (close - last_close) / last_close
+			diff2 = 100 * (high - last_close) / last_close - 100 * (low - last_close) / last_close
+		paint.drawText(toFixed(close, 2), getPriceColor(close, last_close), drawFont, 45, dTop + 10)
+		paint.drawText(toFixed(diff, 2) + "%", getPriceColor(close, last_close), drawFont, 45, dTop + 35)
+		paint.drawText(toFixed(amount / 100000000, 2) + "億", textColor, drawFont, 45, dTop + 60)
+		paint.drawText(toFixed(volume / 1000, 0) + "張", textColor, drawFont, 45, dTop + 85)
+		paint.drawText(toFixed(open_price, 2), getPriceColor(open_price, last_close), drawFont, 145, dTop + 10)
+		paint.drawText(toFixed(diff2, 2) + "%", getPriceColor(close, last_close), drawFont, 145, dTop + 35)
+		paint.drawText(toFixed(high, 2), getPriceColor(high, last_close), drawFont, 145, dTop + 60)
+		paint.drawText(toFixed(low, 2), getPriceColor(low, last_close), drawFont, 145, dTop + 85)
+
+
+def setChartTitle(chart, code, name, intCycle):
+	chart.text = code + " " + name
+	if intCycle == 0:
+		chart.text += " 分時"
+	elif intCycle < 1440:
+		chart.text += " " + str(intCycle) + "分鐘"
+	elif intCycle == 1440:
+		chart.text += " 日線"
+	elif intCycle == 10080:
+		chart.text += " 週線"
+	elif intCycle == 43200:
+		chart.text += " 月線"
+	elif intCycle == 129600:
+		chart.text += " 季線"
+	elif intCycle == 259200:
+		chart.text += " 半年線"
+	elif intCycle == 518400:
+		chart.text += " 年線"
+
+
+def historyDataCallBack(data):
+	if data.success:
+		code, name, cycle, myCharts = data.tag
+		base_datas = parse_yahoo_history(data.data)
+		if not base_datas:
+			return
+		for c in range(0, len(myCharts)):
+			myChart = myCharts[c]
+			myCycle = int(myChart.exAttributes["cycle"])
+			chart = myChart.views[0].secondView.views[0]
+			copyDatas = [copySecurityData(item) for item in base_datas]
+			if cycle == 0 and myCycle == 0:
+				chart.autoFillHScale = True
+				chart.cycle = "trend"
+			elif cycle == 1 and (myCycle > 0 and myCycle < 1440):
+				chart.cycle = "minute"
+				if myCycle > 1:
+					newDatas = []
+					multiMinuteSecurityDatas(newDatas, copyDatas, myCycle)
+					copyDatas = newDatas
+			elif cycle == 1440 and myCycle >= 1440:
+				chart.cycle = "day"
+				if myCycle == 10080:
+					newDatas = []
+					getHistoryWeekDatas(newDatas, copyDatas)
+					copyDatas = newDatas
+				elif myCycle == 43200:
+					newDatas = []
+					getHistoryMonthDatas(newDatas, copyDatas)
+					copyDatas = newDatas
+				elif myCycle == 129600:
+					newDatas = []
+					getHistorySeasonDatas(newDatas, copyDatas)
+					copyDatas = newDatas
+				elif myCycle == 259200:
+					newDatas = []
+					getHistoryHalfYearDatas(newDatas, copyDatas)
+					copyDatas = newDatas
+				elif myCycle == 518400:
+					newDatas = []
+					getHistoryYearDatas(newDatas, copyDatas)
+					copyDatas = newDatas
+			else:
+				continue
+			clientTicks[c] = ClientTickDataCache()
+			setChartTitle(chart, code, name, myCycle)
+			chart.firstOpen = copyDatas[0].open if copyDatas else 0
+			chart.lastVisibleKey = 0
+			chart.firstVisibleIndex = -1
+			chart.lastVisibleIndex = -1
+			chart.datas = copyDatas
+			maxVisibleRecord = getChartMaxVisibleCount(chart, chart.hScalePixel, getChartWorkAreaWidth(chart))
+			chart.lastVisibleIndex = len(chart.datas) - 1
+			if maxVisibleRecord > len(chart.datas):
+				chart.firstVisibleIndex = 0
+			else:
+				chart.firstVisibleIndex = chart.lastVisibleIndex - maxVisibleRecord + 1
+			resetChartVisibleRecord(chart)
+			checkChartLastVisibleIndex(chart)
+			calcChartIndicator(chart)
+			chart.invalidate()
+
+
+def queryHistoryData(code, name, cycle, myCharts):
+	if cycle == 0:
+		url = build_yahoo_chart_url(code, "1m", "5d")
+	elif cycle < 1440:
+		url = build_yahoo_chart_url(code, "1m", "5d")
+	else:
+		url = build_yahoo_chart_url(code, "1d", "2y")
+	httpRequest(url, historyDataCallBack, [code, name, cycle, myCharts])
+
+
+def newDataCallBack(data):
+	if data.success:
+		global latestQuote
+		payload = json.loads(data.data)
+		msg_array = payload.get("msgArray", [])
+		if not msg_array:
+			return
+		latestQuote = build_latest_quote(msg_array[0])
+		code = latestQuote.get("code", "")
+		close = safe_float(latestQuote.get("close"))
+		volume = safe_float(latestQuote.get("volume")) * 1000
+		amount = safe_float(latestQuote.get("amount"))
+		date_value = safe_float(latestQuote.get("time"))
+		date = int(date_value / 1000) if date_value > 0 else int(time.time())
+		for c in range(0, len(findMyCharts)):
+			myChart = findMyCharts[c]
+			chart = charts[c]
+			if chart.viewName == "preChart":
+				continue
+			if code == chart.text.split(" ")[0] and len(chart.datas) > 0:
+				myCycle = int(myChart.exAttributes["cycle"])
+				latestData = SecurityData()
+				latestData.close = close
+				latestData.open = close
+				latestData.high = close
+				latestData.low = close
+				latestData.volume = volume
+				latestData.amount = amount
+				latestData.date = date
+				cTick = clientTicks.get(c, ClientTickDataCache())
+				if len(cTick.code) == 0:
+					cTick.code = currentCode
+					cTick.lastAmount = latestData.amount
+					cTick.lastVolume = latestData.volume
+					cTick.lastDate = latestData.date
+				oldDataSize = len(chart.datas)
+				mergeLatestData(code, chart.datas, latestData, cTick, myCycle)
+				clientTicks[c] = cTick
+				if myCycle == 0:
+					for d in range(0, len(chart.datas)):
+						if chart.datas[d].volume > 0:
+							chart.lastValidIndex = d
+				if chart.lastRecordIsVisible and len(chart.datas) > oldDataSize:
+					chart.firstVisibleIndex += 1
+					chart.lastVisibleIndex += 1
+				checkChartLastVisibleIndex(chart)
+				calcChartIndicator(chart)
+		gPaint.update()
+
+
+def queryNewData():
+	httpRequest(build_mis_url([currentCode]), newDataCallBack, [])
+
+
+def queryPriceCallBack(data):
+	global priceRowMap
+	if data.success:
+		payload = json.loads(data.data)
+		msg_array = payload.get("msgArray", [])
+		for stock_info in msg_array:
+			quote = build_latest_quote(stock_info)
+			code = quote["code"]
+			row = priceRowMap.get(code)
+			if row is None:
+				row = FCGridRow()
+				priceRowMap[code] = row
+				gridStocks.rows.append(row)
+				for _ in range(11):
+					row.cells.append(createGridCell(gridStocks))
+				row.cells[0].value = len(gridStocks.rows)
+			row.cells[1].value = code
+			row.cells[1].textColor = "rgb(194,151,18)"
+			row.cells[2].value = quote["name"]
+			close = safe_float(quote["close"])
+			last_close = safe_float(quote["last_close"])
+			open_price = safe_float(quote["open"])
+			high = safe_float(quote["high"])
+			low = safe_float(quote["low"])
+			volume = safe_float(quote["volume"])
+			diff = close - last_close
+			diff_pct = 100 * diff / last_close if last_close > 0 else 0
+			row.cells[3].value = toFixed(close, 2)
+			row.cells[3].textColor = getPriceColor(close, last_close)
+			row.cells[4].value = toFixed(diff_pct, 2) + "%"
+			row.cells[4].textColor = getPriceColor(diff, 0)
+			row.cells[5].value = toFixed(diff, 2)
+			row.cells[5].textColor = getPriceColor(diff, 0)
+			row.cells[6].value = toFixed(open_price, 2)
+			row.cells[7].value = toFixed(high, 2)
+			row.cells[8].value = toFixed(low, 2)
+			row.cells[9].value = toFixed(volume / 1000, 0) + "張"
+			row.cells[10].value = toFixed(last_close, 2)
+		gridStocks.invalidate()
+
+
+def queryPrice():
+	httpRequest(build_mis_url([item["code"] for item in TAIWAN_WATCHLIST]), queryPriceCallBack, [])
+
+
+def drawChartTip(chart, paint, clipRect):
+	if paint.touchMoveView == chart and chart.cycle != "trend":
+		crossLineIndex = chart.crossStopIndex
+		if crossLineIndex != -1 and chart.firstVisibleIndex <= crossLineIndex <= chart.lastVisibleIndex:
+			mp = chart.touchPosition
+			cmp = FCPoint(mp.x + 5, mp.y)
+			width = 125
+			height = 125
+			tipRect = FCRect(cmp.x, cmp.y, cmp.x + width, cmp.y + height)
+			if tipRect.left < 0:
+				tipRect.left = 0
+				tipRect.right = width
+			if tipRect.right > chart.size.cx:
+				tipRect.left = chart.size.cx - width
+				tipRect.right = tipRect.left + width
+			if tipRect.bottom > chart.size.cy:
+				tipRect.top = chart.size.cy - height
+				tipRect.bottom = tipRect.top + height
+			sData = chart.datas[crossLineIndex]
+			high = sData.high
+			low = sData.low
+			highY = getChartY(chart, 0, high)
+			lowY = getChartY(chart, 0, low)
+			if cmp.y >= highY and cmp.y <= lowY:
+				if paint.defaultUIStyle == "dark":
+					paint.fillRect("rgb(50,50,50)", tipRect.left, tipRect.top, tipRect.right, tipRect.bottom)
+				else:
+					paint.fillRect("rgb(220,220,220)", tipRect.left, tipRect.top, tipRect.right, tipRect.bottom)
+				close = sData.close
+				openPrice = sData.open
+				volume = sData.volume
+				lastClose = chart.datas[crossLineIndex - 1].close if crossLineIndex > 0 else sData.open
+				xText = time.strftime("%Y-%m-%d", time.localtime(sData.date))
+				if chart.cycle == "minute":
+					xText = time.strftime("%Y-%m-%d %H:%M", time.localtime(sData.date))
+				xFont = "Default,13"
+				paint.drawText(xText, chart.textColor, xFont, tipRect.left + 5, tipRect.top + 5)
+				paint.drawText("高:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 25)
+				paint.drawText(toFixed(high, chart.candleDigit), getPriceColor(high, lastClose), xFont, tipRect.left + 25, tipRect.top + 25)
+				paint.drawText("開:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 45)
+				paint.drawText(toFixed(openPrice, chart.candleDigit), getPriceColor(openPrice, lastClose), xFont, tipRect.left + 25, tipRect.top + 45)
+				paint.drawText("低:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 65)
+				paint.drawText(toFixed(low, chart.candleDigit), getPriceColor(low, lastClose), xFont, tipRect.left + 25, tipRect.top + 65)
+				paint.drawText("收:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 85)
+				paint.drawText(toFixed(close, chart.candleDigit), getPriceColor(close, lastClose), xFont, tipRect.left + 25, tipRect.top + 85)
+				paint.drawText("量:", chart.textColor, xFont, tipRect.left + 5, tipRect.top + 105)
+				paint.drawText(toFixed(volume, 0), "rgb(80,255,255)", xFont, tipRect.left + 25, tipRect.top + 105)
+
+
+def popupWindow(text):
+	global popupPaint
+	pPaint = FCPaint()
+	wSize = FCSize(500, 200)
+	setWindowSize(wSize)
+	setCenterScreen(True)
+	createWindow(pPaint, "提示", WndProcPopup)
+	popupPaint[pPaint.hWnd] = pPaint
+	safe_text = str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+	xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+		<html xmlns="facecat">
+		<body>
+			<div dock="fill" backcolor="rgb(170,178,189)">
+				<label name="labelText" size="420,33" text="{safe_text}" font="Default,24" location="40,30"/>
+				<label name="labelText2" size="420,33" text="請切換週期或調整預測參數。" font="Default,24" location="40,70"/>
+			</div>
+		</body>
+		</html>"""
+	renderFaceCat(pPaint, xml)
+	showWindow(pPaint)
+	msg = cwintypes.MSG()
+	pmsg = ct.byref(msg)
+	while user32.IsWindow(pPaint.hWnd):
+		res = user32.GetMessageW(pmsg, None, 0, 0)
+		if res <= 0:
+			break
+		user32.TranslateMessage(pmsg)
+		user32.DispatchMessageW(pmsg)
+
+
+def predict(chart):
+	local_predictor = ensure_predictor_loaded()
+	if local_predictor is None:
+		return
+	preButton = gPaint.findView("preButton")
+	preButton.enabled = False
+	progressDiv = gPaint.findView("progress")
+	progressDiv.text = "-1"
+	progressDiv.invalidate()
+	preButton.invalidate()
+	lookback = chart.lookback
+	pred_len = chart.pred_len
+	mode = chart.preMode
+	if len(chart.datas) < lookback and mode == "predict":
+		popupWindow(f"K 線數量不足，目前只有 {len(chart.datas)} 筆，至少需要 {lookback} 筆。")
+		progressDiv.text = "0"
+		progressDiv.invalidate()
+		preButton.enabled = True
+		preButton.invalidate()
+		return
+	elif len(chart.datas) < lookback + pred_len and mode == "backtest":
+		popupWindow(f"K 線數量不足，目前只有 {len(chart.datas)} 筆，至少需要 {lookback + pred_len} 筆。")
+		progressDiv.text = "0"
+		progressDiv.invalidate()
+		preButton.enabled = True
+		preButton.invalidate()
+		return
+	if mode == "predict":
+		klines = chart.lastVisibleIndex - chart.firstVisibleIndex
+		if chart.pred_len > 50 and klines > 50:
+			chart.firstVisibleIndex += 50
+		elif chart.pred_len <= 50 and klines > chart.pred_len:
+			chart.firstVisibleIndex += chart.pred_len
+		chart.invalidate()
+		df = transToPanda(chart.datas)
+		df["timestamps"] = pd.to_datetime(df["timestamps"])
+		df = df.sort_values("timestamps").reset_index(drop=True)
+		x_df = df.tail(lookback)[["open", "high", "low", "close", "volume", "amount"]].reset_index(drop=True)
+		x_timestamp = df.tail(lookback)["timestamps"].reset_index(drop=True)
+		last_timestamp = x_timestamp.iloc[-1]
+		y_timestamp = pd.Series(pd.date_range(start=last_timestamp + pd.Timedelta(days=1), periods=pred_len))
+		pred_df = local_predictor.predict(
+			df=x_df,
+			x_timestamp=x_timestamp,
+			y_timestamp=y_timestamp,
+			pred_len=pred_len,
+			T=chart.temperature,
+			top_p=chart.topP,
+			sample_count=1,
+			verbose=True,
+			progress_callback=progress_callback
+		)
+		chart.datas2 = transToChartData(pred_df)
+	else:
+		df = transToPanda(chart.datas)
+		df["timestamps"] = pd.to_datetime(df["timestamps"])
+		df = df.sort_values("timestamps").reset_index(drop=True)
+		test_df = df.tail(lookback + pred_len).reset_index(drop=True)
+		x_df = test_df.loc[:lookback - 1, ["open", "high", "low", "close", "volume", "amount"]]
+		x_timestamp = test_df.loc[:lookback - 1, "timestamps"]
+		y_timestamp = test_df.loc[lookback:lookback + pred_len - 1, "timestamps"]
+		pred_df = local_predictor.predict(
+			df=x_df,
+			x_timestamp=x_timestamp,
+			y_timestamp=y_timestamp,
+			pred_len=pred_len,
+			T=chart.temperature,
+			top_p=chart.topP,
+			sample_count=1,
+			verbose=True,
+			progress_callback=progress_callback
+		)
+		chart.datas2 = transToChartData(pred_df)
+	preButton.enabled = True
+	preButton.invalidate()
+
+
+def predict_in_thread(chart):
+	predict(chart)
+	chart.invalidate()
 def WndProc(hwnd,msg,wParam,lParam):
-	"""消息循环"""
+	"""消息循環"""
 	if msg == 0x0401:
 		gPaint.dealData()
 	return WndProcDefault(gPaint,hwnd,msg,wParam,lParam)
 
-gPaint = FCPaint() #创建绘图对象
+gPaint = FCPaint() #創建繪圖對象
 gPaint.defaultUIStyle = "dark"
 gPaint.onPaint = onPaint
 gPaint.onClickGridCell = onClickGridCell
@@ -1280,7 +1991,7 @@ gPaint.highQuanlity()
 gPaint.scaleFactorX = 1.33
 gPaint.scaleFactorY = 1.33
 
-#初始化窗体
+#初始化窗體
 createMainWindow(gPaint, "Facecat-Kronos", WndProc)
 xml = """<?xml version="1.0" encoding="utf-8" ?>
 	    <html xmlns="facecat">
@@ -1296,58 +2007,58 @@ xml = """<?xml version="1.0" encoding="utf-8" ?>
 	                            allowpreviewsevent="true" allowdragscroll="true">
 	                            <tr>
 	                                <th name="colP0" text="序" width="40" allowdrag="true" allowresize="true" coltype="no"/>
-	                                <th name="colP1" text="代码" width="70" allowdrag="true" allowresize="true"/>
-	                                <th name="colP2" text="名称" width="70" allowdrag="true" allowresize="true" />
-	                                <th name="colP3" text="现价" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP4" text="涨幅" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP5" text="涨跌" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP9" text="总量" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP10" text="总额" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP1" text="代碼" width="70" allowdrag="true" allowresize="true"/>
+	                                <th name="colP2" text="名稱" width="70" allowdrag="true" allowresize="true" />
+	                                <th name="colP3" text="現價" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP4" text="漲幅" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP5" text="漲跌" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP9" text="總量" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP10" text="總額" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
 	                                <th name="colP11" text="量比" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP12" text="PE动" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP12" text="PE動" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
 	                                <th name="colP13" text="振幅" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP14" text="换手率" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP15" text="总市值" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP14" text="換手率" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP15" text="總市值" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
 	                                <th name="colP16" text="流值" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP17" text="行业分类板块" width="80" allowdrag="true" allowresize="true" cellalign="center"/>
-	                                <th name="colP18" text="涨停价" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP19" text="跌停价" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP17" text="行業分類板塊" width="80" allowdrag="true" allowresize="true" cellalign="center"/>
+	                                <th name="colP18" text="漲停價" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP19" text="跌停價" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
 	                                <th name="colP20" text="金比" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP21" text="涨跌比" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP22" text="涨速" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP23" text="净资产收益率" width="100" allowdrag="true" allowresize="true" cellalign="right"/>
-	                                <th name="colP24" text="自设指标" width="80" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP21" text="漲跌比" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP22" text="漲速" width="60" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP23" text="淨資產收益率" width="100" allowdrag="true" allowresize="true" cellalign="right"/>
+	                                <th name="colP24" text="自設指標" width="80" allowdrag="true" allowresize="true" cellalign="right"/>
 	                            </tr>
 	                        </table>
 							<div type="tab" dock="fill" selectedindex="0" backcolor="none" bordercolor="none"
 	           					 name="tabFunc">
-								<div type="tabpage" text="预测" name="preTab" backcolor="none">
+								<div type="tabpage" text="預測" name="preTab" backcolor="none">
 									<div type="splitlayout" layoutstyle="toptobottom" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitterposition="25,1" >
 										<div type="splitlayout" layoutstyle="righttoleft" bordercolor="none" dock="fill" size="400,400" candragsplitter="true" splitterposition="300,1" splitmode="percentsize">
 											<div type="layout" backcolor="none" allowResize="false" bordercolor="none">
-												<input type="button" name="preButton" text="预测" textcolor="rgb(255,255,255)" /> 
+												<input type="button" name="preButton" text="預測" textcolor="rgb(255,255,255)" /> 
 												<select name="modeSwich" selectedindex="0">
-													<option text="预测模式" name="mode_predict" value="predict"/>
-													<option text="回测模式" name="mode_backtest" value="backtest"/>
+													<option text="預測模式" name="mode_predict" value="predict"/>
+													<option text="回測模式" name="mode_backtest" value="backtest"/>
 												</select>
 											</div>
 											<div type="layout" backcolor="none" bordercolor="none">
 												<select name="lookback" selectedindex="0" size="80,25">
-													<option text="训练 50" name="lookback_50" value="50"/>
-													<option text="训练 10" name="lookback_10" value="10"/>
-													<option text="训练 20" name="lookback_20" value="20"/>
-													<option text="训练 100" name="lookback_100" value="100"/>
-													<option text="训练 200" name="lookback_200" value="200"/>
-													<option text="训练 300" name="lookback_300" value="300"/>
-													<option text="训练 400" name="lookback_400" value="400"/>
+													<option text="訓練 50" name="lookback_50" value="50"/>
+													<option text="訓練 10" name="lookback_10" value="10"/>
+													<option text="訓練 20" name="lookback_20" value="20"/>
+													<option text="訓練 100" name="lookback_100" value="100"/>
+													<option text="訓練 200" name="lookback_200" value="200"/>
+													<option text="訓練 300" name="lookback_300" value="300"/>
+													<option text="訓練 400" name="lookback_400" value="400"/>
 												</select>
 												<select name="pred_len" size="80,25">
-													<option text="预测 5" name="pred_len_5" value="5"/>
-													<option text="预测 1" name="pred_len_1" value="1"/>
-													<option text="预测 10" name="pred_len_10" value="10"/>
-													<option text="预测 20" name="pred_len_20" value="20"/>
-													<option text="预测 50" name="pred_len_50" value="50"/>
-													<option text="预测 120" name="pred_len_120" value="120"/>
+													<option text="預測 5" name="pred_len_5" value="5"/>
+													<option text="預測 1" name="pred_len_1" value="1"/>
+													<option text="預測 10" name="pred_len_10" value="10"/>
+													<option text="預測 20" name="pred_len_20" value="20"/>
+													<option text="預測 50" name="pred_len_50" value="50"/>
+													<option text="預測 120" name="pred_len_120" value="120"/>
 												</select>
 												<div size="80,25" name="temperatureDiv" text="Temp:1.0">
 													<input type="button" location="65,4" size="10,12" name="temperatureUp" hoveredColor="rgb(180,180,180)" pushedColor="rgb(100,100,100)"/>
@@ -1387,7 +2098,7 @@ xml = """<?xml version="1.0" encoding="utf-8" ?>
 
 	                    </div>
 	                    </div>
-	                    <div type="tabpage" text="多K线" name="divMulti" backcolor="none">
+	                    <div type="tabpage" text="多K線" name="divMulti" backcolor="none">
 	                        <div type="splitlayout" layoutstyle="lefttoright" backcolor="none" bordercolor="none"
 	                            dock="fill" size="400,400" candragsplitter="true" splitmode="percentsize" splitterposition="133,1">
 	                            <div type="splitlayout" layoutstyle="toptobottom" backcolor="none" bordercolor="none"
@@ -1436,6 +2147,7 @@ xml = """<?xml version="1.0" encoding="utf-8" ?>
 	    </body>
 	    </html>"""
 
+xml = MAIN_XML
 gPaint.render(None, xml)
 gridStocks = gPaint.findView("gridStocks")
 for i in range(3, len(gridStocks.columns)):
@@ -1446,9 +2158,10 @@ if gPaint.defaultUIStyle == "dark":
 elif gPaint.defaultUIStyle == "light":
 	gridStocks.selectedRowColor = "rgb(175,175,175)"
 	gridStocks.alternateRowColor = "rgb(245,245,245)"
-stockName = "浦发银行"
+stockName = "浦發銀行"
 
 progressDiv = gPaint.findView("progress")
+stockName = get_stock_profile(currentCode)["name"]
 progressDiv.onPaint = drawProgressDiv
 
 temperatureUpButton = gPaint.findView("temperatureUp")
@@ -1516,7 +2229,7 @@ for i in range(0, len(findMyCharts)):
 	charts.append(chart)
 	bottomDiv.addView(chart)
 	setChartTheme(chart, i)
-	# 预测面板属性调整
+	# 預測面板屬性調整
 	if myChart.viewName=="preDiv":
 		chart.viewName = "preChart"
 		chart.indicatorColors = []
@@ -1588,6 +2301,20 @@ for i in range(0, len(findMyCharts)):
 		cycleButton.backColor = "none"
 		cycleButton.viewName = "cycle," + str(i) + "," + str(cyclesInts[c])
 		topDiv.addView(cycleButton)
+for myChart in findMyCharts:
+	topDiv = myChart.views[0].firstView
+	for cycleButton in topDiv.views:
+		if cycleButton.viewName.find("cycle,") == 0:
+			cycleInt = int(cycleButton.viewName.split(",")[2])
+			labelMap = {
+				1440: "日",
+				10080: "週",
+				43200: "月",
+				129600: "季",
+				259200: "半年",
+				518400: "年",
+			}
+			cycleButton.text = labelMap.get(cycleInt, str(cycleInt))
 queryHistoryData(currentCode, stockName, 0, findMyCharts)
 queryHistoryData(currentCode, stockName, 1, findMyCharts)
 queryHistoryData(currentCode, stockName, 1440, findMyCharts)
