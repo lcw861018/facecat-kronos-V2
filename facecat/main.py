@@ -105,6 +105,85 @@ HTTP_HEADERS = {
 }
 
 
+def create_stock_profile(code, name, category, market="tse", suffix="TW"):
+	return {
+		"code": code,
+		"name": name,
+		"category": category,
+		"market": market,
+		"suffix": suffix,
+	}
+
+
+TAIWAN_STOCK_GROUPS = [
+	("半導體", [
+		create_stock_profile("2330", "台積電", "半導體"),
+		create_stock_profile("2454", "聯發科", "半導體"),
+		create_stock_profile("3034", "聯詠", "半導體"),
+		create_stock_profile("3711", "日月光投控", "半導體"),
+		create_stock_profile("2379", "瑞昱", "半導體"),
+		create_stock_profile("2327", "國巨", "半導體"),
+		create_stock_profile("6488", "環球晶", "半導體", market="otc", suffix="TWO"),
+		create_stock_profile("5347", "世界", "半導體", market="otc", suffix="TWO"),
+		create_stock_profile("8299", "群聯", "半導體", market="otc", suffix="TWO"),
+	]),
+	("AI伺服器", [
+		create_stock_profile("2317", "鴻海", "AI伺服器"),
+		create_stock_profile("2382", "廣達", "AI伺服器"),
+		create_stock_profile("3231", "緯創", "AI伺服器"),
+		create_stock_profile("6669", "緯穎", "AI伺服器"),
+		create_stock_profile("2356", "英業達", "AI伺服器"),
+		create_stock_profile("2308", "台達電", "AI伺服器"),
+		create_stock_profile("2301", "光寶科", "AI伺服器"),
+		create_stock_profile("3017", "奇鋐", "AI伺服器"),
+	]),
+	("電子零組件", [
+		create_stock_profile("2357", "華碩", "電子零組件"),
+		create_stock_profile("2345", "智邦", "電子零組件"),
+		create_stock_profile("3008", "大立光", "電子零組件"),
+		create_stock_profile("8069", "元太", "電子零組件", market="otc", suffix="TWO"),
+	]),
+	("航運", [
+		create_stock_profile("2603", "長榮", "航運"),
+		create_stock_profile("2609", "陽明", "航運"),
+		create_stock_profile("2615", "萬海", "航運"),
+	]),
+	("金融", [
+		create_stock_profile("2881", "富邦金", "金融"),
+		create_stock_profile("2882", "國泰金", "金融"),
+		create_stock_profile("2884", "玉山金", "金融"),
+		create_stock_profile("2885", "元大金", "金融"),
+		create_stock_profile("2886", "兆豐金", "金融"),
+		create_stock_profile("2891", "中信金", "金融"),
+		create_stock_profile("5871", "中租-KY", "金融"),
+	]),
+	("電信", [
+		create_stock_profile("2412", "中華電", "電信"),
+		create_stock_profile("3045", "台灣大", "電信"),
+		create_stock_profile("4904", "遠傳", "電信"),
+	]),
+	("傳產", [
+		create_stock_profile("1216", "統一", "傳產"),
+		create_stock_profile("1301", "台塑", "傳產"),
+		create_stock_profile("1303", "南亞", "傳產"),
+		create_stock_profile("1326", "台化", "傳產"),
+		create_stock_profile("2002", "中鋼", "傳產"),
+		create_stock_profile("2207", "和泰車", "傳產"),
+	]),
+	("ETF", [
+		create_stock_profile("0050", "元大台灣50", "ETF"),
+		create_stock_profile("0056", "元大高股息", "ETF"),
+		create_stock_profile("00878", "國泰永續高股息", "ETF"),
+		create_stock_profile("00919", "群益台灣精選高息", "ETF"),
+		create_stock_profile("00929", "復華台灣科技優息", "ETF"),
+	]),
+]
+TAIWAN_WATCHLIST = []
+for _, stocks in TAIWAN_STOCK_GROUPS:
+	TAIWAN_WATCHLIST.extend(stocks)
+TAIWAN_STOCK_MAP = {item["code"]: item for item in TAIWAN_WATCHLIST}
+
+
 def safe_float(value, default=0.0):
 	"""Convert loose number strings from public APIs into floats."""
 	if value in (None, "", "-", "--", "---", "null"):
@@ -123,6 +202,7 @@ def get_stock_profile(code):
 	return TAIWAN_STOCK_MAP.get(normalized, {
 		"code": normalized,
 		"name": normalized,
+		"category": "其他",
 		"market": "tse",
 		"suffix": "TW",
 	})
@@ -170,6 +250,7 @@ def build_latest_quote(stock_info):
 	return {
 		"code": code,
 		"name": profile["name"],
+		"category": profile["category"],
 		"close": close,
 		"high": high,
 		"low": low,
@@ -1490,6 +1571,7 @@ MAIN_XML = """<?xml version="1.0" encoding="utf-8" ?>
 							<th name="colP8" text="最低" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
 							<th name="colP9" text="成交量" width="90" allowdrag="true" allowresize="true" cellalign="right"/>
 							<th name="colP10" text="昨收" width="70" allowdrag="true" allowresize="true" cellalign="right"/>
+							<th name="colP11" text="分類" width="90" allowdrag="true" allowresize="true" cellalign="center"/>
 						</tr>
 					</table>
 					<div type="tab" dock="fill" selectedindex="0" backcolor="none" bordercolor="none" name="tabFunc">
@@ -1815,7 +1897,7 @@ def queryPriceCallBack(data):
 				row = FCGridRow()
 				priceRowMap[code] = row
 				gridStocks.rows.append(row)
-				for _ in range(11):
+				for _ in range(12):
 					row.cells.append(createGridCell(gridStocks))
 				row.cells[0].value = len(gridStocks.rows)
 			row.cells[1].value = code
@@ -1840,6 +1922,7 @@ def queryPriceCallBack(data):
 			row.cells[8].value = toFixed(low, 2)
 			row.cells[9].value = toFixed(volume / 1000, 0) + "張"
 			row.cells[10].value = toFixed(last_close, 2)
+			row.cells[11].value = quote["category"]
 		gridStocks.invalidate()
 
 
@@ -2202,8 +2285,9 @@ xml = """<?xml version="1.0" encoding="utf-8" ?>
 xml = MAIN_XML
 gPaint.render(None, xml)
 gridStocks = gPaint.findView("gridStocks")
-for i in range(3, len(gridStocks.columns)):
+for i in range(3, len(gridStocks.columns) - 1):
 	gridStocks.columns[i].cellAlign = "right"
+gridStocks.columns[len(gridStocks.columns) - 1].cellAlign = "center"
 if gPaint.defaultUIStyle == "dark":
 	gridStocks.selectedRowColor = "rgb(75,75,75)"
 	gridStocks.alternateRowColor = "rgb(25,25,25)"
