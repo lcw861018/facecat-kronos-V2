@@ -380,7 +380,7 @@ def sample_from_logits(logits, temperature=1.0, top_k=None, top_p=None, sample_l
     probs = F.softmax(logits, dim=-1)
 
     if not sample_logits:
-        _, x = top_k(probs, k=1, dim=-1)
+        x = torch.argmax(probs, dim=-1, keepdim=True)
     else:
         x = torch.multinomial(probs, num_samples=1)
 
@@ -429,11 +429,11 @@ def auto_regressive_inference(tokenizer, model, x, x_stamp, y_stamp, max_context
 
             s1_logits, context = model.decode_s1(input_tokens[0], input_tokens[1], current_stamp)
             s1_logits = s1_logits[:, -1, :]
-            sample_pre = sample_from_logits(s1_logits, temperature=T, top_k=top_k, top_p=top_p, sample_logits=True)
+            sample_pre = sample_from_logits(s1_logits, temperature=T, top_k=top_k, top_p=top_p, sample_logits=False)
 
             s2_logits = model.decode_s2(context, sample_pre)
             s2_logits = s2_logits[:, -1, :]
-            sample_post = sample_from_logits(s2_logits, temperature=T, top_k=top_k, top_p=top_p, sample_logits=True)
+            sample_post = sample_from_logits(s2_logits, temperature=T, top_k=top_k, top_p=top_p, sample_logits=False)
 
             x_token[0] = torch.cat([x_token[0], sample_pre], dim=1)
             x_token[1] = torch.cat([x_token[1], sample_post], dim=1)

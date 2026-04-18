@@ -450,7 +450,8 @@ def predict(chart):
 	progressDiv.text = "-1"
 	progressDiv.invalidate()
 	preButton.invalidate()
-	lookback, pred_len, adjust_message = normalize_prediction_params(chart)
+	frozen_datas = clone_chart_datas(chart.datas)
+	lookback, pred_len, adjust_message = normalize_prediction_params(chart, frozen_datas)
 	mode = chart.preMode
 	
 	if lookback is None or (len(chart.datas) < lookback and mode == "predict"):
@@ -460,7 +461,7 @@ def predict(chart):
 		preButton.enabled = True
 		preButton.invalidate()
 		return
-	elif len(chart.datas) < lookback + pred_len and mode == "backtest":
+	elif len(frozen_datas) < lookback + pred_len and mode == "backtest":
 		popupWindow(f"k線數量{len(chart.datas)}小於訓練數量{lookback + pred_len}")
 		progressDiv.text = "0"
 		progressDiv.invalidate()
@@ -477,7 +478,7 @@ def predict(chart):
 			chart.firstVisibleIndex += pred_len
 		chart.invalidate()
 	# 獲取圖表數據，轉化成panda格式
-		df = transToPanda(chart.datas)
+		df = transToPanda(frozen_datas)
 		df['timestamps'] = pd.to_datetime(df['timestamps'])
 
 		df = df.sort_values('timestamps').reset_index(drop=True)
@@ -504,7 +505,7 @@ def predict(chart):
 	elif mode == "backtest": # 回測模式
 		# popupWindow()
 		print(f"Using device: {device} mode: {mode}")
-		df = transToPanda(chart.datas)
+		df = transToPanda(frozen_datas)
 		df['timestamps'] = pd.to_datetime(df['timestamps'])
 
 		df = df.sort_values('timestamps').reset_index(drop=True)
@@ -2101,9 +2102,11 @@ def popupWindow(text):
 		user32.TranslateMessage(pmsg)
 		user32.DispatchMessageW(pmsg)
 
-def normalize_prediction_params(chart):
+def normalize_prediction_params(chart, datas=None):
 	"""Fit lookback/pred_len to the loaded sample size before predicting."""
-	available = len(chart.datas)
+	if datas is None:
+		datas = chart.datas
+	available = len(datas)
 	mode = chart.preMode
 	lookback = int(chart.lookback)
 	pred_len = int(chart.pred_len)
@@ -2131,6 +2134,32 @@ def normalize_prediction_params(chart):
 	if adjustments:
 		message = "資料筆數不足，已自動調整參數：" + "，".join(adjustments) + f"。目前共 {available} 筆資料。"
 	return lookback, pred_len, message
+
+
+def clone_chart_datas(datas):
+	"""Freeze the current chart inputs so one prediction run uses stable data."""
+	return [copySecurityData(item) for item in datas]
+
+
+def build_future_timestamps_from_datas(datas, pred_len):
+	"""Build future timestamps using the recent K-line spacing instead of a fixed one-day step."""
+	if not datas or pred_len <= 0:
+		return pd.Series(dtype="datetime64[ns]")
+
+	timestamps = pd.Series([datetime.fromtimestamp(item.date) for item in datas])
+	if len(timestamps) == 1:
+		step = pd.Timedelta(minutes=1)
+	else:
+		deltas = timestamps.diff().dropna()
+		deltas = deltas[deltas > pd.Timedelta(0)]
+		if deltas.empty:
+			step = pd.Timedelta(minutes=1)
+		else:
+			step = deltas.iloc[-1]
+
+	last_timestamp = timestamps.iloc[-1]
+	future_values = [last_timestamp + step * (index + 1) for index in range(pred_len)]
+	return pd.Series(future_values)
 
 
 def ensure_predictor_loaded():
@@ -2163,7 +2192,8 @@ def predict(chart):
 	progressDiv.text = "-1"
 	progressDiv.invalidate()
 	preButton.invalidate()
-	lookback, pred_len, adjust_message = normalize_prediction_params(chart)
+	frozen_datas = clone_chart_datas(chart.datas)
+	lookback, pred_len, adjust_message = normalize_prediction_params(chart, frozen_datas)
 	mode = chart.preMode
 	if lookback is None:
 		popupWindow(adjust_message)
@@ -2176,15 +2206,15 @@ def predict(chart):
 		popupWindow(adjust_message)
 	chart.lookback = lookback
 	chart.pred_len = pred_len
-	if len(chart.datas) < lookback and mode == "predict":
-		popupWindow(f"K 線數量不足，目前只有 {len(chart.datas)} 筆，至少需要 {lookback} 筆。")
+	if len(frozen_datas) < lookback and mode == "predict":
+		popupWindow(f"K 線數量不足，目前只有 {len(frozen_datas)} 筆，至少需要 {lookback} 筆。")
 		progressDiv.text = "0"
 		progressDiv.invalidate()
 		preButton.enabled = True
 		preButton.invalidate()
 		return
-	elif len(chart.datas) < lookback + pred_len and mode == "backtest":
-		popupWindow(f"K 線數量不足，目前只有 {len(chart.datas)} 筆，至少需要 {lookback + pred_len} 筆。")
+	elif len(frozen_datas) < lookback + pred_len and mode == "backtest":
+		popupWindow(f"K 線數量不足，目前只有 {len(frozen_datas)} 筆，至少需要 {lookback + pred_len} 筆。")
 		progressDiv.text = "0"
 		progressDiv.invalidate()
 		preButton.enabled = True
@@ -2192,18 +2222,17 @@ def predict(chart):
 		return
 	if mode == "predict":
 		klines = chart.lastVisibleIndex - chart.firstVisibleIndex
-		if chart.pred_len > 50 and klines > 50:
+		if pred_len > 50 and klines > 50:
 			chart.firstVisibleIndex += 50
-		elif chart.pred_len <= 50 and klines > chart.pred_len:
-			chart.firstVisibleIndex += chart.pred_len
+		elif pred_len <= 50 and klines > pred_len:
+			chart.firstVisibleIndex += pred_len
 		chart.invalidate()
-		df = transToPanda(chart.datas)
+		df = transToPanda(frozen_datas)
 		df["timestamps"] = pd.to_datetime(df["timestamps"])
 		df = df.sort_values("timestamps").reset_index(drop=True)
 		x_df = df.tail(lookback)[["open", "high", "low", "close", "volume", "amount"]].reset_index(drop=True)
 		x_timestamp = df.tail(lookback)["timestamps"].reset_index(drop=True)
-		last_timestamp = x_timestamp.iloc[-1]
-		y_timestamp = pd.Series(pd.date_range(start=last_timestamp + pd.Timedelta(days=1), periods=pred_len))
+		y_timestamp = build_future_timestamps_from_datas(frozen_datas, pred_len)
 		pred_df = local_predictor.predict(
 			df=x_df,
 			x_timestamp=x_timestamp,
@@ -2217,7 +2246,7 @@ def predict(chart):
 		)
 		chart.datas2 = transToChartData(pred_df)
 	else:
-		df = transToPanda(chart.datas)
+		df = transToPanda(frozen_datas)
 		df["timestamps"] = pd.to_datetime(df["timestamps"])
 		df = df.sort_values("timestamps").reset_index(drop=True)
 		test_df = df.tail(lookback + pred_len).reset_index(drop=True)
