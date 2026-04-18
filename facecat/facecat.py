@@ -2853,17 +2853,19 @@ def drawGrid(grid, paint, clipRect):
 		column.bounds = colRect
 		column.index = i
 		colLeft += column.width
-	visibleIndex = 0
 	for i in range(0, len(grid.rows)):
 		row = grid.rows[i]
 		row.index = i
 		row.alternate = False
 		if row.visible:
-			if visibleIndex % 2 == 1:
-				row.alternate = True
-			visibleIndex = visibleIndex + 1
 			rTop = cTop
 			rBottom = cTop + grid.rowHeight
+			slotTop = rTop
+			if slotTop < grid.headerHeight:
+				slotTop = grid.headerHeight
+			slotIndex = int((slotTop - grid.headerHeight) / grid.rowHeight)
+			if slotIndex % 2 == 1:
+				row.alternate = True
 			#繪制非凍結列
 			if rBottom >= 0 and cTop <= grid.size.cy:
 				for j in range(0, len(row.cells)):

@@ -621,6 +621,50 @@ def onPaint(view, paint, clipRect):
 		onPaintDefault(view, paint, clipRect)
 
 
+def onInvalidateNoErase(paint):
+	"""Queue a repaint without asking Windows to erase the background first."""
+	rect = RECT()
+	rect.left = 0
+	rect.top = 0
+	rect.right = paint.size.cx
+	rect.bottom = paint.size.cy
+	user32.InvalidateRect(paint.hWnd, ct.byref(rect), False)
+
+
+def onInvalidateViewNoErase(view):
+	"""Queue a clipped repaint for one view to reduce scroll flicker."""
+	if not isPaintVisible(view):
+		return
+	rect = RECT()
+	rect.left = int(clientX(view) * view.paint.scaleFactorX)
+	rect.top = int(clientY(view) * view.paint.scaleFactorY)
+	rect.right = int((clientX(view) + view.size.cx) * view.paint.scaleFactorX)
+	rect.bottom = int((clientY(view) + view.size.cy) * view.paint.scaleFactorY)
+	user32.InvalidateRect(view.paint.hWnd, ct.byref(rect), False)
+
+
+def invalidate_grid_body_no_erase(grid):
+	"""Only repaint the scrolling body of the stock grid."""
+	if not isPaintVisible(grid):
+		return
+	left = clientX(grid)
+	top = clientY(grid) + grid.headerHeight
+	right = clientX(grid) + grid.size.cx
+	bottom = clientY(grid) + grid.size.cy
+	rect = RECT()
+	rect.left = int(left * grid.paint.scaleFactorX)
+	rect.top = int(top * grid.paint.scaleFactorY)
+	rect.right = int(right * grid.paint.scaleFactorX)
+	rect.bottom = int(bottom * grid.paint.scaleFactorY)
+	user32.InvalidateRect(grid.paint.hWnd, ct.byref(rect), False)
+
+
+def on_grid_pre_mouse_wheel(view, mp, buttons, clicks, delta):
+	"""Handle grid wheel scrolling with a smaller repaint region to reduce flicker."""
+	touchWheelGrid(view, delta)
+	invalidate_grid_body_no_erase(view)
+
+
 def drawMyDiv(view, paint, clipRect):
 		# elif view.viewName == "temperatureDiv" or view.viewName == "topPDiv":
 	tSize = paint.textSize(view.text, "Default,14")
@@ -2280,6 +2324,8 @@ def WndProc(hwnd,msg,wParam,lParam):
 
 gPaint = FCPaint() #創建繪圖對象
 gPaint.defaultUIStyle = "dark"
+gPaint.onInvalidate = onInvalidateNoErase
+gPaint.onInvalidateView = onInvalidateViewNoErase
 gPaint.onPaint = onPaint
 gPaint.onClickGridCell = onClickGridCell
 gPaint.onClick = onClick
@@ -2448,6 +2494,7 @@ xml = """<?xml version="1.0" encoding="utf-8" ?>
 xml = MAIN_XML
 gPaint.render(None, xml)
 gridStocks = gPaint.findView("gridStocks")
+gridStocks.onPreMouseWheel = on_grid_pre_mouse_wheel
 for i in range(3, len(gridStocks.columns) - 1):
 	gridStocks.columns[i].cellAlign = "right"
 gridStocks.columns[len(gridStocks.columns) - 1].cellAlign = "center"
