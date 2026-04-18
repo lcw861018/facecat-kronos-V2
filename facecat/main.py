@@ -7,6 +7,7 @@ from requests.adapters import HTTPAdapter
 import random
 from datetime import datetime
 import json
+import os
 from stock import *
 
 
@@ -14,6 +15,7 @@ import pandas as pd
 import sys
 from model import Kronos, KronosTokenizer, KronosPredictor
 import torch
+from huggingface_hub import snapshot_download
 
 latestDataStr = ""
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,15 +27,45 @@ LOCAL_MODEL_DIR_ALT = os.path.join(FACECAT_DIR, "model", "Kronos-small")
 HF_TOKENIZER_REPO = "NeoQuasar/Kronos-Tokenizer-base"
 HF_MODEL_REPO = "NeoQuasar/Kronos-small"
 
-def resolve_pretrained_source(local_dir, repo_id):
-	"""Prefer local weights; otherwise use the official Hugging Face repo."""
-	if os.path.isdir(local_dir):
-		return local_dir
-	if "Tokenizer" in local_dir and os.path.isdir(LOCAL_TOKENIZER_DIR_ALT):
-		return LOCAL_TOKENIZER_DIR_ALT
-	if "Kronos-small" in local_dir and os.path.isdir(LOCAL_MODEL_DIR_ALT):
-		return LOCAL_MODEL_DIR_ALT
-	return repo_id
+def has_pretrained_weights(model_dir):
+	"""Only treat a folder as ready when config and weights both exist."""
+	if not os.path.isdir(model_dir):
+		return False
+	if not os.path.isfile(os.path.join(model_dir, "config.json")):
+		return False
+	weight_patterns = (".safetensors", ".bin", ".pt", ".pth")
+	for file_name in os.listdir(model_dir):
+		if file_name.endswith(weight_patterns):
+			return True
+	return False
+
+
+def get_candidate_model_dirs(local_dir):
+	candidates = [local_dir]
+	if "Tokenizer" in local_dir:
+		candidates.append(LOCAL_TOKENIZER_DIR_ALT)
+	elif "Kronos-small" in local_dir:
+		candidates.append(LOCAL_MODEL_DIR_ALT)
+	ordered = []
+	for candidate in candidates:
+		if candidate not in ordered:
+			ordered.append(candidate)
+	return ordered
+
+
+def ensure_local_pretrained_dir(local_dir, repo_id):
+	"""Download the official snapshot when the bundled folder is incomplete."""
+	candidates = get_candidate_model_dirs(local_dir)
+	for candidate in candidates:
+		if has_pretrained_weights(candidate):
+			return candidate
+	target_dir = candidates[-1]
+	os.makedirs(target_dir, exist_ok=True)
+	print(f"[startup] downloading missing model assets: {repo_id} -> {target_dir}")
+	snapshot_download(repo_id=repo_id, local_dir=target_dir)
+	if has_pretrained_weights(target_dir):
+		return target_dir
+	raise FileNotFoundError(f"{repo_id} downloaded, but no weight file was found in {target_dir}")
 # tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base",force_download=True, cache_dir="model/Kronos-Tokenizer-base")
 # model = Kronos.from_pretrained("NeoQuasar/Kronos-small",force_download=True, cache_dir="model/Kronos-small")
 if torch.cuda.is_available():
@@ -244,10 +276,10 @@ def ensure_predictor_loaded():
 		return predictor
 	try:
 		tokenizer = KronosTokenizer.from_pretrained(
-			resolve_pretrained_source(LOCAL_TOKENIZER_DIR, HF_TOKENIZER_REPO)
+			ensure_local_pretrained_dir(LOCAL_TOKENIZER_DIR, HF_TOKENIZER_REPO)
 		)
 		model = Kronos.from_pretrained(
-			resolve_pretrained_source(LOCAL_MODEL_DIR, HF_MODEL_REPO)
+			ensure_local_pretrained_dir(LOCAL_MODEL_DIR, HF_MODEL_REPO)
 		)
 		predictor = KronosPredictor(model, tokenizer, device=device, max_context=512)
 		print(f"[startup] model ready on {device}")
@@ -1892,6 +1924,26 @@ def popupWindow(text):
 			break
 		user32.TranslateMessage(pmsg)
 		user32.DispatchMessageW(pmsg)
+
+
+def ensure_predictor_loaded():
+	"""Load predictor lazily and auto-download missing Hugging Face weights."""
+	global tokenizer
+	global model
+	global predictor
+	if predictor is not None:
+		return predictor
+	try:
+		tokenizer_dir = ensure_local_pretrained_dir(LOCAL_TOKENIZER_DIR, HF_TOKENIZER_REPO)
+		model_dir = ensure_local_pretrained_dir(LOCAL_MODEL_DIR, HF_MODEL_REPO)
+		tokenizer = KronosTokenizer.from_pretrained(tokenizer_dir)
+		model = Kronos.from_pretrained(model_dir)
+		predictor = KronosPredictor(model, tokenizer, device=device, max_context=512)
+		print(f"[startup] model ready on {device}")
+		return predictor
+	except Exception as ex:
+		popupWindow("AI 模型載入失敗。\n本地模型檔不完整，程式已嘗試自動下載；若仍失敗，請確認網路連線或模型資料夾權限。\n\n詳細錯誤: " + str(ex))
+		return None
 
 
 def predict(chart):

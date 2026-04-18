@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+
+facecat/model/Kronos-small/model.safetensors
+facecat/model/Kronos-Tokenizer-base/model.safetensors
+facecat/model/Kronos-small/.cache/
+facecat/model/Kronos-Tokenizer-base/.cache/
