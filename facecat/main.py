@@ -379,11 +379,10 @@ def predict(chart):
 	progressDiv.text = "-1"
 	progressDiv.invalidate()
 	preButton.invalidate()
-	lookback = chart.lookback
-	pred_len = chart.pred_len
+	lookback, pred_len, adjust_message = normalize_prediction_params(chart)
 	mode = chart.preMode
 	
-	if len(chart.datas) < lookback and mode == "predict":
+	if lookback is None or (len(chart.datas) < lookback and mode == "predict"):
 		popupWindow(f"k線數量{len(chart.datas)}小於訓練數量{lookback}")
 		progressDiv.text = "0"
 		progressDiv.invalidate()
@@ -401,10 +400,10 @@ def predict(chart):
 		print(f"Using device: {device} mode: {mode}")
 		# 可見k線數量
 		klines = chart.lastVisibleIndex - chart.firstVisibleIndex 
-		if chart.pred_len > 50 and klines > 50:
+		if pred_len > 50 and klines > 50:
 			chart.firstVisibleIndex += 50
-		elif chart.pred_len <= 50 and klines > chart.pred_len:
-			chart.firstVisibleIndex += chart.pred_len
+		elif pred_len <= 50 and klines > pred_len:
+			chart.firstVisibleIndex += pred_len
 		chart.invalidate()
 	# 獲取圖表數據，轉化成panda格式
 		df = transToPanda(chart.datas)
@@ -1822,11 +1821,11 @@ def historyDataCallBack(data):
 
 def queryHistoryData(code, name, cycle, myCharts):
 	if cycle == 0:
-		url = build_yahoo_chart_url(code, "1m", "5d")
+		url = build_yahoo_chart_url(code, "1m", "8d")
 	elif cycle < 1440:
-		url = build_yahoo_chart_url(code, "1m", "5d")
+		url = build_yahoo_chart_url(code, "1m", "8d")
 	else:
-		url = build_yahoo_chart_url(code, "1d", "2y")
+		url = build_yahoo_chart_url(code, "1d", "10y")
 	httpRequest(url, historyDataCallBack, [code, name, cycle, myCharts])
 
 
@@ -2008,6 +2007,37 @@ def popupWindow(text):
 		user32.TranslateMessage(pmsg)
 		user32.DispatchMessageW(pmsg)
 
+def normalize_prediction_params(chart):
+	"""Fit lookback/pred_len to the loaded sample size before predicting."""
+	available = len(chart.datas)
+	mode = chart.preMode
+	lookback = int(chart.lookback)
+	pred_len = int(chart.pred_len)
+	adjustments = []
+	min_lookback = 10
+
+	if available < min_lookback:
+		return None, None, f"K 線數量不足，目前只有 {available} 筆，至少需要 {min_lookback} 筆。"
+
+	max_lookback = available if mode == "predict" else max(min_lookback, available - 1)
+	if lookback > max_lookback:
+		lookback = max_lookback
+		adjustments.append(f"樣本改為 {lookback}")
+
+	if mode == "backtest":
+		max_pred_len = max(1, available - lookback)
+		if pred_len > max_pred_len:
+			pred_len = max_pred_len
+			adjustments.append(f"預測改為 {pred_len}")
+
+	if lookback < min_lookback:
+		return None, None, f"K 線數量不足，目前只有 {available} 筆，至少需要 {min_lookback} 筆。"
+
+	message = ""
+	if adjustments:
+		message = "資料筆數不足，已自動調整參數：" + "，".join(adjustments) + f"。目前共 {available} 筆資料。"
+	return lookback, pred_len, message
+
 
 def ensure_predictor_loaded():
 	"""Load predictor lazily and auto-download missing Hugging Face weights."""
@@ -2039,9 +2069,19 @@ def predict(chart):
 	progressDiv.text = "-1"
 	progressDiv.invalidate()
 	preButton.invalidate()
-	lookback = chart.lookback
-	pred_len = chart.pred_len
+	lookback, pred_len, adjust_message = normalize_prediction_params(chart)
 	mode = chart.preMode
+	if lookback is None:
+		popupWindow(adjust_message)
+		progressDiv.text = "0"
+		progressDiv.invalidate()
+		preButton.enabled = True
+		preButton.invalidate()
+		return
+	if adjust_message:
+		popupWindow(adjust_message)
+	chart.lookback = lookback
+	chart.pred_len = pred_len
 	if len(chart.datas) < lookback and mode == "predict":
 		popupWindow(f"K 線數量不足，目前只有 {len(chart.datas)} 筆，至少需要 {lookback} 筆。")
 		progressDiv.text = "0"
