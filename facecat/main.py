@@ -276,6 +276,16 @@ def build_yahoo_chart_url(code, interval, range_value):
 	return f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval={interval}&range={range_value}&includePrePost=false&events=div%2Csplits"
 
 
+def build_yahoo_chart_period_url(code, interval, period1, period2):
+	"""Build a Yahoo Finance chart endpoint with explicit time bounds."""
+	symbol = get_yahoo_symbol(code)
+	return (
+		f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+		f"?interval={interval}&period1={int(period1)}&period2={int(period2)}"
+		"&includePrePost=false&events=div%2Csplits"
+	)
+
+
 def parse_yahoo_history(result_text):
 	"""Parse Yahoo chart JSON into SecurityData records."""
 	data = json.loads(result_text)
@@ -312,6 +322,67 @@ def parse_yahoo_history(result_text):
 		stock_data.amount = close * volume * 1000
 		data_list.append(stock_data)
 	return data_list
+
+
+def request_text(url):
+	"""Fetch remote text with the same retry behavior used elsewhere in the app."""
+	session = requests.Session()
+	session.mount("http://", HTTPAdapter(max_retries=3))
+	session.mount("https://", HTTPAdapter(max_retries=3))
+	response = session.get(url, headers=HTTP_HEADERS, timeout=15)
+	response.raise_for_status()
+	return response.text
+
+
+def merge_yahoo_history_payloads(payload_texts, max_points=0):
+	"""Merge multiple Yahoo chart payloads into one sorted deduplicated payload."""
+	rows = []
+	seen_timestamps = set()
+	for payload_text in payload_texts:
+		payload = json.loads(payload_text)
+		result_list = payload.get("chart", {}).get("result", [])
+		if not result_list:
+			continue
+		result = result_list[0]
+		timestamps = result.get("timestamp") or []
+		quote = (result.get("indicators", {}).get("quote") or [{}])[0]
+		opens = quote.get("open", [])
+		highs = quote.get("high", [])
+		lows = quote.get("low", [])
+		closes = quote.get("close", [])
+		volumes = quote.get("volume", [])
+		for index, ts in enumerate(timestamps):
+			if ts in seen_timestamps:
+				continue
+			seen_timestamps.add(ts)
+			rows.append({
+				"timestamp": ts,
+				"open": opens[index] if index < len(opens) else None,
+				"high": highs[index] if index < len(highs) else None,
+				"low": lows[index] if index < len(lows) else None,
+				"close": closes[index] if index < len(closes) else None,
+				"volume": volumes[index] if index < len(volumes) else None,
+			})
+	rows.sort(key=lambda item: item["timestamp"])
+	if max_points > 0 and len(rows) > max_points:
+		rows = rows[-max_points:]
+	return json.dumps({
+		"chart": {
+			"result": [{
+				"timestamp": [item["timestamp"] for item in rows],
+				"indicators": {
+					"quote": [{
+						"open": [item["open"] for item in rows],
+						"high": [item["high"] for item in rows],
+						"low": [item["low"] for item in rows],
+						"close": [item["close"] for item in rows],
+						"volume": [item["volume"] for item in rows],
+					}]
+				}
+			}],
+			"error": None,
+		}
+	})
 
 def transToPanda(datas):
 	data_list = []
@@ -488,6 +559,34 @@ def startHttpRequest(url, callBack, tag):
 		data.success = False
 		data.data = str(e)
 	data.tag = tag
+	gPaint.addData(data)
+	user32.PostMessageW(gPaint.hWnd, 0x0401, 0, 0)
+
+
+def startHistoryRequest(code, name, cycle, myCharts):
+	"""Fetch enough history for longer charts, including up to 3000 recent minute points."""
+	data = FCData()
+	data.key = f"history:{code}:{cycle}"
+	data.callBack = historyDataCallBack
+	try:
+		if cycle < 1440:
+			end_time = int(time.time())
+			chunk_seconds = 8 * 24 * 60 * 60
+			payload_texts = []
+			for _ in range(3):
+				start_time = end_time - chunk_seconds
+				url = build_yahoo_chart_period_url(code, "1m", start_time, end_time)
+				payload_texts.append(request_text(url))
+				end_time = start_time - 60
+			data.data = merge_yahoo_history_payloads(payload_texts, max_points=3000)
+		else:
+			url = build_yahoo_chart_url(code, "1d", "10y")
+			data.data = request_text(url)
+		data.success = True
+	except requests.exceptions.RequestException as ex:
+		data.success = False
+		data.data = str(ex)
+	data.tag = [code, name, cycle, myCharts]
 	gPaint.addData(data)
 	user32.PostMessageW(gPaint.hWnd, 0x0401, 0, 0)
 
@@ -1820,13 +1919,8 @@ def historyDataCallBack(data):
 
 
 def queryHistoryData(code, name, cycle, myCharts):
-	if cycle == 0:
-		url = build_yahoo_chart_url(code, "1m", "8d")
-	elif cycle < 1440:
-		url = build_yahoo_chart_url(code, "1m", "8d")
-	else:
-		url = build_yahoo_chart_url(code, "1d", "10y")
-	httpRequest(url, historyDataCallBack, [code, name, cycle, myCharts])
+	thread = threading.Thread(target=startHistoryRequest, args=(code, name, cycle, myCharts))
+	thread.start()
 
 
 def newDataCallBack(data):
