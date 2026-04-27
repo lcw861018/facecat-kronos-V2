@@ -1,11 +1,14 @@
 # -*- coding:utf-8 -*-
 #! python3
+# pyright: reportMissingModuleSource=false, reportMissingImports=false
 
-from facecat_pyside import *
+from facecat import *
+from facecat import FCPoint, getChartX, getChartY, toFixed
 #這里可能需要pip install requests
 import requests
 from requests.adapters import HTTPAdapter
 import random
+import time
 from datetime import datetime
 import threading
 
@@ -15,7 +18,23 @@ import sys
 from model import Kronos, KronosTokenizer, KronosPredictor
 import torch
 
+try:
+	from PySide6.QtWidgets import QApplication, QMainWindow
+except ImportError:
+	try:
+		from PySide2.QtWidgets import QApplication, QMainWindow
+	except ImportError:
+		QApplication = None
+		class QMainWindow(object):
+			pass
+
+class MainWindow(QMainWindow):
+	def onLoad(self):
+		if hasattr(self, "paint") and self.paint is not None:
+			self.paint.widget = self
+
 latestDataStr = ""
+selectedCode = "600000.SH"
 # tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base",force_download=True, cache_dir="model/Kronos-Tokenizer-base")
 # model = Kronos.from_pretrained("NeoQuasar/Kronos-small",force_download=True, cache_dir="model/Kronos-small")
 tokenizer = KronosTokenizer.from_pretrained(
@@ -524,6 +543,18 @@ def queryNewData(code):
 	tag = []
 	httpRequest(url, newDataCallBack, tag)
 
+def startQueryNewData():
+	"""Periodically refresh the selected stock quote."""
+	while True:
+		time.sleep(3)
+		queryNewData(selectedCode)
+
+def startQueryPriceData():
+	"""Periodically refresh the watchlist quote table."""
+	while True:
+		time.sleep(6)
+		queryPrice("all")
+
 def setChartTheme(chart, index):
 	"""黑色風格"""
 	if chart.paint.defaultUIStyle == "dark":
@@ -584,8 +615,10 @@ def findViewsByType(findType, views, refViews):
 
 def onClickGridCell(grid, row, gridColumn, cell, firstTouch, firstPoint, secondTouch, secondPoint, clicks):
 	"""點擊單元格"""
+	global selectedCode
 	code = row.cells[1].value
 	name = row.cells[2].value
+	selectedCode = code
 	for i in range(0, len(findMyCharts)):
 		myChart = findMyCharts[i]
 		chart = charts[i]
@@ -1335,6 +1368,11 @@ def main():
 			topDiv.addView(cycleButton)
 	queryPrice("all")
 	queryNewData(strCode)
+	selectedCode = strCode
+	thread = threading.Thread(target=startQueryNewData, daemon=True)
+	thread.start()
+	thread2 = threading.Thread(target=startQueryPriceData, daemon=True)
+	thread2.start()
 	gPaint.update()
 	threading.Timer(0.01, checkNewData).start()
 	ex.showMaximized() 

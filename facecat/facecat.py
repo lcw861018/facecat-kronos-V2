@@ -202,6 +202,7 @@ class FCPaint(object):
 		self.touchDownView = None #鼠標按下的視圖
 		self.touchMoveView = None #鼠標移動的視圖
 		self.touchDownPoint = FCPoint(0,0)
+		self.widget = None # PySide host widget
 		self.views = [] #子視圖
 		self.onCalculateChartMaxMin = None #計算最大最小值
 		self.onClick = None #點擊
