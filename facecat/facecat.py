@@ -7790,6 +7790,11 @@ def drawChartStock(chart, paint, clipRect):
 		if isTrend:
 			drawPoints = []
 			lastDay = int(chart.datas[0].date / 86400)
+			dataCount = len(chart.datas)
+			if dataCount == 0:
+				return
+			if lastValidIndex > dataCount - 1:
+				lastValidIndex = dataCount - 1
 			for i in range(0,lastValidIndex + 1):
 				x = getChartX(chart, i)
 				close = chart.datas[i].close
@@ -7806,7 +7811,17 @@ def drawChartStock(chart, paint, clipRect):
 		else:
 			hasMinTag = False
 			hasMaxTag = False
-			for i in range(chart.firstVisibleIndex,lastValidIndex + 1):
+			dataCount = len(chart.datas)
+			if dataCount == 0:
+				return
+			firstIndex = chart.firstVisibleIndex
+			if firstIndex < 0:
+				firstIndex = 0
+			if lastValidIndex > dataCount - 1:
+				lastValidIndex = dataCount - 1
+			if firstIndex > lastValidIndex:
+				return
+			for i in range(firstIndex,lastValidIndex + 1):
 				x = getChartX(chart, i)
 				openValue = chart.datas[i].open
 				close = chart.datas[i].close

@@ -105,6 +105,7 @@ def predict(chart):
 			chart.firstVisibleIndex += 50
 		elif chart.pred_len <= 50 and klines > chart.pred_len:
 			chart.firstVisibleIndex += chart.pred_len
+		checkChartLastVisibleIndex(chart)
 		chart.invalidate()
 	# 獲取圖表數據，轉化成panda格式
 		df = transToPanda(chart.datas)
@@ -218,27 +219,25 @@ def drawProgressDiv(view, paint, clipRect):
 			paint.fillRect(view.textColor, 0, 0, cx, view.size.cy)
 			paint.drawLine("rgb(255,255,255)", 1, 0,  view.size.cx, 0,  view.size.cx, view.size.cy)
 
+def getPredictionDrawStartIndex(view):
+	dataCount = len(view.datas)
+	if dataCount == 0:
+		return -1
+	if view.preMode == "backtest":
+		return max(0, dataCount - len(view.datas2))
+	return dataCount
+
 def drawPreChart(view, paint, clipRect):
 	drawChartStock(view, paint, clipRect)
 	if view.datas2 != None and len(view.datas2) > 0:
 		cWidth = int(view.hScalePixel - 3) / 2
-		splitIndex = view.lastVisibleIndex + 1
-		if view.preMode == "backtest":
-			splitIndex = view.lastVisibleIndex - view.pred_len + 1
-			if view.lastVisibleIndex + 1 < len(view.datas):
-				splitIndex = len(view.datas) - 1 - view.pred_len + 1
-		elif view.preMode == "predict":
-			if view.lastVisibleIndex + 1 < len(view.datas):
-				return
+		splitIndex = getPredictionDrawStartIndex(view)
+		if splitIndex < 0:
+			return
 		splitX = getChartX(view, splitIndex) - cWidth
 		paint.drawLine("rgb(150,150,150)", 1, 0, splitX, 0, splitX, view.size.cy)
 		for i in range(0,len(view.datas2)):
-			index = view.lastVisibleIndex + i + 1
-			
-			if view.preMode == "backtest":
-				index = view.lastVisibleIndex - view.pred_len + i + 1
-				if view.lastVisibleIndex + 1 < len(view.datas):
-					index = len(view.datas) - view.pred_len + i + 1
+			index = splitIndex + i
 			x = getChartX(view, index)
 			if x > view.size.cx - view.rightVScaleWidth:
 				break
